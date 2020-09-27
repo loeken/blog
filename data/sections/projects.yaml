@@ -1,0 +1,91 @@
+# section information
+section:
+  name: Projects
+  enable: true
+  weight: 3
+  showOnNavbar: true
+  # Can optionally hide the title in sections
+  # hideTitle: true
+
+# filter buttons
+buttons:
+- name: All
+  filter: "all"
+- name: Professional
+  filter: "professional"
+- name: Friends
+  filter: "friends"
+
+# your projects
+projects:
+- name: Internetz.me
+  logo: images/projects/internetz.me.png
+  role: Owner
+  timeline: "2011 - Present"
+  url: https://internetz.me
+  summary: Started as an irc network, grew into a vpn/hosting company - now it's featuring stuff i like!
+  tags: ["professional", "cloud"]
+
+- name: Internetz.me Blog
+  logo: images/projects/internetz.me.png
+  role: Owner
+  timeline: "2013 - Present"
+  url: https://internetz.me
+  summary: Revamped in 2020 - a blog that slowly grew along with the youtube channel. no real focus but covering a lot of tech/coding/devops
+  tags: ["professional"]
+
+- name: youtube.com/schvollguad
+  logo: images/projects/youtube.png
+  role: Owner
+  timeline: "2013 - Present"
+  url: https://youtube.com/schvollguad
+  summary: schvollguad is bavarian and means "it's really good" - a small youtube channel that focusses on stuff i find interesting
+  tags: ["professional"]
+
+- name: Cryptocompare
+  logo: images/projects/cryptocompare.png
+  role: Head of Devops
+  timeline: "2017 - Present"
+  url: https://www.cryptocompare.com
+  summary: A free and paid cryptocurrency pricing index. rest apis and streaming endpoints available 
+  tags: ["professional", "friends"]
+
+- name: Popcorntimes.tv
+  logo: images/projects/popcorntimes.png
+  role: Devops
+  timeline: "Jun 2018 - Present"
+  url: "https://popcorntimes.tv"
+  summary: Stream movies/documentaries for free and legal - movies from 1910-2010
+  tags: ["professional","entertainment", "friends"]
+
+- name: jai-paul.com
+  role: Backend Developer
+  timeline: "2018 - 2019"
+  url: "https://jai-paul.com/"
+  summary: A cool project with a interactive website for the music artist jai paul
+  tags: ["professional","entertainment"]
+
+- name: Cryptocompare API
+  logo: images/projects/cryptocompare.png
+  role: Owner
+  timeline: "Jun 2019 - Present"
+  repo: https://github.com/loeken/cryptocompare-api-php-wrapper
+  summary: A client sided php wrapper that allows using the cryptocompare api easily
+  tags: ["professional", "hackathon"]
+
+- name: Bureau Cool
+  logo: images/projects/bureau_cool.png
+  role: Devops
+  timeline: "Jun 2019 - Present"
+  url: https://bureau.cool
+  summary: a boutique design studio - websites, animations, visuals
+  tags: ["professional","friends"]
+
+
+- name: Chilloutzone.net
+  logo: images/projects/coz.svg
+  role: Devops / Backend Developer
+  timeline: "2014 - Present"
+  url: https://www.chilloutzone.net
+  summary: A community that evolved around sharing funny videos 
+  tags: ["professional", "friends"]

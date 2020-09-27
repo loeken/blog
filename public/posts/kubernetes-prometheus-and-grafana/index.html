@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Kubernetes Prometheus &amp; Grafana</title>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+
+<link rel="stylesheet" href="/assets/css/bootstrap.min.css" />
+<link rel="stylesheet" href="/assets/css/main.css" />
+<link rel="stylesheet" href="/assets/css/style.css" />
+<link rel="stylesheet" href="/assets/css/navigators/navbar.css" />
+
+
+<link href="https://fonts.googleapis.com/css2?family=Muli:wght@300;400;500;600" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" />
+
+
+<link rel="icon" type="image/png" href="/assets/images/favicon.png" />
+
+
+<link rel="stylesheet" href="/assets/css/style.css" />
+
+    
+<meta name="description" content="Kubernetes Prometheus &amp; Grafana" />
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/atom-one-dark.min.css"
+/>
+<link rel="stylesheet" href="/assets/css/single.css" />
+<link rel="stylesheet" href="/assets/css/navigators/sidebar.css">
+
+
+    
+    
+  </head>
+
+  <body data-spy="scroll" data-target="#TableOfContents" data-offset="80">
+    <div class="container-fluid bg-dimmed wrapper">
+      
+      
+    <nav class="navbar navbar-expand-xl top-navbar final-navbar shadow">
+  <div class="container">
+    
+    
+    
+      
+    
+    
+      
+    
+      <button class="navbar-toggler navbar-light" id="sidebar-toggler" type="button" onclick="toggleSidebar()">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" href="https://blog.internetz.me/">
+      <img src="/assets/images/main-logo.png">shit i like</a>
+    <button class="navbar-toggler navbar-light" id="toc-toggler" type="button" onclick="toggleTOC()">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="top-nav-items">
+      <ul class="navbar-nav ml-auto">
+      </ul>
+    </div>
+  </div>
+  
+  <img src="/assets/images/main-logo.png" class="d-none" id="main-logo">
+  <img src="/assets/images/inverted-logo.png" class="d-none" id="inverted-logo">
+</nav>
+
+
+
+      
+       
+
+      
+      
+<section class="content-section" id="content-section">
+  <div class="content">
+    <div class="container p-0 read-area">
+      
+      <div class="hero-area col-sm-12" id="hero-area" style='background-image: url(https://blog.internetz.me/assets/images/default-hero.jpg);'>
+      </div>
+
+      
+      <div class="page-content">
+        <div class="author-profile ml-auto align-self-lg-center">
+          <img class="rounded-circle" src='/images/avatar.png'/>
+          <h5 class="author-name">loeken</h5>
+          <p>June 11, 2020</p>
+        </div>
+
+        <div class="title">
+          <h1>Kubernetes Prometheus &amp; Grafana</h1>
+        </div>
+
+        <div class="post-content" id="post-content">
+          <h2 id="kubernetes--prometheus">Kubernetes &amp; Prometheus</h2>
+<p>Prometheus by defaults pulls info from the hosts via an http endpoint by default this is the /metrics endpoint
+Data exposed on this /metrics endpoint needs to support the prometheus endpoint.
+Exporter is a standalone tool that gathers data and exposes it on the /metrics endpoint
+These exporters are also available via docker ( can be used as sidecar containers )</p>
+<h3 id="promotheus-server">Promotheus Server</h3>
+<ul>
+<li>Data Retrieval Worker ( pulls metrics data)</li>
+<li>Time Series Database ( stores time series metrics data )</li>
+<li>Api ( to access this stored data )</li>
+</ul>
+<h3 id="view-data">View Data</h3>
+<ul>
+<li>Prometheus Web Ui</li>
+<li>Grafana</li>
+</ul>
+<h3 id="terms">Terms</h3>
+<p>Targets: anything monitored
+Units: a subset of whats monitored</p>
+<ul>
+<li>cpu status</li>
+<li>memory usage</li>
+<li>disk usage</li>
+<li>exception count</li>
+<li>request count</li>
+</ul>
+<h3 id="metrics">metrics:</h3>
+<p>Each monitored target exposes a /metrics endpoint that expose your metrics in a certain <a href="https://github.com/prometheus/docs/blob/master/content/docs/instrumenting/exposition_formats.md">format</a></p>
+<p>HELP: description of what the metric is
+TYPE: one of three metrics types:</p>
+<ul>
+<li>Counter ( how often something happend )</li>
+<li>Gauge ( current value of something )</li>
+<li>Histogram ( How long something took / how big a request was)</li>
+</ul>
+<h3 id="prometheus-client-libraries">Prometheus Client libraries</h3>
+<p><a href="https://prometheus.io/docs/instrumenting/clientlibs/">libraries for various languages are available here</a>
+Official third-party client libraries:</p>
+<ul>
+<li>Go</li>
+<li>Java or Scala</li>
+<li>Python</li>
+<li>Ruby</li>
+</ul>
+<p>Unofficial third-party client libraries:</p>
+<ul>
+<li>Bash</li>
+<li>C</li>
+<li>C++</li>
+<li>Common Lisp</li>
+<li>Dart</li>
+<li>Elixir</li>
+<li>Erlang</li>
+<li>Haskell</li>
+<li>Lua for Nginx</li>
+<li>Lua for Tarantool</li>
+<li>.NET / C#</li>
+<li>Node.js</li>
+<li>Perl</li>
+<li>PHP</li>
+<li>R</li>
+<li>Rust</li>
+</ul>
+<h3 id="promoetheuss-pull-system">promoetheus&rsquo;s pull system</h3>
+<p>controlled pulling of metrics in order to avoid the monitoring becoming the bottleneck.
+multiple prometheus instances can pull metrics ( good scalability )</p>
+<h3 id="pushgateway">pushgateway</h3>
+<p>&ldquo;short lived jobs&rdquo; services that only live for short times can use short lived jobs to push data into prometheus</p>
+<h3 id="alert-manager">alert manager</h3>
+<p>responsible for firing alerts via different channels ( slack / email / sms etc )</p>
+<h3 id="prometheus-data-storage">Prometheus data storage</h3>
+<p>local time series database ( integrates with remote storage systems )</p>
+<h2 id="setting-up-prometheus">Setting up prometheus</h2>
+<p>first we need to create a cluster role:</p>
+<h4 id="prometheus-rbac-setupyaml"><strong><code>prometheus-rbac-setup.yaml</code></strong></h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: rbac.authorization.k8s.io/v1beta1
+<span style="color:#66d9ef">kind</span>: ClusterRole
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: prometheus
+<span style="color:#66d9ef">rules</span>:
+- <span style="color:#66d9ef">apiGroups</span>: [<span style="color:#e6db74">&#34;&#34;</span>]
+  <span style="color:#66d9ef">resources</span>:
+  - nodes
+  - nodes/proxy
+  - services
+  - endpoints
+  - pods
+  - ingresses
+  <span style="color:#66d9ef">verbs</span>: [<span style="color:#e6db74">&#34;get&#34;</span>, <span style="color:#e6db74">&#34;list&#34;</span>, <span style="color:#e6db74">&#34;watch&#34;</span>]
+- <span style="color:#66d9ef">apiGroups</span>:
+  - networking.k8s.io
+  <span style="color:#66d9ef">resources</span>:
+  - ingresses
+  <span style="color:#66d9ef">verbs</span>: [<span style="color:#e6db74">&#34;get&#34;</span>, <span style="color:#e6db74">&#34;list&#34;</span>, <span style="color:#e6db74">&#34;watch&#34;</span>]
+- <span style="color:#66d9ef">nonResourceURLs</span>: [<span style="color:#e6db74">&#34;/metrics&#34;</span>]
+  <span style="color:#66d9ef">verbs</span>: [<span style="color:#e6db74">&#34;get&#34;</span>]
+---
+<span style="color:#66d9ef">apiVersion</span>: v1
+<span style="color:#66d9ef">kind</span>: ServiceAccount
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: prometheus
+  <span style="color:#66d9ef">namespace</span>: default
+---
+<span style="color:#66d9ef">apiVersion</span>: rbac.authorization.k8s.io/v1beta1
+<span style="color:#66d9ef">kind</span>: ClusterRoleBinding
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: prometheus
+<span style="color:#66d9ef">roleRef</span>:
+  <span style="color:#66d9ef">apiGroup</span>: rbac.authorization.k8s.io
+  <span style="color:#66d9ef">kind</span>: ClusterRole
+  <span style="color:#66d9ef">name</span>: prometheus
+<span style="color:#66d9ef">subjects</span>:
+- <span style="color:#66d9ef">kind</span>: ServiceAccount
+  <span style="color:#66d9ef">name</span>: prometheus
+  <span style="color:#66d9ef">namespace</span>: default
+</code></pre></div><p>not the prometheus.yml is from prometheus and does not adhere to yaml file name extension - which might be confusing here as we use yaml across this blog</p>
+<p>this configmap basically contains the info on what prometheus scrapes. the most important part of the next section would be</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">          - <span style="color:#66d9ef">source_labels</span>: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            <span style="color:#66d9ef">action</span>: keep
+            <span style="color:#66d9ef">regex</span>: <span style="color:#66d9ef">true</span>
+          - <span style="color:#66d9ef">source_labels</span>: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+            <span style="color:#66d9ef">action</span>: replace
+            <span style="color:#66d9ef">regex</span>: ([^:]+)(?::\d+)?;(\d+)
+            <span style="color:#66d9ef">replacement</span>: $<span style="color:#ae81ff">1</span>:$<span style="color:#ae81ff">2</span>
+            <span style="color:#66d9ef">target_label</span>: __address__
+</code></pre></div><p>this would basically mean in our pod definition ( kind: Deployment ) that we would need two annotations to tell prometheus to scrape this pod, and which port to scrape</p>
+<h4 id="prometheus-configmapyml"><strong><code>prometheus-configmap.yml</code></strong></h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: v1
+<span style="color:#66d9ef">data</span>:
+  <span style="color:#66d9ef">prometheus.yml</span>: <span style="color:#e6db74">|
+</span><span style="color:#e6db74">    scrape_configs:</span>
+      - <span style="color:#66d9ef">job_name</span>: <span style="color:#e6db74">&#39;kubernetes-apiservers&#39;</span>
+        <span style="color:#66d9ef">kubernetes_sd_configs</span>:
+          - <span style="color:#66d9ef">role</span>: endpoints
+        <span style="color:#66d9ef">scheme</span>: https
+        <span style="color:#66d9ef">tls_config</span>:
+          <span style="color:#66d9ef">ca_file</span>: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        <span style="color:#66d9ef">bearer_token_file</span>: /var/run/secrets/kubernetes.io/serviceaccount/token
+        <span style="color:#66d9ef">relabel_configs</span>:
+          - <span style="color:#66d9ef">source_labels</span>: [__meta_kubernetes_namespace, __meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
+            <span style="color:#66d9ef">action</span>: keep
+            <span style="color:#66d9ef">regex</span>: default;kubernetes;https
+      - <span style="color:#66d9ef">job_name</span>: <span style="color:#e6db74">&#39;kubernetes-nodes&#39;</span>
+        <span style="color:#66d9ef">scheme</span>: https
+        <span style="color:#66d9ef">tls_config</span>:
+          <span style="color:#66d9ef">ca_file</span>: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        <span style="color:#66d9ef">bearer_token_file</span>: /var/run/secrets/kubernetes.io/serviceaccount/token
+        <span style="color:#66d9ef">kubernetes_sd_configs</span>:
+          - <span style="color:#66d9ef">role</span>: node
+        <span style="color:#66d9ef">relabel_configs</span>:
+          - <span style="color:#66d9ef">action</span>: labelmap
+            <span style="color:#66d9ef">regex</span>: __meta_kubernetes_node_label_(.+)
+          - <span style="color:#66d9ef">target_label</span>: __address__
+            <span style="color:#66d9ef">replacement</span>: kubernetes.default.svc:<span style="color:#ae81ff">443</span>
+          - <span style="color:#66d9ef">source_labels</span>: [__meta_kubernetes_node_name]
+            <span style="color:#66d9ef">regex</span>: (.+)
+            <span style="color:#66d9ef">target_label</span>: __metrics_path__
+            <span style="color:#66d9ef">replacement</span>: /api/v1/nodes/${<span style="color:#ae81ff">1</span>}/proxy/metrics
+      - <span style="color:#66d9ef">job_name</span>: <span style="color:#e6db74">&#39;kubernetes-cadvisor&#39;</span>
+        <span style="color:#66d9ef">scheme</span>: https
+        <span style="color:#66d9ef">tls_config</span>:
+          <span style="color:#66d9ef">ca_file</span>: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        <span style="color:#66d9ef">bearer_token_file</span>: /var/run/secrets/kubernetes.io/serviceaccount/token
+        <span style="color:#66d9ef">kubernetes_sd_configs</span>:
+          - <span style="color:#66d9ef">role</span>: node
+        <span style="color:#66d9ef">relabel_configs</span>:
+          - <span style="color:#66d9ef">action</span>: labelmap
+            <span style="color:#66d9ef">regex</span>: __meta_kubernetes_node_label_(.+)
+          - <span style="color:#66d9ef">target_label</span>: __address__
+            <span style="color:#66d9ef">replacement</span>: kubernetes.default.svc:<span style="color:#ae81ff">443</span>
+          - <span style="color:#66d9ef">source_labels</span>: [__meta_kubernetes_node_name]
+            <span style="color:#66d9ef">regex</span>: (.+)
+            <span style="color:#66d9ef">target_label</span>: __metrics_path__
+            <span style="color:#66d9ef">replacement</span>: /api/v1/nodes/${<span style="color:#ae81ff">1</span>}/proxy/metrics/cadvisor
+      - <span style="color:#66d9ef">job_name</span>: <span style="color:#e6db74">&#39;kubernetes-service-endpoints&#39;</span>
+        <span style="color:#66d9ef">kubernetes_sd_configs</span>:
+          - <span style="color:#66d9ef">role</span>: endpoints
+        <span style="color:#66d9ef">relabel_configs</span>:
+          - <span style="color:#66d9ef">source_labels</span>: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            <span style="color:#66d9ef">action</span>: keep
+            <span style="color:#66d9ef">regex</span>: <span style="color:#66d9ef">true</span>
+          - <span style="color:#66d9ef">source_labels</span>: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+            <span style="color:#66d9ef">action</span>: replace
+            <span style="color:#66d9ef">regex</span>: ([^:]+)(?::\d+)?;(\d+)
+            <span style="color:#66d9ef">replacement</span>: $<span style="color:#ae81ff">1</span>:$<span style="color:#ae81ff">2</span>
+            <span style="color:#66d9ef">target_label</span>: __address__
+          - <span style="color:#66d9ef">action</span>: labelmap
+            <span style="color:#66d9ef">regex</span>: __meta_kubernetes_service_label_(.+)
+          - <span style="color:#66d9ef">source_labels</span>: [__meta_kubernetes_namespace]
+            <span style="color:#66d9ef">action</span>: replace
+            <span style="color:#66d9ef">target_label</span>: kubernetes_namespace
+          - <span style="color:#66d9ef">source_labels</span>: [__meta_kubernetes_service_name]
+            <span style="color:#66d9ef">action</span>: replace
+            <span style="color:#66d9ef">target_label</span>: kubernetes_name
+
+      - <span style="color:#66d9ef">job_name</span>: <span style="color:#e6db74">&#39;kubernetes-services&#39;</span>
+        <span style="color:#66d9ef">metrics_path</span>: /probe
+        <span style="color:#66d9ef">params</span>:
+          <span style="color:#66d9ef">module</span>: [http_2xx]
+        <span style="color:#66d9ef">kubernetes_sd_configs</span>:
+          - <span style="color:#66d9ef">role</span>: service
+        <span style="color:#66d9ef">relabel_configs</span>:
+          - <span style="color:#66d9ef">source_labels</span>: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            <span style="color:#66d9ef">action</span>: keep
+            <span style="color:#66d9ef">regex</span>: <span style="color:#66d9ef">true</span>
+          - <span style="color:#66d9ef">source_labels</span>: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+            <span style="color:#66d9ef">action</span>: replace
+            <span style="color:#66d9ef">regex</span>: ([^:]+)(?::\d+)?;(\d+)
+            <span style="color:#66d9ef">replacement</span>: $<span style="color:#ae81ff">1</span>:$<span style="color:#ae81ff">2</span>
+            <span style="color:#66d9ef">target_label</span>: __address__
+          - <span style="color:#66d9ef">source_labels</span>: [__address__]
+            <span style="color:#66d9ef">target_label</span>: __param_target
+          - <span style="color:#66d9ef">source_labels</span>: [__param_target]
+            <span style="color:#66d9ef">target_label</span>: instance
+          - <span style="color:#66d9ef">action</span>: labelmap
+            <span style="color:#66d9ef">regex</span>: __meta_kubernetes_service_label_(.+)
+          - <span style="color:#66d9ef">source_labels</span>: [__meta_kubernetes_namespace]
+            <span style="color:#66d9ef">target_label</span>: kubernetes_namespace
+          - <span style="color:#66d9ef">source_labels</span>: [__meta_kubernetes_service_name]
+            <span style="color:#66d9ef">target_label</span>: kubernetes_name
+      - <span style="color:#66d9ef">job_name</span>: <span style="color:#e6db74">&#39;kubernetes-ingresses&#39;</span>
+        <span style="color:#66d9ef">metrics_path</span>: /metrics
+        <span style="color:#66d9ef">basic_auth</span>:
+          <span style="color:#66d9ef">username</span>: <span style="color:#e6db74">&#34;loeken&#34;</span>
+          <span style="color:#66d9ef">password</span>: <span style="color:#e6db74">&#34;topsecure&#34;</span>
+        <span style="color:#66d9ef">params</span>:
+          <span style="color:#66d9ef">module</span>: [http_2xx]
+        <span style="color:#66d9ef">kubernetes_sd_configs</span>:
+          - <span style="color:#66d9ef">role</span>: ingress
+        <span style="color:#66d9ef">relabel_configs</span>:
+          - <span style="color:#66d9ef">source_labels</span>: [__meta_kubernetes_service_annotation_example_io_should_be_probed]
+            <span style="color:#66d9ef">action</span>: keep
+            <span style="color:#66d9ef">regex</span>: <span style="color:#66d9ef">true</span>
+          - <span style="color:#66d9ef">source_labels</span>: [__meta_kubernetes_ingress_scheme,__address__,__meta_kubernetes_ingress_path]
+            <span style="color:#66d9ef">regex</span>: (.+);(.+);(.+)
+            <span style="color:#66d9ef">replacement</span>: ${<span style="color:#ae81ff">1</span>}://${<span style="color:#ae81ff">2</span>}${<span style="color:#ae81ff">3</span>}
+            <span style="color:#66d9ef">target_label</span>: __param_target
+          - <span style="color:#66d9ef">source_labels</span>: [__param_target]
+            <span style="color:#66d9ef">target_label</span>: instance
+          - <span style="color:#66d9ef">action</span>: labelmap
+            <span style="color:#66d9ef">regex</span>: __meta_kubernetes_ingress_label_(.+)
+          - <span style="color:#66d9ef">source_labels</span>: [__meta_kubernetes_namespace]
+            <span style="color:#66d9ef">target_label</span>: kubernetes_namespace
+          - <span style="color:#66d9ef">source_labels</span>: [__meta_kubernetes_ingress_name]
+            <span style="color:#66d9ef">target_label</span>: kubernetes_name
+      - <span style="color:#66d9ef">job_name</span>: <span style="color:#e6db74">&#39;kubernetes-pods&#39;</span>
+        <span style="color:#66d9ef">kubernetes_sd_configs</span>:
+          - <span style="color:#66d9ef">role</span>: pod
+        <span style="color:#66d9ef">relabel_configs</span>:
+        <span style="color:#75715e"># Example relabel to scrape only pods that have</span>
+        <span style="color:#75715e"># &#34;example.io/should_be_scraped = true&#34; annotation.</span>
+          - <span style="color:#66d9ef">source_labels</span>: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            <span style="color:#66d9ef">action</span>: keep
+            <span style="color:#66d9ef">regex</span>: <span style="color:#66d9ef">true</span>
+        <span style="color:#75715e">#</span>
+        <span style="color:#75715e"># Example relabel to customize metric path based on pod</span>
+        <span style="color:#75715e"># &#34;example.io/metric_path = &lt;metric path&gt;&#34; annotation.</span>
+        <span style="color:#75715e">#  - source_labels: [__meta_kubernetes_pod_annotation_example_io_metric_path]</span>
+        <span style="color:#75715e">#    action: replace</span>
+        <span style="color:#75715e">#    target_label: __metrics_path__</span>
+        <span style="color:#75715e">#    regex: (.+)</span>
+        <span style="color:#75715e">#</span>
+        <span style="color:#75715e"># Example relabel to scrape only single, desired port for the pod</span>
+        <span style="color:#75715e"># based on pod &#34;example.io/scrape_port = &lt;port&gt;&#34; annotation.</span>
+          - <span style="color:#66d9ef">source_labels</span>: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+            <span style="color:#66d9ef">action</span>: replace
+            <span style="color:#66d9ef">regex</span>: ([^:]+)(?::\d+)?;(\d+)
+            <span style="color:#66d9ef">replacement</span>: $<span style="color:#ae81ff">1</span>:$<span style="color:#ae81ff">2</span>
+            <span style="color:#66d9ef">target_label</span>: __address__
+          - <span style="color:#66d9ef">action</span>: labelmap
+            <span style="color:#66d9ef">regex</span>: __meta_kubernetes_pod_label_(.+)
+          - <span style="color:#66d9ef">source_labels</span>: [__meta_kubernetes_namespace]
+            <span style="color:#66d9ef">action</span>: replace
+            <span style="color:#66d9ef">target_label</span>: kubernetes_namespace
+          - <span style="color:#66d9ef">source_labels</span>: [__meta_kubernetes_pod_name]
+            <span style="color:#66d9ef">action</span>: replace
+            <span style="color:#66d9ef">target_label</span>: kubernetes_pod_name
+<span style="color:#66d9ef">kind</span>: ConfigMap
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: prometheus-cm
+  <span style="color:#66d9ef">namespace</span>: default
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl apply -f prometheus-configmap.yaml
+</code></pre></div><p>Similar to the last node example we are deploying this the same way with a service exposing it via the ingress</p>
+<h4 id="prometheus-deplyomentyaml"><strong><code>prometheus-deplyoment.yaml</code></strong></h4>
+<pre><code>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus-deployment
+  labels:
+    app: prometheus-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus-server
+  template:
+    metadata:
+      labels:
+        app: prometheus-server
+    spec:
+      containers:
+        - name: prometheus
+          image: prom/prometheus
+          args:
+            - &quot;--config.file=/etc/prometheus/prometheus.yml&quot;
+            - &quot;--storage.tsdb.path=/prometheus/&quot;
+          ports:
+            - containerPort: 9090
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/prometheus
+            - name: prometheus-storage-volume
+              mountPath: /prometheus
+      volumes:
+        - name: config-volume
+          configMap:
+            name: prometheus-cm  
+        - name: prometheus-storage-volume
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-service
+spec:
+  selector:
+    app: prometheus-server
+  ports:
+  - name: promui
+    protocol: TCP
+    port: 9090
+    targetPort: 9090
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: prometheus-ingress
+  annotations:
+    kubernetes.io/ingress.class: &quot;nginx&quot;
+spec:
+  rules:
+  - host: prometheus.example.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: prometheus-service
+          servicePort: 9090
+</code></pre><p>apply deployment</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl apply -f prometheus-deplyoment.yaml
+</code></pre></div><p>afterwards you can view it via <a href="http://prometheus.example.com/">http://prometheus.example.com/</a> if you point prometheus.example.com at any of the k3s nodes</p>
+<h2 id="grafana">Grafana</h2>
+<p>Grafana is a really nice ui to create dashboars from the data prometheus gathers</p>
+<p>grafana-datasource.yaml</p>
+<h4 id="grafana-datasourceyaml"><strong><code>grafana-datasource.yaml</code></strong></h4>
+<pre><code>apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-datasources
+data:
+  prometheus.yaml: |-
+    {
+        &quot;apiVersion&quot;: 1,
+        &quot;datasources&quot;: [
+            {
+               &quot;access&quot;:&quot;proxy&quot;,
+                &quot;editable&quot;: true,
+                &quot;name&quot;: &quot;prometheus&quot;,
+                &quot;orgId&quot;: 1,
+                &quot;type&quot;: &quot;prometheus&quot;,
+                &quot;url&quot;: &quot;http://prometheus.example.com&quot;,
+                &quot;version&quot;: 1
+            }
+        ]
+    }
+</code></pre><h4 id="grafana-deploymentyaml"><strong><code>grafana-deployment.yaml</code></strong></h4>
+<pre><code>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+      name: grafana
+      labels:
+        app: grafana
+    spec:
+      containers:
+      - name: grafana
+        image: grafana/grafana:latest
+        ports:
+        - name: grafana
+          containerPort: 3000
+        resources:
+          limits:
+            memory: &quot;1Gi&quot;
+            cpu: &quot;1000m&quot;
+          requests: 
+            memory: &quot;1Gi&quot;
+            cpu: &quot;500m&quot;
+        volumeMounts:
+          - mountPath: /var/lib/grafana
+            name: grafana-storage
+          - mountPath: /etc/grafana/provisioning/datasources
+            name: grafana-datasources
+            readOnly: false
+      volumes:
+        - name: grafana-storage
+          emptyDir: {}
+        - name: grafana-datasources
+          configMap:
+              defaultMode: 420
+              name: grafana-datasources
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: grafana-service
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/port:   '3000'
+spec:
+  selector:
+    app: grafana
+  ports:
+  - name: grafanaui
+    protocol: TCP
+    port: 3000
+    targetPort: 3000
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: grafana-ingress
+  annotations:
+    kubernetes.io/ingress.class: &quot;nginx&quot;
+spec:
+  rules:
+  - host: grafana.example.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: grafana-service
+          servicePort: 3000
+</code></pre><p>afterwards you can view it via http://grafana
+.example.com/ if you point prometheus.example.com at any of the k3s nodes</p>
+<p>an example for a website that is using nginx to host a static site ( and has nginx /stub_status exposed ) and a second
+container which reads the /stub_status endpoint and converts it to prometheus format</p>
+<p>note: something still seems buggy with the cloudflare integration</p>
+<h4 id="blog-deploymentyml"><strong><code>blog-deployment.yml</code></strong></h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: apps/v1
+<span style="color:#66d9ef">kind</span>: Deployment
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: blog
+  <span style="color:#66d9ef">labels</span>:
+    <span style="color:#66d9ef">app</span>: blog
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">replicas</span>: <span style="color:#ae81ff">1</span>
+  <span style="color:#66d9ef">selector</span>:
+    <span style="color:#66d9ef">matchLabels</span>:
+      <span style="color:#66d9ef">app</span>: blog
+  <span style="color:#66d9ef">template</span>:
+    <span style="color:#66d9ef">metadata</span>:
+      <span style="color:#66d9ef">labels</span>:
+        <span style="color:#66d9ef">app</span>: blog
+        <span style="color:#66d9ef">monitoring</span>: <span style="color:#e6db74">&#39;1&#39;</span>
+    <span style="color:#66d9ef">spec</span>:
+      <span style="color:#66d9ef">containers</span>:
+        - <span style="color:#66d9ef">name</span>: blog
+          <span style="color:#66d9ef">image</span>: gcr.io/example/blog
+          <span style="color:#66d9ef">imagePullPolicy</span>: Always
+          <span style="color:#66d9ef">ports</span>:
+            - <span style="color:#66d9ef">containerPort</span>: <span style="color:#ae81ff">80</span>
+        - <span style="color:#66d9ef">name</span>: adapter
+          <span style="color:#66d9ef">image</span>: nginx/nginx-prometheus-exporter:<span style="color:#ae81ff">0.4.2</span>
+          <span style="color:#66d9ef">args</span>: [<span style="color:#e6db74">&#34;-nginx.scrape-uri&#34;</span>,<span style="color:#e6db74">&#34;http://localhost/stub_status&#34;</span>]
+          <span style="color:#66d9ef">ports</span>:
+            - <span style="color:#66d9ef">containerPort</span>: <span style="color:#ae81ff">9113</span>
+      <span style="color:#66d9ef">imagePullSecrets</span>:
+        - <span style="color:#66d9ef">name</span>: gcr-json-key
+      <span style="color:#66d9ef">volumes</span>:
+        - <span style="color:#66d9ef">name</span>: dhparam-volume
+          <span style="color:#66d9ef">configMap</span>:
+            <span style="color:#66d9ef">name</span>: dhparam
+---
+<span style="color:#66d9ef">apiVersion</span>: v1
+<span style="color:#66d9ef">kind</span>: Service
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: blog-service
+  <span style="color:#66d9ef">annotations</span>:
+    <span style="color:#66d9ef">prometheus.io/port</span>: <span style="color:#e6db74">&#34;9113&#34;</span>
+    <span style="color:#66d9ef">prometheus.io/scrape</span>: <span style="color:#e6db74">&#34;true&#34;</span>
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">selector</span>:
+    <span style="color:#66d9ef">app</span>: blog
+  <span style="color:#66d9ef">type</span>: LoadBalancer
+  <span style="color:#66d9ef">ports</span>:
+    - <span style="color:#66d9ef">protocol</span>: TCP
+      <span style="color:#66d9ef">port</span>: <span style="color:#ae81ff">20001</span>
+      <span style="color:#66d9ef">targetPort</span>: <span style="color:#ae81ff">80</span>
+      <span style="color:#66d9ef">nodePort</span>: <span style="color:#ae81ff">30001</span>
+
+
+---
+<span style="color:#66d9ef">apiVersion</span>: networking.k8s.io/v1beta1
+<span style="color:#66d9ef">kind</span>: Ingress
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: blog-ingress
+  <span style="color:#66d9ef">annotations</span>:
+    <span style="color:#66d9ef">cert-manager.io/cluster-issue</span>: letsencrypt-prod
+    <span style="color:#75715e">#external-dns.alpha.kubernetes.io/hostname: blog.internetz.me</span>
+    <span style="color:#75715e">#external-dns.alpha.kubernetes.io/cloudflare-proxied: &#34;false&#34;</span>
+    <span style="color:#75715e">#external-dns.alpha.kuberentes.io/ttl: &#34;1&#34;</span>
+    <span style="color:#66d9ef">prometheus.io/port</span>: <span style="color:#e6db74">&#34;9113&#34;</span>
+    <span style="color:#66d9ef">prometheus.io/scrape</span>: <span style="color:#e6db74">&#34;true&#34;</span>
+
+  <span style="color:#66d9ef">labels</span>:
+    <span style="color:#66d9ef">monitoring</span>: <span style="color:#e6db74">&#39;1&#39;</span>
+
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">rules</span>:
+    - <span style="color:#66d9ef">host</span>: blog.internetz.me
+      <span style="color:#66d9ef">http</span>:
+        <span style="color:#66d9ef">paths</span>:
+          - <span style="color:#66d9ef">path</span>: /
+            <span style="color:#66d9ef">backend</span>:
+              <span style="color:#66d9ef">serviceName</span>: blog-service
+              <span style="color:#66d9ef">servicePort</span>: <span style="color:#ae81ff">80</span>
+  <span style="color:#66d9ef">tls</span>:
+    - <span style="color:#66d9ef">hosts</span>:
+        - blog.internetz.me
+      <span style="color:#66d9ef">secretName</span>: blog-internetz-me-tls
+---
+<span style="color:#66d9ef">apiVersion</span>: cert-manager.io/v1alpha2
+<span style="color:#66d9ef">kind</span>: Certificate
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: blog-internetz-me
+  <span style="color:#66d9ef">namespace</span>: default
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">secretName</span>: blog-internetz-me-tls
+  <span style="color:#66d9ef">issuerRef</span>:
+    <span style="color:#66d9ef">name</span>: letsencrypt-prod
+    <span style="color:#66d9ef">kind</span>: ClusterIssuer
+  <span style="color:#66d9ef">commonName</span>: blog.internetz.me
+  <span style="color:#66d9ef">dnsNames</span>:
+    - blog.internetz.me
+</code></pre></div>
+        </div>
+
+        
+        
+          <div class="btn-improve-page">
+              <a href="https://github.com/hossainemruz/toha-example-site/edit/master/content/posts/kubernetes-prometheus-and-grafana.md">
+                <i class="fas fa-code-branch"></i>
+                Improve This Page
+              </a>
+          </div>
+        
+
+        
+      <hr />
+        <div class="row next-prev-navigator">
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+      <div class="col-md-6 previous-article">
+        <a href="/posts/kubernetes-create-images-in-google-container-registry/" class="btn btn-outline-info">
+          <span><i class="fas fa-chevron-circle-left"></i> Prev</span>
+          <br />
+          <span>Kubernetes Create Images in Google Container Registry</span>
+        </a>
+      </div>
+      
+    
+    
+      
+        
+        
+          
+              
+          
+        
+        <div class="col-md-6 next-article">
+          <a href="/posts/kubernetes-nodejs-postgresql-example-with-nginx-ingress/" class="btn btn-outline-info">
+            <span>Next <i class="fas fa-chevron-circle-right"></i></span>
+            <br />
+            <span>Kubernetes Nodejs Postgresql Example With Nginx Ingress</span>
+          </a>
+        </div>
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+</div>
+
+      <hr />
+      
+      
+          <div id="disqus_thread"></div>
+<script type="text/javascript">
+  (function () {
+    
+    
+    if (window.location.hostname == "localhost") return;
+
+    var dsq = document.createElement("script");
+    dsq.type = "text/javascript";
+    dsq.async = true;
+    var disqus_shortname = "does-not-exist";
+    dsq.src = "//" + disqus_shortname + ".disqus.com/embed.js";
+    (
+      document.getElementsByTagName("head")[0] ||
+      document.getElementsByTagName("body")[0]
+    ).appendChild(dsq);
+  })();
+</script>
+<noscript
+  >Please enable JavaScript to view the
+  <a href="https://disqus.com/?ref_noscript"
+    >comments powered by Disqus.</a
+  ></noscript
+>
+<a href="https://disqus.com/" class="dsq-brlink"
+  >comments powered by <span class="logo-disqus">Disqus</span></a
+>
+
+      
+      </div>
+    </div>
+  </div>
+</section>
+
+
+      
+      
+  <section class="toc-section" id="toc-section">
+    
+    <div class="toc-holder">
+      <h5 class="text-center pl-3">Table of Contents</h5>
+      <hr>
+      <div class="toc">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#kubernetes--prometheus">Kubernetes &amp; Prometheus</a>
+      <ul>
+        <li><a href="#promotheus-server">Promotheus Server</a></li>
+        <li><a href="#view-data">View Data</a></li>
+        <li><a href="#terms">Terms</a></li>
+        <li><a href="#metrics">metrics:</a></li>
+        <li><a href="#prometheus-client-libraries">Prometheus Client libraries</a></li>
+        <li><a href="#promoetheuss-pull-system">promoetheus&rsquo;s pull system</a></li>
+        <li><a href="#pushgateway">pushgateway</a></li>
+        <li><a href="#alert-manager">alert manager</a></li>
+        <li><a href="#prometheus-data-storage">Prometheus data storage</a></li>
+      </ul>
+    </li>
+    <li><a href="#setting-up-prometheus">Setting up prometheus</a>
+      <ul>
+        <li>
+          <ul>
+            <li><a href="#prometheus-rbac-setupyaml"><strong><code>prometheus-rbac-setup.yaml</code></strong></a></li>
+            <li><a href="#prometheus-configmapyml"><strong><code>prometheus-configmap.yml</code></strong></a></li>
+            <li><a href="#prometheus-deplyomentyaml"><strong><code>prometheus-deplyoment.yaml</code></strong></a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#grafana">Grafana</a>
+      <ul>
+        <li>
+          <ul>
+            <li><a href="#grafana-datasourceyaml"><strong><code>grafana-datasource.yaml</code></strong></a></li>
+            <li><a href="#grafana-deploymentyaml"><strong><code>grafana-deployment.yaml</code></strong></a></li>
+            <li><a href="#blog-deploymentyml"><strong><code>blog-deployment.yml</code></strong></a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+      </div>
+    </div>
+    
+  </section>
+
+    </div>
+
+    <footer class="container-fluid text-center align-content-center footer pb-2">
+  <div class="container pt-5">
+    <div class="row text-left">
+      <div class="col-md-4 col-sm-12">
+        <h5>Navigation</h5>
+        
+        <ul>
+            
+            <li class="nav-item">
+              <a class="smooth-scroll" href="/#recent-posts">Recent Posts</a>
+            </li>
+            
+            
+            <li class="nav-item">
+              <a class="smooth-scroll" href="/#projects">Projects</a>
+            </li>
+            
+            
+            <li class="nav-item">
+              <a class="smooth-scroll" href="/#skills">Skills</a>
+            </li>
+            
+        </ul>
+        
+
+      </div>
+      <div class="col-md-4 col-sm-12">
+        <h5>Contact Me</h5>
+        <ul>
+          
+          <li><span>Email: </span> <span>loeken@internetz.me</span></li>
+          
+        </ul>
+      </div>
+      
+    </div>
+  </div>
+  <hr />
+  <div class="container">
+    <div class="row text-left">
+      <div class="col-md-4">
+        <a id="theme" href="https://github.com/hossainemruz/toha" target="#">
+          <img src="/assets/images/inverted-logo.png">
+          Toha
+        </a>
+      </div>
+      <div class="col-md-4 text-center">© 2020 Copyright.</div>
+      <div class="col-md-4 text-right">
+        <a id="hugo" href="https://gohugo.io/">Powered by Hugo
+        <img
+          src="/assets/images/hugo-logo-wide.svg"
+          alt="Hugo Logo"
+          height="18"
+        />
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+    <script src="/assets/js/jquery-3.4.1.min.js"></script>
+<script src="/assets/js/bootstrap.min.js"></script>
+
+<script src="/assets/js/navbar.js"></script>
+<script src="/assets/js/main.js"></script>
+
+
+    
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js"></script>
+<script src="/assets/js/single.js"></script>
+<script>
+  hljs.initHighlightingOnLoad();
+</script>
+
+
+  </body>
+</html>

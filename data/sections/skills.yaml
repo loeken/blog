@@ -1,0 +1,80 @@
+# section information
+section:
+  name: Skills
+  enable: true
+  weight: 4
+  showOnNavbar: true
+  # Can optionally hide the title in sections
+  # hideTitle: true
+
+# Your Skills.
+# Give a summary of you each skill in the summary section.
+skills:
+- name: Proxmox
+  icon: "images/skills/proxmox.png"
+  summary: "Cabable of running production clusters, very experienced with api/inner workings"
+  url: "https://proxmox.com/"
+
+- name: Kubernetes
+  icon: "images/skills/kubernetes.png"
+  summary: "Capable of deploying, managing application on Kubernetes. Experienced in writing Kubernetes controllers for CRDs."
+  url: "https://kubernetes.io/"
+
+- name: PHP Development
+  icon: "images/skills/php.png"
+  summary: "Using as the main language for professional development. Capable of writing scalable, testable, and maintainable program."
+  url: "https://php.net/"
+
+- name: Python Development
+  icon: "images/skills/python.png"
+  summary: "Using as the second main language for professional development."
+  url: "https://python.org/"
+
+- name: Ansible
+  icon: "images/skills/ansible.png"
+  summary: "Very deep understanding of ansible as an automation tool for configuration and resource deployment"
+  url: "https://ansible.com"
+
+- name: Go Development
+  icon: "images/skills/go.png"
+  summary: "very basic go knowledge, familiar with build process"
+
+- name: Cloud Computing
+  icon: "images/skills/cloud.png"
+  summary: "Experience with the major clouds such as GCP, AWS, Azure, OVH."
+
+- name: CI / CD pipelines
+  icon: "images/skills/jenkins.png"
+  summary: "Experience in setting CI/CD pipelines using jenkins/aptly and other tools"
+
+- name: Icinga
+  icon: "images/skills/icinga2.png"
+  summary: "Experienced in Icinga from setting up monitoring clusters to writing custom tests & configuration"
+
+- name: Docker
+  icon: "images/skills/docker.svg"
+  summary: "Using mostly in combination with k8s/k3s. Experienced with multi-stage, multi-arch build process."
+  url: "https://www.docker.com/"
+
+- name: Prometheus
+  icon: "images/skills/prometheus.png"
+  summary: "Capable of setup, configure Prometheus metrics. Experienced with PromQL, AlertManager. Also, experienced with writing metric exporters."
+  url: "https://prometheus.io/"
+
+- name: Linux
+  icon: "images/skills/linux.png"
+  summary: "Using as the main operating system. Capable of writing bash/shell scripts."
+
+- name: Git
+  icon: "images/skills/git.png"
+  summary: "Experienced with git-based development. Mostly, use Github. Also, have experience in working with GitLab."
+  url: "https://git-scm.com/"
+
+- name: C++
+  icon: "images/skills/c++.png"
+  summary: "Experience with basic C/C++ programming and the build Process using cmake"
+
+
+- name: Pfsense
+  icon: "images/skills/pfsense.png"
+  summary: "Experience setting up pfsense clusters and a lot of functionality of pfsense"

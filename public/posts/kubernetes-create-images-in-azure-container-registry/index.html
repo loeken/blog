@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Kubernetes Create Images in Azure Container Registry</title>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+
+<link rel="stylesheet" href="/assets/css/bootstrap.min.css" />
+<link rel="stylesheet" href="/assets/css/main.css" />
+<link rel="stylesheet" href="/assets/css/style.css" />
+<link rel="stylesheet" href="/assets/css/navigators/navbar.css" />
+
+
+<link href="https://fonts.googleapis.com/css2?family=Muli:wght@300;400;500;600" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" />
+
+
+<link rel="icon" type="image/png" href="/assets/images/favicon.png" />
+
+
+<link rel="stylesheet" href="/assets/css/style.css" />
+
+    
+<meta name="description" content="Kubernetes Create Images in Azure Container Registry" />
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/atom-one-dark.min.css"
+/>
+<link rel="stylesheet" href="/assets/css/single.css" />
+<link rel="stylesheet" href="/assets/css/navigators/sidebar.css">
+
+
+    
+    
+  </head>
+
+  <body data-spy="scroll" data-target="#TableOfContents" data-offset="80">
+    <div class="container-fluid bg-dimmed wrapper">
+      
+      
+    <nav class="navbar navbar-expand-xl top-navbar final-navbar shadow">
+  <div class="container">
+    
+    
+    
+      
+    
+    
+      
+    
+      <button class="navbar-toggler navbar-light" id="sidebar-toggler" type="button" onclick="toggleSidebar()">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" href="https://blog.internetz.me/">
+      <img src="/assets/images/main-logo.png">shit i like</a>
+    <button class="navbar-toggler navbar-light" id="toc-toggler" type="button" onclick="toggleTOC()">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="top-nav-items">
+      <ul class="navbar-nav ml-auto">
+      </ul>
+    </div>
+  </div>
+  
+  <img src="/assets/images/main-logo.png" class="d-none" id="main-logo">
+  <img src="/assets/images/inverted-logo.png" class="d-none" id="inverted-logo">
+</nav>
+
+
+
+      
+       
+
+      
+      
+<section class="content-section" id="content-section">
+  <div class="content">
+    <div class="container p-0 read-area">
+      
+      <div class="hero-area col-sm-12" id="hero-area" style='background-image: url(https://blog.internetz.me/assets/images/default-hero.jpg);'>
+      </div>
+
+      
+      <div class="page-content">
+        <div class="author-profile ml-auto align-self-lg-center">
+          <img class="rounded-circle" src='/images/avatar.png'/>
+          <h5 class="author-name">loeken</h5>
+          <p>June 9, 2020</p>
+        </div>
+
+        <div class="title">
+          <h1>Kubernetes Create Images in Azure Container Registry</h1>
+        </div>
+
+        <div class="post-content" id="post-content">
+          <h2 id="creating-a-container-registry--azure">Creating a Container registry @ azure</h2>
+<p>For this we&rsquo;ll be using the azure container registry, alternatively you can use docker.io or google/aws based services.</p>
+<p>I will name my registry demoregistry
+<a href="https://docs.microsoft.com/en-us/azure/container-registry/container-registry-get-started-portal">this guide will get you started</a></p>
+<h3 id="dependencies-for-azure-registry">dependencies for azure registry:</h3>
+<p>now we login via the azure cli</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">pacaur -S azure-cli
+az login
+az acr login --name demoregistry
+</code></pre></div><p>after the az login it will show</p>
+<p>now let&rsquo;s package up the node app</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">cd ~/Projects
+git clone https://github.com/loeken/kubernetes_nodejs_postgresql_demo
+cd kubernetes_nodejs_postgresql_demo
+
+docker build -t kubernetes_nodejs_postgresql_demo:latest .                                                                                                                                            0.00   22:28  
+Sending build context to Docker daemon  914.9kB
+Step 1/7 : FROM node:alpine
+alpine: Pulling from library/node
+cbdbe7a5bc2a: Pull complete 
+fb0e3739aee1: Pull complete 
+738de7869598: Pull complete 
+ffd68be3d86c: Pull complete 
+Digest: sha256:7d11fea6d901bfe59999dda0fa3514438628a134d43c27c2eaec43cc8f4b98d5
+Status: Downloaded newer image <span style="color:#66d9ef">for</span> node:alpine
+ ---&gt; 3bf5a7d41d77
+Step 2/7 : WORKDIR /usr/src/app
+ ---&gt; Running in b35c1c830dd5
+Removing intermediate container b35c1c830dd5
+ ---&gt; 72b783d36c39
+Step 3/7 : COPY package*.json ./
+ ---&gt; 19e398b02edd
+Step 4/7 : RUN npm install
+ ---&gt; Running in 14c532d4db10
+added <span style="color:#ae81ff">17</span> packages from <span style="color:#ae81ff">9</span> contributors and audited <span style="color:#ae81ff">17</span> packages in 1.02s
+found <span style="color:#ae81ff">0</span> vulnerabilities
+
+Removing intermediate container 14c532d4db10
+ ---&gt; 215e96a458b4
+Step 5/7 : COPY . .
+ ---&gt; e3337bb735e9
+Step 6/7 : EXPOSE <span style="color:#ae81ff">1337</span>
+ ---&gt; Running in fef14992b60f
+Removing intermediate container fef14992b60f
+ ---&gt; 2efacffecc53
+Step 7/7 : CMD <span style="color:#f92672">[</span> <span style="color:#e6db74">&#34;node&#34;</span>, <span style="color:#e6db74">&#34;server.js&#34;</span> <span style="color:#f92672">]</span>
+ ---&gt; Running in ed0ccc95fd1f
+Removing intermediate container ed0ccc95fd1f
+ ---&gt; 693448b5fc7b
+Successfully built 693448b5fc7b
+Successfully tagged kubernetes_nodejs_postgresql_demo:latest
+
+docker images
+REPOSITORY                          TAG                 IMAGE ID            CREATED             SIZE
+kubernetes_nodejs_postgresql_demo   latest              693448b5fc7b        <span style="color:#ae81ff">4</span> seconds ago       118MB
+postgres                            latest              b97bae343e06        <span style="color:#ae81ff">4</span> hours ago         313MB
+node                                alpine              3bf5a7d41d77        <span style="color:#ae81ff">6</span> days ago          117MB
+docker tag 3bf5a7d41d77
+docker images | head -2 | tail -1 | awk <span style="color:#e6db74">&#39;{print $3}&#39;</span>
+693448b5fc7b
+docker tag 693448b5fc7b demoregistry.azurecr.io/node:1.0.0
+docker push demoregistry.azurecr.io/node:1.0.0  
+
+</code></pre></div><p>The &lt;SUBSCRIPTION_ID&gt; is returned after az login as &ldquo;id&rdquo; in the response array.
+For &lt;RG_NAME&gt; enter the resource you used when creating the registry.
+The &lt;REGISTRY_NAME&gt; is the name of the registry.</p>
+<p>Not that i am createing a &ldquo;Reader&rdquo; here as in most production environments you want to only pull from within the k3s cluster</p>
+<ul>
+<li>Owner: (pull, push, and assign roles to other users)</li>
+<li>Contributor: (pull and push)</li>
+<li>Reader: (pull only access)</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">az ad sp create-for-rbac <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  --scopes /subscriptions/&lt;SUBSCRIPTION_ID&gt;/resourcegroups/&lt;RG_NAME&gt;/providers/Microsoft.ContainerRegistry/registries/&lt;REGISTRY_NAME&gt; <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  --role Reader <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  --name registry
+Changing <span style="color:#e6db74">&#34;registry&#34;</span> to a valid URI of <span style="color:#e6db74">&#34;http://registry&#34;</span>, which is the required format used <span style="color:#66d9ef">for</span> service principal names
+Creating a role assignment under the scope of <span style="color:#e6db74">&#34;/subscriptions/&lt;SUBSCRIPTION_ID&gt;/resourcegroups/&lt;RG_NAME&gt;/providers/Microsoft.ContainerRegistry/registries/&lt;REGISTRY_NAME&gt;&#34;</span>
+<span style="color:#f92672">{</span>
+  <span style="color:#e6db74">&#34;appId&#34;</span>: <span style="color:#e6db74">&#34;asdfg&#34;</span>,
+  <span style="color:#e6db74">&#34;displayName&#34;</span>: <span style="color:#e6db74">&#34;registry&#34;</span>,
+  <span style="color:#e6db74">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;http://registry&#34;</span>,
+  <span style="color:#e6db74">&#34;password&#34;</span>: <span style="color:#e6db74">&#34;TOPSECRET&#34;</span>,
+  <span style="color:#e6db74">&#34;tenant&#34;</span>: <span style="color:#e6db74">&#34;TENANT_ID&#34;</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl create secret docker-registry regcred <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  --docker-server demoregistry.azurecr.io <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  --docker-email azure@demoregistry.com <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  --docker-username<span style="color:#f92672">=</span>asdfg <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  --docker-password TOPSECRET
+</code></pre></div>
+        </div>
+
+        
+        
+          <div class="btn-improve-page">
+              <a href="https://github.com/hossainemruz/toha-example-site/edit/master/content/posts/kubernetes-create-images-in-azure-container-registry.md">
+                <i class="fas fa-code-branch"></i>
+                Improve This Page
+              </a>
+          </div>
+        
+
+        
+      <hr />
+        <div class="row next-prev-navigator">
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+      <div class="col-md-6 previous-article">
+        <a href="/posts/kubernetes-nodejs-postgresql-example/" class="btn btn-outline-info">
+          <span><i class="fas fa-chevron-circle-left"></i> Prev</span>
+          <br />
+          <span>Kubernetes Nodejs Postgresql Example</span>
+        </a>
+      </div>
+      
+    
+    
+      
+        
+        
+          
+              
+          
+        
+        <div class="col-md-6 next-article">
+          <a href="/posts/kubernetes-yaml-configuration-deployment-and-service/" class="btn btn-outline-info">
+            <span>Next <i class="fas fa-chevron-circle-right"></i></span>
+            <br />
+            <span>Kubernetes Yaml Configuration Deployment and Service</span>
+          </a>
+        </div>
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</div>
+
+      <hr />
+      
+      
+          <div id="disqus_thread"></div>
+<script type="text/javascript">
+  (function () {
+    
+    
+    if (window.location.hostname == "localhost") return;
+
+    var dsq = document.createElement("script");
+    dsq.type = "text/javascript";
+    dsq.async = true;
+    var disqus_shortname = "does-not-exist";
+    dsq.src = "//" + disqus_shortname + ".disqus.com/embed.js";
+    (
+      document.getElementsByTagName("head")[0] ||
+      document.getElementsByTagName("body")[0]
+    ).appendChild(dsq);
+  })();
+</script>
+<noscript
+  >Please enable JavaScript to view the
+  <a href="https://disqus.com/?ref_noscript"
+    >comments powered by Disqus.</a
+  ></noscript
+>
+<a href="https://disqus.com/" class="dsq-brlink"
+  >comments powered by <span class="logo-disqus">Disqus</span></a
+>
+
+      
+      </div>
+    </div>
+  </div>
+</section>
+
+
+      
+      
+  <section class="toc-section" id="toc-section">
+    
+    <div class="toc-holder">
+      <h5 class="text-center pl-3">Table of Contents</h5>
+      <hr>
+      <div class="toc">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#creating-a-container-registry--azure">Creating a Container registry @ azure</a>
+      <ul>
+        <li><a href="#dependencies-for-azure-registry">dependencies for azure registry:</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+      </div>
+    </div>
+    
+  </section>
+
+    </div>
+
+    <footer class="container-fluid text-center align-content-center footer pb-2">
+  <div class="container pt-5">
+    <div class="row text-left">
+      <div class="col-md-4 col-sm-12">
+        <h5>Navigation</h5>
+        
+        <ul>
+            
+            <li class="nav-item">
+              <a class="smooth-scroll" href="/#recent-posts">Recent Posts</a>
+            </li>
+            
+            
+            <li class="nav-item">
+              <a class="smooth-scroll" href="/#projects">Projects</a>
+            </li>
+            
+            
+            <li class="nav-item">
+              <a class="smooth-scroll" href="/#skills">Skills</a>
+            </li>
+            
+        </ul>
+        
+
+      </div>
+      <div class="col-md-4 col-sm-12">
+        <h5>Contact Me</h5>
+        <ul>
+          
+          <li><span>Email: </span> <span>loeken@internetz.me</span></li>
+          
+        </ul>
+      </div>
+      
+    </div>
+  </div>
+  <hr />
+  <div class="container">
+    <div class="row text-left">
+      <div class="col-md-4">
+        <a id="theme" href="https://github.com/hossainemruz/toha" target="#">
+          <img src="/assets/images/inverted-logo.png">
+          Toha
+        </a>
+      </div>
+      <div class="col-md-4 text-center">© 2020 Copyright.</div>
+      <div class="col-md-4 text-right">
+        <a id="hugo" href="https://gohugo.io/">Powered by Hugo
+        <img
+          src="/assets/images/hugo-logo-wide.svg"
+          alt="Hugo Logo"
+          height="18"
+        />
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+    <script src="/assets/js/jquery-3.4.1.min.js"></script>
+<script src="/assets/js/bootstrap.min.js"></script>
+
+<script src="/assets/js/navbar.js"></script>
+<script src="/assets/js/main.js"></script>
+
+
+    
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js"></script>
+<script src="/assets/js/single.js"></script>
+<script>
+  hljs.initHighlightingOnLoad();
+</script>
+
+
+  </body>
+</html>

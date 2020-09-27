@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>letsencrypt on shit i like</title>
+    <link>https://blog.internetz.me/tags/letsencrypt/</link>
+    <description>Recent content in letsencrypt on shit i like</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 13 Jun 2020 22:07:15 +0200</lastBuildDate>
+    
+	<atom:link href="https://blog.internetz.me/tags/letsencrypt/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Kubernetes Cert Manager for Letsencrypt Based Certificates With Nginx Ingress</title>
+      <link>https://blog.internetz.me/posts/kubernetes-cert-manager-for-letsencrypt-based-certificates-with-nginx-ingress/</link>
+      <pubDate>Sat, 13 Jun 2020 22:07:15 +0200</pubDate>
+      
+      <guid>https://blog.internetz.me/posts/kubernetes-cert-manager-for-letsencrypt-based-certificates-with-nginx-ingress/</guid>
+      <description>Cert Manager cert manager stores certificates in kubernetes secret store and we can configure the nginx-ingress to use these certificates.
+cert-manager.yaml wget https://github.com/jetstack/cert-manager/releases/download/v0.15.1/cert-manager.yaml kubectl apply --validate=false -f cert-manager.yaml cert-manager.crds.yaml wget https://github.com/jetstack/cert-manager/releases/download/v0.15.1/cert-manager.crds.yaml kubectl apply --validate=false -f cert-manager.crds.yaml using the ClusterIssuer allows us to create certificates across all namespaces
+letsencrypt-issuer.yaml apiVersion: cert-manager.io/v1alpha2 kind: ClusterIssuer metadata: name: letsencrypt-prod spec: acme: # The ACME server URL server: https://acme-v02.api.letsencrypt.org/directory # Email address used for ACME registration email: loeken@internetz.</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Docker Nodejs Postgresql Example</title>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+
+<link rel="stylesheet" href="/assets/css/bootstrap.min.css" />
+<link rel="stylesheet" href="/assets/css/main.css" />
+<link rel="stylesheet" href="/assets/css/style.css" />
+<link rel="stylesheet" href="/assets/css/navigators/navbar.css" />
+
+
+<link href="https://fonts.googleapis.com/css2?family=Muli:wght@300;400;500;600" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" />
+
+
+<link rel="icon" type="image/png" href="/assets/images/favicon.png" />
+
+
+<link rel="stylesheet" href="/assets/css/style.css" />
+
+    
+<meta name="description" content="summary of blogpost" />
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/atom-one-dark.min.css"
+/>
+<link rel="stylesheet" href="/assets/css/single.css" />
+<link rel="stylesheet" href="/assets/css/navigators/sidebar.css">
+
+
+    
+    
+  </head>
+
+  <body data-spy="scroll" data-target="#TableOfContents" data-offset="80">
+    <div class="container-fluid bg-dimmed wrapper">
+      
+      
+    <nav class="navbar navbar-expand-xl top-navbar final-navbar shadow">
+  <div class="container">
+    
+    
+    
+      
+    
+    
+      
+    
+      <button class="navbar-toggler navbar-light" id="sidebar-toggler" type="button" onclick="toggleSidebar()">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" href="https://blog.internetz.me/">
+      <img src="/assets/images/main-logo.png">shit i like</a>
+    <button class="navbar-toggler navbar-light" id="toc-toggler" type="button" onclick="toggleTOC()">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="top-nav-items">
+      <ul class="navbar-nav ml-auto">
+      </ul>
+    </div>
+  </div>
+  
+  <img src="/assets/images/main-logo.png" class="d-none" id="main-logo">
+  <img src="/assets/images/inverted-logo.png" class="d-none" id="inverted-logo">
+</nav>
+
+
+
+      
+       
+
+      
+      
+<section class="content-section" id="content-section">
+  <div class="content">
+    <div class="container p-0 read-area">
+      
+      <div class="hero-area col-sm-12" id="hero-area" style='background-image: url(https://blog.internetz.me/assets/images/default-hero.jpg);'>
+      </div>
+
+      
+      <div class="page-content">
+        <div class="author-profile ml-auto align-self-lg-center">
+          <img class="rounded-circle" src='/images/avatar.png'/>
+          <h5 class="author-name">loeken</h5>
+          <p>June 6, 2020</p>
+        </div>
+
+        <div class="title">
+          <h1>Docker Nodejs Postgresql Example</h1>
+        </div>
+
+        <div class="post-content" id="post-content">
+          <h3 id="example-postgresqlnodejs-in-two-containers">example postgresql/nodejs in two containers</h3>
+<p><img src="/media/img/docker_postgresql_nodejs.png" alt=""></p>
+<p><a href="/media/imgmarkup/docker_example_nodejs_postgresql.py">Download Image Markup</a></p>
+<p>first we need to grab the postgresql image</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">docker pull postgres
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">docker network ls
+NETWORK ID          NAME                DRIVER              SCOPE
+62e4019570d2        bridge              bridge              local
+c1aeefb374e7        host                host                local
+608568a867c3        none                null                local
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">docker network create testnetwork1 
+577e8e0c44c4ca0c0b1d855a70536e875bf77ec0010fdbfaf5db1d131ddabd69
+
+docker network ls
+NETWORK ID          NAME                DRIVER              SCOPE
+62e4019570d2        bridge              bridge              local
+c1aeefb374e7        host                host                local
+608568a867c3        none                null                local
+577e8e0c44c4        testnetwork1        bridge              local
+</code></pre></div><h5 id="docker-volumes">docker volumes:</h5>
+<p>docker containers dont have persistent storage out of the box. you can easily map a folder to the host. this way data will remain after restarts.
+so far i&rsquo;ve come across 3 ways of how one can specify volumes:
+1.) anonymous volumes
+example:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">-v /var/lib/postgresql 
+</code></pre></div><p>this is the easiest syntax, you simply specify the path inside the container and docker will create a volume in /var/lib/docker/volumes ( named via hash )</p>
+<p>2.) named volumes
+imo the cleanest way: you specify the path within the container and add a name
+example:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">-v postgresql:/var/lib/postgresql
+</code></pre></div><p>this will create a folder inside /var/lib/docker/volumes on the host and name it postgresql</p>
+<p>3.) mapped paths
+good for quick n easy tests or when you want to specify a specific location on the host to store the data on.
+example:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">-v /home/loeken/Projects/storehere:/var/lib/postgresql
+</code></pre></div><h5 id="fire-up-postgresql">fire up postgresql</h5>
+<p>create the container based on the image and forward the postgresql port</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">docker run -d <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>           -p 5432:5432 <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>           -e POSTGRES_PASSWORD<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;topsecure&#34;</span> <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>           --net<span style="color:#f92672">=</span>testnetwork1 <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>           --name<span style="color:#f92672">=</span>postgresql <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>           -v /home/loeken/Projects/docker_postgresql_nodejs:/var/lib/postgresql/data <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>           postgres
+5bc0816ecac54fef7e334ebd243a5a62c5859c8eeb639cea85414165bb9c7506
+</code></pre></div><p>let&rsquo;s query the logs and see if the startup went fine</p>
+<pre><code>docker logs postgresql
+The files belonging to this database system will be owned by user &quot;postgres&quot;.
+This user must also own the server process.
+
+The database cluster will be initialized with locale &quot;en_US.utf8&quot;.
+The default database encoding has accordingly been set to &quot;UTF8&quot;.
+The default text search configuration will be set to &quot;english&quot;.
+
+Data page checksums are disabled.
+
+fixing permissions on existing directory /var/lib/postgresql/data ... ok
+creating subdirectories ... ok
+selecting dynamic shared memory implementation ... posix
+selecting default max_connections ... 100
+selecting default shared_buffers ... 128MB
+selecting default time zone ... Etc/UTC
+creating configuration files ... ok
+running bootstrap script ... ok
+performing post-bootstrap initialization ... ok
+syncing data to disk ... ok
+initdb: warning: enabling &quot;trust&quot; authentication for local connections
+You can change this by editing pg_hba.conf or using the option -A, or
+--auth-local and --auth-host, the next time you run initdb.
+
+
+Success. You can now start the database server using:
+
+    pg_ctl -D /var/lib/postgresql/data -l logfile start
+
+waiting for server to start....2020-06-06 10:54:05.039 UTC [46] LOG:  starting PostgreSQL 12.3 (Debian 12.3-1.pgdg100+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 8.3.0-6) 8.3.0, 64-bit
+2020-06-06 10:54:05.049 UTC [46] LOG:  listening on Unix socket &quot;/var/run/postgresql/.s.PGSQL.5432&quot;
+2020-06-06 10:54:05.073 UTC [47] LOG:  database system was shut down at 2020-06-06 10:54:04 UTC
+2020-06-06 10:54:05.079 UTC [46] LOG:  database system is ready to accept connections
+ done
+server started
+
+/usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+
+2020-06-06 10:54:05.125 UTC [46] LOG:  received fast shutdown request
+waiting for server to shut down....2020-06-06 10:54:05.127 UTC [46] LOG:  aborting any active transactions
+2020-06-06 10:54:05.130 UTC [46] LOG:  background worker &quot;logical replication launcher&quot; (PID 53) exited with exit code 1
+2020-06-06 10:54:05.131 UTC [48] LOG:  shutting down
+2020-06-06 10:54:05.153 UTC [46] LOG:  database system is shut down
+ done
+server stopped
+
+PostgreSQL init process complete; ready for start up.
+
+2020-06-06 10:54:05.245 UTC [1] LOG:  starting PostgreSQL 12.3 (Debian 12.3-1.pgdg100+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 8.3.0-6) 8.3.0, 64-bit
+2020-06-06 10:54:05.245 UTC [1] LOG:  listening on IPv4 address &quot;0.0.0.0&quot;, port 5432
+2020-06-06 10:54:05.245 UTC [1] LOG:  listening on IPv6 address &quot;::&quot;, port 5432
+2020-06-06 10:54:05.252 UTC [1] LOG:  listening on Unix socket &quot;/var/run/postgresql/.s.PGSQL.5432&quot;
+2020-06-06 10:54:05.275 UTC [55] LOG:  database system was shut down at 2020-06-06 10:54:05 UTC
+2020-06-06 10:54:05.281 UTC [1] LOG:  database system is ready to accept connections
+</code></pre><p>lets now create a database connect to it and insert sample data</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-postgresql" data-lang="postgresql">psql <span style="color:#f92672">-</span>h localhost <span style="color:#f92672">-</span>U postgres <span style="color:#f92672">-</span>W
+Passwort: 
+psql (<span style="color:#ae81ff">12.3</span>)
+Geben Sie <span style="color:#960050;background-color:#1e0010">»</span>help<span style="color:#960050;background-color:#1e0010">«</span> für Hilfe ein<span style="color:#ae81ff">.</span>
+
+postgres<span style="color:#f92672">=#</span> <span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">DATABASE</span> api;
+<span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">DATABASE</span>
+
+api<span style="color:#f92672">=#</span> <span style="color:#960050;background-color:#1e0010">\</span>c api;
+Passwort für Benutzer postgres: 
+Sie sind jetzt verbunden mit der Datenbank <span style="color:#960050;background-color:#1e0010">»</span>api<span style="color:#960050;background-color:#1e0010">«</span> als Benutzer <span style="color:#960050;background-color:#1e0010">»</span>postgres<span style="color:#960050;background-color:#1e0010">«</span><span style="color:#ae81ff">.</span>
+
+api<span style="color:#f92672">=#</span> <span style="color:#960050;background-color:#1e0010">\</span>dt
+Keine Relationen gefunden
+
+api<span style="color:#f92672">=#</span> <span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> users (
+              ID SERIAL <span style="color:#66d9ef">PRIMARY</span> <span style="color:#66d9ef">KEY</span>,
+              <span style="color:#66d9ef">name</span> VARCHAR(<span style="color:#ae81ff">30</span>),
+              email VARCHAR(<span style="color:#ae81ff">30</span>)
+      );
+<span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> USERS <span style="color:#66d9ef">values</span> (<span style="color:#ae81ff">1</span>,<span style="color:#e6db74">&#39;foo&#39;</span>,<span style="color:#e6db74">&#39;bar&#39;</span>);
+<span style="color:#66d9ef">INSERT</span> <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">1</span>
+</code></pre></div><p>now we can fire up a docker container with example code</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">cd Projects
+git clone https://github.com/loeken/docker_nodejs_postgresql_demo
+cd docker_nodejs_postgresql_demo
+</code></pre></div><p>we download the example project which is a very basic app that connects to postgresql, reads and prints records.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">pg</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;pg&#39;</span>);
+
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">cs</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;postgres://postgres:topsecure@postgresql:5432/api&#39;</span>;
+
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">client</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">pg</span>.<span style="color:#a6e22e">Client</span>(<span style="color:#a6e22e">cs</span>);
+<span style="color:#a6e22e">client</span>.<span style="color:#a6e22e">connect</span>();
+
+<span style="color:#a6e22e">client</span>.<span style="color:#a6e22e">query</span>(<span style="color:#e6db74">&#39;SELECT * FROM users&#39;</span>).<span style="color:#a6e22e">then</span>(<span style="color:#a6e22e">res</span> =&gt; {
+
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">data</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">rows</span>;
+
+    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;all data&#39;</span>);
+    <span style="color:#a6e22e">data</span>.<span style="color:#a6e22e">forEach</span>(<span style="color:#a6e22e">row</span> =&gt; {
+        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Id: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">row</span>.<span style="color:#a6e22e">id</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> Name: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">row</span>.<span style="color:#a6e22e">name</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> Email: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">row</span>.<span style="color:#a6e22e">email</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
+    })
+}).<span style="color:#66d9ef">finally</span>(() =&gt; {
+    <span style="color:#a6e22e">client</span>.<span style="color:#a6e22e">end</span>()
+});
+</code></pre></div><p>and now let&rsquo;s start up  our application:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">docker run -it <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>           --rm <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>           --name docker_nodejs_postgresql_demo <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>           --net<span style="color:#f92672">=</span>testnetwork1 <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>           -v <span style="color:#e6db74">&#34;</span>$PWD<span style="color:#e6db74">&#34;</span>:/usr/src/app -w /usr/src/app node:latest node index.js
+all data
+Id: <span style="color:#ae81ff">1</span> Name: Foo Email: foo@bar.com
+</code></pre></div><h4 id="docker-compose">docker compose</h4>
+<p>a unified way to combine the run commands for various containers into a single file. you will need docker-compose installed for this to work.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">version</span>: <span style="color:#e6db74">&#39;3&#39;</span>
+<span style="color:#66d9ef">services</span>:
+  <span style="color:#66d9ef">postgresql</span>:
+    <span style="color:#66d9ef">image</span>: postgres
+    <span style="color:#66d9ef">ports</span>:
+      - <span style="color:#ae81ff">5432</span>:<span style="color:#ae81ff">5432</span>
+    <span style="color:#66d9ef">environment</span>:
+      - POSTGRES_PASSWORD=<span style="color:#e6db74">&#34;topsecure&#34;</span>
+    <span style="color:#66d9ef">volumes</span>:
+      - /home/loeken/docker/postgresql/docker_postgresql_nodejs:/var/lib/postgresql/data
+  <span style="color:#66d9ef">docker_nodejs_postgresql_demo</span>:
+    <span style="color:#66d9ef">image</span>: node
+    <span style="color:#66d9ef">depends_on</span>:
+      - postgresql
+    <span style="color:#66d9ef">volumes</span>: 
+      - /home/loeken/Projects/docker_nodejs_postgresql_demo:/usr/src/app
+    <span style="color:#66d9ef">working_dir</span>: /usr/src/app
+    <span style="color:#66d9ef">command</span>: <span style="color:#e6db74">&#34;bash -c &#39;node /usr/src/app/index.js&#39;&#34;</span>
+</code></pre></div><p>if you compare this to  the earlier docker run commands you ll notice that there is no network param.
+if you combine containers inside a docker compose definition it will automatically create a network for these.
+i added the depends_on directive so that the docker_nodejs_postgresql_demo is only</p>
+<p>If you already created the image as described in the <a href="/posts/docker-create-images-in-a-private-self-hosted-registry/">last blobpost</a> you can also just use that instead</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">version</span>: <span style="color:#e6db74">&#39;3&#39;</span>
+<span style="color:#66d9ef">services</span>:
+  <span style="color:#66d9ef">postgresql</span>:
+    <span style="color:#66d9ef">image</span>: postgres
+    <span style="color:#66d9ef">ports</span>:
+      - <span style="color:#ae81ff">5432</span>:<span style="color:#ae81ff">5432</span>
+    <span style="color:#66d9ef">environment</span>:
+      - POSTGRES_PASSWORD=<span style="color:#e6db74">&#34;topsecure&#34;</span>
+    <span style="color:#66d9ef">volumes</span>:
+      - /home/loeken/docker/postgresql/docker_postgresql_nodejs:/var/lib/postgresql/data
+  <span style="color:#66d9ef">docker_nodejs_postgresql_demo</span>:
+    <span style="color:#66d9ef">image</span>: localhost:<span style="color:#ae81ff">5000</span>/docker_nodejs_postgresql_demo
+    <span style="color:#66d9ef">depends_on</span>:
+      - postgresql
+    <span style="color:#66d9ef">volumes</span>: 
+      - /home/loeken/Projects/docker_nodejs_postgresql_demo:/usr/src/app
+    <span style="color:#66d9ef">working_dir</span>: /usr/src/app
+</code></pre></div><p>as we already have the start command defined within the Dockerfile we can remove the command: directive here.</p>
+
+        </div>
+
+        
+        
+          <div class="btn-improve-page">
+              <a href="https://github.com/hossainemruz/toha-example-site/edit/master/content/posts/docker-nodejs-postgresql-example.md">
+                <i class="fas fa-code-branch"></i>
+                Improve This Page
+              </a>
+          </div>
+        
+
+        
+      <hr />
+        <div class="row next-prev-navigator">
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+      <div class="col-md-6 previous-article">
+        <a href="/posts/kubernetes-getting-started/" class="btn btn-outline-info">
+          <span><i class="fas fa-chevron-circle-left"></i> Prev</span>
+          <br />
+          <span>Kubernetes Getting Started</span>
+        </a>
+      </div>
+      
+    
+    
+      
+        
+        
+          
+              
+          
+        
+        <div class="col-md-6 next-article">
+          <a href="/posts/docker-create-images-in-a-private-self-hosted-registry/" class="btn btn-outline-info">
+            <span>Next <i class="fas fa-chevron-circle-right"></i></span>
+            <br />
+            <span>Docker Create Images in a Private Self Hosted Registry</span>
+          </a>
+        </div>
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</div>
+
+      <hr />
+      
+      
+          <div id="disqus_thread"></div>
+<script type="text/javascript">
+  (function () {
+    
+    
+    if (window.location.hostname == "localhost") return;
+
+    var dsq = document.createElement("script");
+    dsq.type = "text/javascript";
+    dsq.async = true;
+    var disqus_shortname = "does-not-exist";
+    dsq.src = "//" + disqus_shortname + ".disqus.com/embed.js";
+    (
+      document.getElementsByTagName("head")[0] ||
+      document.getElementsByTagName("body")[0]
+    ).appendChild(dsq);
+  })();
+</script>
+<noscript
+  >Please enable JavaScript to view the
+  <a href="https://disqus.com/?ref_noscript"
+    >comments powered by Disqus.</a
+  ></noscript
+>
+<a href="https://disqus.com/" class="dsq-brlink"
+  >comments powered by <span class="logo-disqus">Disqus</span></a
+>
+
+      
+      </div>
+    </div>
+  </div>
+</section>
+
+
+      
+      
+  <section class="toc-section" id="toc-section">
+    
+    <div class="toc-holder">
+      <h5 class="text-center pl-3">Table of Contents</h5>
+      <hr>
+      <div class="toc">
+        <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#example-postgresqlnodejs-in-two-containers">example postgresql/nodejs in two containers</a>
+          <ul>
+            <li>
+              <ul>
+                <li><a href="#docker-volumes">docker volumes:</a></li>
+                <li><a href="#fire-up-postgresql">fire up postgresql</a></li>
+              </ul>
+            </li>
+            <li><a href="#docker-compose">docker compose</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+      </div>
+    </div>
+    
+  </section>
+
+    </div>
+
+    <footer class="container-fluid text-center align-content-center footer pb-2">
+  <div class="container pt-5">
+    <div class="row text-left">
+      <div class="col-md-4 col-sm-12">
+        <h5>Navigation</h5>
+        
+        <ul>
+            
+            <li class="nav-item">
+              <a class="smooth-scroll" href="/#recent-posts">Recent Posts</a>
+            </li>
+            
+            
+            <li class="nav-item">
+              <a class="smooth-scroll" href="/#projects">Projects</a>
+            </li>
+            
+            
+            <li class="nav-item">
+              <a class="smooth-scroll" href="/#skills">Skills</a>
+            </li>
+            
+        </ul>
+        
+
+      </div>
+      <div class="col-md-4 col-sm-12">
+        <h5>Contact Me</h5>
+        <ul>
+          
+          <li><span>Email: </span> <span>loeken@internetz.me</span></li>
+          
+        </ul>
+      </div>
+      
+    </div>
+  </div>
+  <hr />
+  <div class="container">
+    <div class="row text-left">
+      <div class="col-md-4">
+        <a id="theme" href="https://github.com/hossainemruz/toha" target="#">
+          <img src="/assets/images/inverted-logo.png">
+          Toha
+        </a>
+      </div>
+      <div class="col-md-4 text-center">© 2020 Copyright.</div>
+      <div class="col-md-4 text-right">
+        <a id="hugo" href="https://gohugo.io/">Powered by Hugo
+        <img
+          src="/assets/images/hugo-logo-wide.svg"
+          alt="Hugo Logo"
+          height="18"
+        />
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+    <script src="/assets/js/jquery-3.4.1.min.js"></script>
+<script src="/assets/js/bootstrap.min.js"></script>
+
+<script src="/assets/js/navbar.js"></script>
+<script src="/assets/js/main.js"></script>
+
+
+    
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js"></script>
+<script src="/assets/js/single.js"></script>
+<script>
+  hljs.initHighlightingOnLoad();
+</script>
+
+
+  </body>
+</html>

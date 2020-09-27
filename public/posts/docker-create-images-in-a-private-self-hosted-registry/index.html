@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Docker Create Images in a Private Self Hosted Registry</title>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+
+<link rel="stylesheet" href="/assets/css/bootstrap.min.css" />
+<link rel="stylesheet" href="/assets/css/main.css" />
+<link rel="stylesheet" href="/assets/css/style.css" />
+<link rel="stylesheet" href="/assets/css/navigators/navbar.css" />
+
+
+<link href="https://fonts.googleapis.com/css2?family=Muli:wght@300;400;500;600" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" />
+
+
+<link rel="icon" type="image/png" href="/assets/images/favicon.png" />
+
+
+<link rel="stylesheet" href="/assets/css/style.css" />
+
+    
+<meta name="description" content="Docker Create Images in a Private Self Hosted Registry" />
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/atom-one-dark.min.css"
+/>
+<link rel="stylesheet" href="/assets/css/single.css" />
+<link rel="stylesheet" href="/assets/css/navigators/sidebar.css">
+
+
+    
+    
+  </head>
+
+  <body data-spy="scroll" data-target="#TableOfContents" data-offset="80">
+    <div class="container-fluid bg-dimmed wrapper">
+      
+      
+    <nav class="navbar navbar-expand-xl top-navbar final-navbar shadow">
+  <div class="container">
+    
+    
+    
+      
+    
+    
+      
+    
+      <button class="navbar-toggler navbar-light" id="sidebar-toggler" type="button" onclick="toggleSidebar()">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" href="https://blog.internetz.me/">
+      <img src="/assets/images/main-logo.png">shit i like</a>
+    <button class="navbar-toggler navbar-light" id="toc-toggler" type="button" onclick="toggleTOC()">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="top-nav-items">
+      <ul class="navbar-nav ml-auto">
+      </ul>
+    </div>
+  </div>
+  
+  <img src="/assets/images/main-logo.png" class="d-none" id="main-logo">
+  <img src="/assets/images/inverted-logo.png" class="d-none" id="inverted-logo">
+</nav>
+
+
+
+      
+       
+
+      
+      
+<section class="content-section" id="content-section">
+  <div class="content">
+    <div class="container p-0 read-area">
+      
+      <div class="hero-area col-sm-12" id="hero-area" style='background-image: url(https://blog.internetz.me/assets/images/default-hero.jpg);'>
+      </div>
+
+      
+      <div class="page-content">
+        <div class="author-profile ml-auto align-self-lg-center">
+          <img class="rounded-circle" src='/images/avatar.png'/>
+          <h5 class="author-name">loeken</h5>
+          <p>June 5, 2020</p>
+        </div>
+
+        <div class="title">
+          <h1>Docker Create Images in a Private Self Hosted Registry</h1>
+        </div>
+
+        <div class="post-content" id="post-content">
+          <p>first we need a docker registry where we can  push our own application to in this demo we ll be using a self hosted ( unsecured ) docker registry running inside docker:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">docker run -d -p 5000:5000 --restart<span style="color:#f92672">=</span>always --name registry registry:2
+Unable to find image <span style="color:#e6db74">&#39;registry:2&#39;</span> locally
+2: Pulling from library/registry
+486039affc0a: Pull complete 
+ba51a3b098e6: Pull complete 
+8bb4c43d6c8e: Pull complete 
+6f5f453e5f2d: Pull complete 
+42bc10b72f42: Pull complete 
+Digest: sha256:7d081088e4bfd632a88e3f3bcd9e007ef44a796fddfe3261407a3f9f04abe1e7
+Status: Downloaded newer image <span style="color:#66d9ef">for</span> registry:2
+8c6960c8d64962c1054f617e0b141bcdbb8f234ebf3b03c9c52411b3c3062a40
+</code></pre></div><p>then we tell docker to login: just type any username you want and an emtpy password.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">docker login localhost:5000
+Username: loeken
+Password: 
+WARNING! Your password will be stored unencrypted in /home/loeken/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
+</code></pre></div><p>Let&rsquo;s package the app that we build in the previous blogpost. this process uses the Dockerfile that ships with the github example repo.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">mkdir -p ~/Projects
+cd ~/Projects
+git clone https://github.com/loeken/docker_nodejs_postgresql_demo
+cd docker_nodejs_postgresql_demo
+
+docker build -t docker_nodejs_postgresql_demo:1.0.0 .                                        
+Sending build context to Docker daemon  922.1kB
+Step 1/4 : FROM node
+ ---&gt; 2c52ab475b70
+Step 2/4 : RUN mkdir -p /usr/src/app
+ ---&gt; Running in a4657b2583e0
+Removing intermediate container a4657b2583e0
+ ---&gt; 54a28005f7f6
+Step 3/4 : COPY index.js /usr/src/app
+ ---&gt; 8d040b12e927
+Step 4/4 : CMD <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;node&#34;</span>, <span style="color:#e6db74">&#34;index.js&#34;</span><span style="color:#f92672">]</span>
+ ---&gt; Running in 4faed6f071c8
+Removing intermediate container 4faed6f071c8
+ ---&gt; b77da0a970cc
+Successfully built b77da0a970cc
+Successfully tagged docker_nodejs_postgresql_demo:1.0.0
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">docker images|grep demo 
+docker_nodejs_postgresql_demo   1.0.0               b77da0a970cc        <span style="color:#ae81ff">2</span> minutes ago       941MB
+</code></pre></div><p>let&rsquo;s push the image</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">docker tag docker_nodejs_postgresql_demo:1.0.0 localhost:5000/docker_nodejs_postgresql_demo
+
+docker push localhost:5000/docker_nodejs_postgresql_demo 
+The push refers to repository <span style="color:#f92672">[</span>localhost:5000/docker_nodejs_postgresql_demo<span style="color:#f92672">]</span>
+2a7029e871f8: Pushed 
+66ef83808cb6: Pushed 
+a18892f26272: Pushed 
+ee67a955c9b7: Pushed 
+879c2fce68a8: Pushed 
+5aea01ea0a0f: Pushed 
+05f4935ad90a: Pushed 
+c96f2308ab16: Pushed 
+38c2f9ead82d: Pushed 
+0dabcc98eeef: Pushed 
+6885f9305c0a: Pushed 
+latest: digest: sha256:5271a66adcd3881ae7c645a102a8dbe5cbcd43ce2c88fcf9d83cd1dde3b6d6dd size: <span style="color:#ae81ff">2629</span>
+</code></pre></div>
+        </div>
+
+        
+        
+          <div class="btn-improve-page">
+              <a href="https://github.com/hossainemruz/toha-example-site/edit/master/content/posts/docker-create-images-in-a-private-self-hosted-registry.md">
+                <i class="fas fa-code-branch"></i>
+                Improve This Page
+              </a>
+          </div>
+        
+
+        
+      <hr />
+        <div class="row next-prev-navigator">
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+      <div class="col-md-6 previous-article">
+        <a href="/posts/docker-nodejs-postgresql-example/" class="btn btn-outline-info">
+          <span><i class="fas fa-chevron-circle-left"></i> Prev</span>
+          <br />
+          <span>Docker Nodejs Postgresql Example</span>
+        </a>
+      </div>
+      
+    
+    
+      
+        
+        
+          
+              
+          
+        
+        <div class="col-md-6 next-article">
+          <a href="/posts/docker-getting-started/" class="btn btn-outline-info">
+            <span>Next <i class="fas fa-chevron-circle-right"></i></span>
+            <br />
+            <span>Docker Getting Started</span>
+          </a>
+        </div>
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</div>
+
+      <hr />
+      
+      
+          <div id="disqus_thread"></div>
+<script type="text/javascript">
+  (function () {
+    
+    
+    if (window.location.hostname == "localhost") return;
+
+    var dsq = document.createElement("script");
+    dsq.type = "text/javascript";
+    dsq.async = true;
+    var disqus_shortname = "does-not-exist";
+    dsq.src = "//" + disqus_shortname + ".disqus.com/embed.js";
+    (
+      document.getElementsByTagName("head")[0] ||
+      document.getElementsByTagName("body")[0]
+    ).appendChild(dsq);
+  })();
+</script>
+<noscript
+  >Please enable JavaScript to view the
+  <a href="https://disqus.com/?ref_noscript"
+    >comments powered by Disqus.</a
+  ></noscript
+>
+<a href="https://disqus.com/" class="dsq-brlink"
+  >comments powered by <span class="logo-disqus">Disqus</span></a
+>
+
+      
+      </div>
+    </div>
+  </div>
+</section>
+
+
+      
+      
+  <section class="toc-section" id="toc-section">
+    
+    <div class="toc-holder">
+      <h5 class="text-center pl-3">Table of Contents</h5>
+      <hr>
+      <div class="toc">
+        <nav id="TableOfContents"></nav>
+      </div>
+    </div>
+    
+  </section>
+
+    </div>
+
+    <footer class="container-fluid text-center align-content-center footer pb-2">
+  <div class="container pt-5">
+    <div class="row text-left">
+      <div class="col-md-4 col-sm-12">
+        <h5>Navigation</h5>
+        
+        <ul>
+            
+            <li class="nav-item">
+              <a class="smooth-scroll" href="/#recent-posts">Recent Posts</a>
+            </li>
+            
+            
+            <li class="nav-item">
+              <a class="smooth-scroll" href="/#projects">Projects</a>
+            </li>
+            
+            
+            <li class="nav-item">
+              <a class="smooth-scroll" href="/#skills">Skills</a>
+            </li>
+            
+        </ul>
+        
+
+      </div>
+      <div class="col-md-4 col-sm-12">
+        <h5>Contact Me</h5>
+        <ul>
+          
+          <li><span>Email: </span> <span>loeken@internetz.me</span></li>
+          
+        </ul>
+      </div>
+      
+    </div>
+  </div>
+  <hr />
+  <div class="container">
+    <div class="row text-left">
+      <div class="col-md-4">
+        <a id="theme" href="https://github.com/hossainemruz/toha" target="#">
+          <img src="/assets/images/inverted-logo.png">
+          Toha
+        </a>
+      </div>
+      <div class="col-md-4 text-center">© 2020 Copyright.</div>
+      <div class="col-md-4 text-right">
+        <a id="hugo" href="https://gohugo.io/">Powered by Hugo
+        <img
+          src="/assets/images/hugo-logo-wide.svg"
+          alt="Hugo Logo"
+          height="18"
+        />
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+    <script src="/assets/js/jquery-3.4.1.min.js"></script>
+<script src="/assets/js/bootstrap.min.js"></script>
+
+<script src="/assets/js/navbar.js"></script>
+<script src="/assets/js/main.js"></script>
+
+
+    
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js"></script>
+<script src="/assets/js/single.js"></script>
+<script>
+  hljs.initHighlightingOnLoad();
+</script>
+
+
+  </body>
+</html>

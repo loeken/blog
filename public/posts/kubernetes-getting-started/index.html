@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Kubernetes Getting Started</title>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+
+<link rel="stylesheet" href="/assets/css/bootstrap.min.css" />
+<link rel="stylesheet" href="/assets/css/main.css" />
+<link rel="stylesheet" href="/assets/css/style.css" />
+<link rel="stylesheet" href="/assets/css/navigators/navbar.css" />
+
+
+<link href="https://fonts.googleapis.com/css2?family=Muli:wght@300;400;500;600" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" />
+
+
+<link rel="icon" type="image/png" href="/assets/images/favicon.png" />
+
+
+<link rel="stylesheet" href="/assets/css/style.css" />
+
+    
+<meta name="description" content="Kubernetes Getting Started" />
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/atom-one-dark.min.css"
+/>
+<link rel="stylesheet" href="/assets/css/single.css" />
+<link rel="stylesheet" href="/assets/css/navigators/sidebar.css">
+
+
+    
+    
+  </head>
+
+  <body data-spy="scroll" data-target="#TableOfContents" data-offset="80">
+    <div class="container-fluid bg-dimmed wrapper">
+      
+      
+    <nav class="navbar navbar-expand-xl top-navbar final-navbar shadow">
+  <div class="container">
+    
+    
+    
+      
+    
+    
+      
+    
+      <button class="navbar-toggler navbar-light" id="sidebar-toggler" type="button" onclick="toggleSidebar()">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" href="https://blog.internetz.me/">
+      <img src="/assets/images/main-logo.png">shit i like</a>
+    <button class="navbar-toggler navbar-light" id="toc-toggler" type="button" onclick="toggleTOC()">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="top-nav-items">
+      <ul class="navbar-nav ml-auto">
+      </ul>
+    </div>
+  </div>
+  
+  <img src="/assets/images/main-logo.png" class="d-none" id="main-logo">
+  <img src="/assets/images/inverted-logo.png" class="d-none" id="inverted-logo">
+</nav>
+
+
+
+      
+       
+
+      
+      
+<section class="content-section" id="content-section">
+  <div class="content">
+    <div class="container p-0 read-area">
+      
+      <div class="hero-area col-sm-12" id="hero-area" style='background-image: url(https://blog.internetz.me/assets/images/default-hero.jpg);'>
+      </div>
+
+      
+      <div class="page-content">
+        <div class="author-profile ml-auto align-self-lg-center">
+          <img class="rounded-circle" src='/images/avatar.png'/>
+          <h5 class="author-name">loeken</h5>
+          <p>June 7, 2020</p>
+        </div>
+
+        <div class="title">
+          <h1>Kubernetes Getting Started</h1>
+        </div>
+
+        <div class="post-content" id="post-content">
+          <h1 id="kubernetes">Kubernetes</h1>
+<p><img src="/media/img/kubernetes_getting_started.png" alt="">
+<a href="/media/imgmarkup/kubernetes-getting-started.py">Download Image Markup</a>
+all following tutorials are done with k3s version:
+k3s version v1.17.2+k3s1 (cdab19b0)</p>
+<h2 id="node">Node</h2>
+<h3 id="worker-node">Worker Node</h3>
+<p>A server - a physical or virtual machine. pods are running here.
+<a href="https://stackoverflow.com/questions/21889053/what-is-the-runtime-performance-cost-of-a-docker-container">https://stackoverflow.com/questions/21889053/what-is-the-runtime-performance-cost-of-a-docker-container</a></p>
+<h3 id="master-node">Master Node</h3>
+<p>Manages Pods on all Worker and Master nodes</p>
+<h2 id="pod">Pod</h2>
+<p>Abstraction ontop of a docker container. Creates running environment. Abstracting away the runtime/technology ( replace docker/containerd etc )
+expect pods to be ephemeral.</p>
+<h2 id="servicenetwork">Service/Network</h2>
+<p>each pod gets a virtual ip / internal ip. on the base of pods being ephemeral use dns within the code.
+Service is running on it&rsquo;s own not part of Pod
+Acts similar to Load Balancer in front of Pod</p>
+<h2 id="external-service">External Service</h2>
+<p>a service that opens communication from external sources ( frontend vms ).</p>
+<p>Service Type: LoadBalancer</p>
+<h2 id="internal-service">Internal Service</h2>
+<p>for communication between services interally</p>
+<p>Service Type: ClusterIP</p>
+<h2 id="ingress">Ingress</h2>
+<p>preferred production communication from the outside world that are reaching pods via services.</p>
+<ul>
+<li>can update public ips of loadbalancers/NodeIps with external-dns to services like azure/gcp/cloudflare</li>
+<li>can create letsencrypt certificates for ssl termination with cert-managere</li>
+</ul>
+<h2 id="configmap">ConfigMap</h2>
+<p>contains confiruation data like
+POSTGRESQL_USER=postgres
+Pods read from configMap. this is ideal for config updates without having to build a new image and redeploy.</p>
+<h2 id="secret">Secret</h2>
+<p>similar to ConfigMap
+base64 encoded</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">echo -n <span style="color:#e6db74">&#39;topsecret&#39;</span> | base64
+dG9wc2VjcmV0
+</code></pre></div><p>for storing passwords</p>
+<h2 id="volumes">Volumes</h2>
+<p>Pods being ephemeral you want your data persistent, by using volumes
+Volumes are local or remote storage devices.</p>
+<h2 id="replication">Replication</h2>
+<p>clones of pods running on different Worker Nodes.</p>
+<h2 id="deployment">Deployment</h2>
+<p>an abstraction layer that defines the creation of pods but also includes replication for convenient scaling/updates.
+this way you can run containers on multiple workers improving the overall uptime.</p>
+<p>Stateful pods such as databases are not managed via deployments.</p>
+<h2 id="statefulset">StatefulSet</h2>
+<p>Similar to Deployment but this is used for stateful pods ( postgresql/redis/mongodb/mysql &hellip; )</p>
+
+        </div>
+
+        
+        
+          <div class="btn-improve-page">
+              <a href="https://github.com/hossainemruz/toha-example-site/edit/master/content/posts/kubernetes-getting-started.md">
+                <i class="fas fa-code-branch"></i>
+                Improve This Page
+              </a>
+          </div>
+        
+
+        
+      <hr />
+        <div class="row next-prev-navigator">
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+      <div class="col-md-6 previous-article">
+        <a href="/posts/kubernetes-k3s-cluster-using-k3sup-multi-master/" class="btn btn-outline-info">
+          <span><i class="fas fa-chevron-circle-left"></i> Prev</span>
+          <br />
+          <span>Kubernetes K3s Cluster Using K3sup Multi Master</span>
+        </a>
+      </div>
+      
+    
+    
+      
+        
+        
+          
+              
+          
+        
+        <div class="col-md-6 next-article">
+          <a href="/posts/docker-nodejs-postgresql-example/" class="btn btn-outline-info">
+            <span>Next <i class="fas fa-chevron-circle-right"></i></span>
+            <br />
+            <span>Docker Nodejs Postgresql Example</span>
+          </a>
+        </div>
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</div>
+
+      <hr />
+      
+      
+          <div id="disqus_thread"></div>
+<script type="text/javascript">
+  (function () {
+    
+    
+    if (window.location.hostname == "localhost") return;
+
+    var dsq = document.createElement("script");
+    dsq.type = "text/javascript";
+    dsq.async = true;
+    var disqus_shortname = "does-not-exist";
+    dsq.src = "//" + disqus_shortname + ".disqus.com/embed.js";
+    (
+      document.getElementsByTagName("head")[0] ||
+      document.getElementsByTagName("body")[0]
+    ).appendChild(dsq);
+  })();
+</script>
+<noscript
+  >Please enable JavaScript to view the
+  <a href="https://disqus.com/?ref_noscript"
+    >comments powered by Disqus.</a
+  ></noscript
+>
+<a href="https://disqus.com/" class="dsq-brlink"
+  >comments powered by <span class="logo-disqus">Disqus</span></a
+>
+
+      
+      </div>
+    </div>
+  </div>
+</section>
+
+
+      
+      
+  <section class="toc-section" id="toc-section">
+    
+    <div class="toc-holder">
+      <h5 class="text-center pl-3">Table of Contents</h5>
+      <hr>
+      <div class="toc">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#node">Node</a>
+      <ul>
+        <li><a href="#worker-node">Worker Node</a></li>
+        <li><a href="#master-node">Master Node</a></li>
+      </ul>
+    </li>
+    <li><a href="#pod">Pod</a></li>
+    <li><a href="#servicenetwork">Service/Network</a></li>
+    <li><a href="#external-service">External Service</a></li>
+    <li><a href="#internal-service">Internal Service</a></li>
+    <li><a href="#ingress">Ingress</a></li>
+    <li><a href="#configmap">ConfigMap</a></li>
+    <li><a href="#secret">Secret</a></li>
+    <li><a href="#volumes">Volumes</a></li>
+    <li><a href="#replication">Replication</a></li>
+    <li><a href="#deployment">Deployment</a></li>
+    <li><a href="#statefulset">StatefulSet</a></li>
+  </ul>
+</nav>
+      </div>
+    </div>
+    
+  </section>
+
+    </div>
+
+    <footer class="container-fluid text-center align-content-center footer pb-2">
+  <div class="container pt-5">
+    <div class="row text-left">
+      <div class="col-md-4 col-sm-12">
+        <h5>Navigation</h5>
+        
+        <ul>
+            
+            <li class="nav-item">
+              <a class="smooth-scroll" href="/#recent-posts">Recent Posts</a>
+            </li>
+            
+            
+            <li class="nav-item">
+              <a class="smooth-scroll" href="/#projects">Projects</a>
+            </li>
+            
+            
+            <li class="nav-item">
+              <a class="smooth-scroll" href="/#skills">Skills</a>
+            </li>
+            
+        </ul>
+        
+
+      </div>
+      <div class="col-md-4 col-sm-12">
+        <h5>Contact Me</h5>
+        <ul>
+          
+          <li><span>Email: </span> <span>loeken@internetz.me</span></li>
+          
+        </ul>
+      </div>
+      
+    </div>
+  </div>
+  <hr />
+  <div class="container">
+    <div class="row text-left">
+      <div class="col-md-4">
+        <a id="theme" href="https://github.com/hossainemruz/toha" target="#">
+          <img src="/assets/images/inverted-logo.png">
+          Toha
+        </a>
+      </div>
+      <div class="col-md-4 text-center">© 2020 Copyright.</div>
+      <div class="col-md-4 text-right">
+        <a id="hugo" href="https://gohugo.io/">Powered by Hugo
+        <img
+          src="/assets/images/hugo-logo-wide.svg"
+          alt="Hugo Logo"
+          height="18"
+        />
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+    <script src="/assets/js/jquery-3.4.1.min.js"></script>
+<script src="/assets/js/bootstrap.min.js"></script>
+
+<script src="/assets/js/navbar.js"></script>
+<script src="/assets/js/main.js"></script>
+
+
+    
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js"></script>
+<script src="/assets/js/single.js"></script>
+<script>
+  hljs.initHighlightingOnLoad();
+</script>
+
+
+  </body>
+</html>

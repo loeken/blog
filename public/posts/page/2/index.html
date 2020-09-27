@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Posts</title>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+
+<link rel="stylesheet" href="/assets/css/bootstrap.min.css" />
+<link rel="stylesheet" href="/assets/css/main.css" />
+<link rel="stylesheet" href="/assets/css/style.css" />
+<link rel="stylesheet" href="/assets/css/navigators/navbar.css" />
+
+
+<link href="https://fonts.googleapis.com/css2?family=Muli:wght@300;400;500;600" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" />
+
+
+<link rel="icon" type="image/png" href="/assets/images/favicon.png" />
+
+
+<link rel="stylesheet" href="/assets/css/style.css" />
+
+    
+    <link rel="stylesheet" href="/assets/css/list.css">
+    <link rel="stylesheet" href="/assets/css/navigators/sidebar.css">
+
+
+    
+    
+  </head>
+
+  <body data-spy="scroll" data-target="#TableOfContents" data-offset="80">
+    <div class="container-fluid bg-dimmed wrapper">
+      
+      
+    <nav class="navbar navbar-expand-xl top-navbar final-navbar shadow">
+  <div class="container">
+    
+    
+    
+      
+    
+    
+      
+    
+      <button class="navbar-toggler navbar-light" id="sidebar-toggler" type="button" onclick="toggleSidebar()">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" href="https://blog.internetz.me/">
+      <img src="/assets/images/main-logo.png">shit i like</a>
+    <button class="navbar-toggler navbar-light" id="toc-toggler" type="button" onclick="toggleTOC()">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="top-nav-items">
+      <ul class="navbar-nav ml-auto">
+      </ul>
+    </div>
+  </div>
+  
+  <img src="/assets/images/main-logo.png" class="d-none" id="main-logo">
+  <img src="/assets/images/inverted-logo.png" class="d-none" id="inverted-logo">
+</nav>
+
+
+
+      
+      
+  <section class="sidebar-section" id="sidebar-section">
+    <div class="sidebar-holder">
+      <div class="sidebar" id="sidebar">
+        <input type="text" value="" placeholder="Search" data-search="" id="search-box" />
+        <div class="sidebar-tree">
+          <ul class="tree" id="tree">
+            <li id="list-heading"><a href="/posts" data-filter="all">Posts</a></li>
+            <div class="subtree">
+                
+
+            </div>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+      
+      
+<section class="content-section" id="content-section">
+  <div class="content container-fluid" id="content">
+    <div class="container-fluid post-card-holder" id="post-card-holder">
+      
+      
+        <div class="post-card">
+  <a href="/posts/docker-nodejs-postgresql-example/" class="post-card-link">
+    <div class="card">
+      <div class="card-head">
+        <img class="card-img-top" src='/assets/images/default-hero.jpg'/>
+      </div>
+      <div class="card-body">
+        <h5 class="card-title">Docker Nodejs Postgresql Example</h5>
+        <p class="card-text post-summary">example postgresql/nodejs in two containers Download Image Markup
+first we need to grab the postgresql image
+docker pull postgres docker network ls NETWORK ID NAME DRIVER SCOPE 62e4019570d2 bridge bridge local c1aeefb374e7 host host local 608568a867c3 none null local docker network create testnetwork1 577e8e0c44c4ca0c0b1d855a70536e875bf77ec0010fdbfaf5db1d131ddabd69 docker network ls NETWORK ID NAME DRIVER SCOPE 62e4019570d2 bridge bridge local c1aeefb374e7 host host local 608568a867c3 none null local 577e8e0c44c4 testnetwork1 bridge local docker volumes: docker containers dont have persistent storage out of the box.</p>
+      </div>
+      <div class="card-footer">
+        <span class="float-left">June 6, 2020</span>
+        <a
+        href="/posts/docker-nodejs-postgresql-example/"
+        class="float-right btn btn-outline-info btn-sm"
+        >Read</a
+        >
+      </div>
+    </div>
+  </a>
+</div>
+
+      
+        <div class="post-card">
+  <a href="/posts/docker-create-images-in-a-private-self-hosted-registry/" class="post-card-link">
+    <div class="card">
+      <div class="card-head">
+        <img class="card-img-top" src='/assets/images/default-hero.jpg'/>
+      </div>
+      <div class="card-body">
+        <h5 class="card-title">Docker Create Images in a Private Self Hosted Registry</h5>
+        <p class="card-text post-summary">first we need a docker registry where we can push our own application to in this demo we ll be using a self hosted ( unsecured ) docker registry running inside docker:
+docker run -d -p 5000:5000 --restart=always --name registry registry:2 Unable to find image &#39;registry:2&#39; locally 2: Pulling from library/registry 486039affc0a: Pull complete ba51a3b098e6: Pull complete 8bb4c43d6c8e: Pull complete 6f5f453e5f2d: Pull complete 42bc10b72f42: Pull complete Digest: sha256:7d081088e4bfd632a88e3f3bcd9e007ef44a796fddfe3261407a3f9f04abe1e7 Status: Downloaded newer image for registry:2 8c6960c8d64962c1054f617e0b141bcdbb8f234ebf3b03c9c52411b3c3062a40 then we tell docker to login: just type any username you want and an emtpy password.</p>
+      </div>
+      <div class="card-footer">
+        <span class="float-left">June 5, 2020</span>
+        <a
+        href="/posts/docker-create-images-in-a-private-self-hosted-registry/"
+        class="float-right btn btn-outline-info btn-sm"
+        >Read</a
+        >
+      </div>
+    </div>
+  </a>
+</div>
+
+      
+        <div class="post-card">
+  <a href="/posts/docker-getting-started/" class="post-card-link">
+    <div class="card">
+      <div class="card-head">
+        <img class="card-img-top" src='/assets/images/default-hero.jpg'/>
+      </div>
+      <div class="card-body">
+        <h5 class="card-title">Docker Getting Started</h5>
+        <p class="card-text post-summary">img { width: 100%; height: auto; }  Docker A docker container is a packaged application with all necessary dependencies and configuration included to move, share and run an application.
+The video version of this: Road to Kubernetes - 01- docker basics &amp; getting started - k3s / k8s Why use it ?  Docker compared to virtual machines do not have their own kernel running but use the kernel from the host system.</p>
+      </div>
+      <div class="card-footer">
+        <span class="float-left">June 5, 2020</span>
+        <a
+        href="/posts/docker-getting-started/"
+        class="float-right btn btn-outline-info btn-sm"
+        >Read</a
+        >
+      </div>
+    </div>
+  </a>
+</div>
+
+      
+        <div class="post-card">
+  <a href="/posts/building-custom-nginx-deb-package-with-fpm/" class="post-card-link">
+    <div class="card">
+      <div class="card-head">
+        <img class="card-img-top" src='/assets/images/default-hero.jpg'/>
+      </div>
+      <div class="card-body">
+        <h5 class="card-title">Building Nginx Deb Package With Fpm - effin package manager</h5>
+        <p class="card-text post-summary">nginx - creating a package with fpm installation of fpm our tool to build deb packages first we install the dependencies
+apt-get -y install ruby ruby-dev rubygems build-essential gem install --no-document fpm verify installation
+fpm --version dependencies for the modules we want to add
+apt install libgd-dev libgeoip-dev using makefile for a simple build recipe:
+NAME=nginx VERSION=1.14.2 #.PHONY: package package: cd /opt &amp;&amp; \ rm -rf nginx* &amp;&amp; \ rm -rf pcre-8.</p>
+      </div>
+      <div class="card-footer">
+        <span class="float-left">May 17, 2020</span>
+        <a
+        href="/posts/building-custom-nginx-deb-package-with-fpm/"
+        class="float-right btn btn-outline-info btn-sm"
+        >Read</a
+        >
+      </div>
+    </div>
+  </a>
+</div>
+
+      
+        <div class="post-card">
+  <a href="/posts/arch-linux-2020-i3wm-polybar-rofi-picom/" class="post-card-link">
+    <div class="card">
+      <div class="card-head">
+        <img class="card-img-top" src='/assets/images/default-hero.jpg'/>
+      </div>
+      <div class="card-body">
+        <h5 class="card-title">Arch Linux 2020 i3wm polybar rofi picom</h5>
+        <p class="card-text post-summary">fix for the last part typo in the /etc/fstab file
+general stuff we now create a non root user
+useradd -m loeken passwd loeken gpasswd -a loeken wheel we now edit the /etc/sudoers file to enable access for the wheel group
+nano /etc/sudoers i3wm installation we start by installing i3-gaps this is a fork of i3 which has a few more features git
+sudo pacman -S i3-gaps xorg-xinit xorg-server terminator installation polybar I&rsquo;ve upped a small repo to github with a few files lets grab that</p>
+      </div>
+      <div class="card-footer">
+        <span class="float-left">May 3, 2020</span>
+        <a
+        href="/posts/arch-linux-2020-i3wm-polybar-rofi-picom/"
+        class="float-right btn btn-outline-info btn-sm"
+        >Read</a
+        >
+      </div>
+    </div>
+  </a>
+</div>
+
+      
+        <div class="post-card">
+  <a href="/posts/arch-linux-2020-luks-cryptsetup-systemd-boot_base-system-installation/" class="post-card-link">
+    <div class="card">
+      <div class="card-head">
+        <img class="card-img-top" src='/assets/images/default-hero.jpg'/>
+      </div>
+      <div class="card-body">
+        <h5 class="card-title">Arch Linux 2020 luks cryptsetup systemd-boot installation</h5>
+        <p class="card-text post-summary">the video the following video whos the whole installation below the video you&rsquo;ll find the transcript
+ *{padding:0;margin:0;overflow:hidden}html,body{height:100%}img,span{position:absolute;width:100%;top:0;bottom:0;margin:auto}span{height:1.5em;text-align:center;font:48px/1.5 sans-serif;color:white;text-shadow:0 0 0.5em black}▶" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen title="test title"  getting the iso you can grab the latest archlinux iso from https://www.archlinux.org/download/ download the iso and the matching signature to verify, if you are doing this from a arch you can use:
+pacman-key -v archlinux-2020.05.01-x86_64.iso.sig ==&gt; Checking archlinux-2020.05.01-x86_64.iso.sig... (detached) gpg: Signatur vom Fr 01 Mai 2020 07:33:57 CEST gpg: mittels RSA-Schlüssel 4AA4767BBC9C4B1D18AE28B77F2D434B9741E8AC gpg: Hinweis: Die &quot;trustdb&quot; ist nicht schreibbar gpg: Korrekte Signatur von &quot;Pierre Schmitz &lt;pierre@archlinux.</p>
+      </div>
+      <div class="card-footer">
+        <span class="float-left">May 2, 2020</span>
+        <a
+        href="/posts/arch-linux-2020-luks-cryptsetup-systemd-boot_base-system-installation/"
+        class="float-right btn btn-outline-info btn-sm"
+        >Read</a
+        >
+      </div>
+    </div>
+  </a>
+</div>
+
+      
+        <div class="post-card">
+  <a href="/posts/jenkins_installation_setup_multibranch_pipelines_in_docker/" class="post-card-link">
+    <div class="card">
+      <div class="card-head">
+        <img class="card-img-top" src='/assets/images/default-hero.jpg'/>
+      </div>
+      <div class="card-body">
+        <h5 class="card-title">Jenkins installation in Docker</h5>
+        <p class="card-text post-summary">jenkins to build, test and deploy your projects 1. Introduction Jenkins is a software written in java which allows you to setup a CI/CD pipeline. There are many ways to setup Jenkins depending on your environment. In this example I will try to set it up from the perspective of a single user, who wants a simple method to deploy/test their code easily. This approach does allow other users to submit code too.</p>
+      </div>
+      <div class="card-footer">
+        <span class="float-left">February 8, 2020</span>
+        <a
+        href="/posts/jenkins_installation_setup_multibranch_pipelines_in_docker/"
+        class="float-right btn btn-outline-info btn-sm"
+        >Read</a
+        >
+      </div>
+    </div>
+  </a>
+</div>
+
+      
+        <div class="post-card">
+  <a href="/posts/new-blog/" class="post-card-link">
+    <div class="card">
+      <div class="card-head">
+        <img class="card-img-top" src='/assets/images/default-hero.jpg'/>
+      </div>
+      <div class="card-body">
+        <h5 class="card-title">New Blog</h5>
+        <p class="card-text post-summary">hello world, new blog created with http://gohugo.io/</p>
+      </div>
+      <div class="card-footer">
+        <span class="float-left">November 10, 2019</span>
+        <a
+        href="/posts/new-blog/"
+        class="float-right btn btn-outline-info btn-sm"
+        >Read</a
+        >
+      </div>
+    </div>
+  </a>
+</div>
+
+      
+    </div>
+    <div class="paginator">
+      
+<ul class="pagination">
+  <li class="page-item">
+    <a href="/posts/" class="page-link" aria-label="First"><span aria-hidden="true">&laquo;&laquo;</span></a>
+  </li>
+  <li class="page-item">
+    <a href="/posts/" class="page-link" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+  </li>
+  <li class="page-item">
+    <a class="page-link" href="/posts/">1</a>
+  </li>
+  <li class="page-item active">
+    <a class="page-link" href="/posts/page/2/">2</a>
+  </li>
+  <li class="page-item disabled">
+    <a  class="page-link" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+  </li>
+  <li class="page-item">
+    <a href="/posts/page/2/" class="page-link" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
+  </li>
+</ul>
+
+
+    </div>
+  </div>
+</section>
+
+
+      
+       
+    </div>
+
+    <footer class="container-fluid text-center align-content-center footer pb-2">
+  <div class="container pt-5">
+    <div class="row text-left">
+      <div class="col-md-4 col-sm-12">
+        <h5>Navigation</h5>
+        
+        <ul>
+            
+            <li class="nav-item">
+              <a class="smooth-scroll" href="/#recent-posts">Recent Posts</a>
+            </li>
+            
+            
+            <li class="nav-item">
+              <a class="smooth-scroll" href="/#projects">Projects</a>
+            </li>
+            
+            
+            <li class="nav-item">
+              <a class="smooth-scroll" href="/#skills">Skills</a>
+            </li>
+            
+        </ul>
+        
+
+      </div>
+      <div class="col-md-4 col-sm-12">
+        <h5>Contact Me</h5>
+        <ul>
+          
+          <li><span>Email: </span> <span>loeken@internetz.me</span></li>
+          
+        </ul>
+      </div>
+      
+    </div>
+  </div>
+  <hr />
+  <div class="container">
+    <div class="row text-left">
+      <div class="col-md-4">
+        <a id="theme" href="https://github.com/hossainemruz/toha" target="#">
+          <img src="/assets/images/inverted-logo.png">
+          Toha
+        </a>
+      </div>
+      <div class="col-md-4 text-center">© 2020 Copyright.</div>
+      <div class="col-md-4 text-right">
+        <a id="hugo" href="https://gohugo.io/">Powered by Hugo
+        <img
+          src="/assets/images/hugo-logo-wide.svg"
+          alt="Hugo Logo"
+          height="18"
+        />
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+    <script src="/assets/js/jquery-3.4.1.min.js"></script>
+<script src="/assets/js/bootstrap.min.js"></script>
+
+<script src="/assets/js/navbar.js"></script>
+<script src="/assets/js/main.js"></script>
+
+
+    
+    
+    <script src="/assets/js/list.js"></script>
+
+  </body>
+</html>

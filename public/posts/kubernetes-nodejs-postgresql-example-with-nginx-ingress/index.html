@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Kubernetes Nodejs Postgresql Example With Nginx Ingress</title>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+
+<link rel="stylesheet" href="/assets/css/bootstrap.min.css" />
+<link rel="stylesheet" href="/assets/css/main.css" />
+<link rel="stylesheet" href="/assets/css/style.css" />
+<link rel="stylesheet" href="/assets/css/navigators/navbar.css" />
+
+
+<link href="https://fonts.googleapis.com/css2?family=Muli:wght@300;400;500;600" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" />
+
+
+<link rel="icon" type="image/png" href="/assets/images/favicon.png" />
+
+
+<link rel="stylesheet" href="/assets/css/style.css" />
+
+    
+<meta name="description" content="Kubernetes Nodejs Postgresql Example With Nginx Ingress" />
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/atom-one-dark.min.css"
+/>
+<link rel="stylesheet" href="/assets/css/single.css" />
+<link rel="stylesheet" href="/assets/css/navigators/sidebar.css">
+
+
+    
+    
+  </head>
+
+  <body data-spy="scroll" data-target="#TableOfContents" data-offset="80">
+    <div class="container-fluid bg-dimmed wrapper">
+      
+      
+    <nav class="navbar navbar-expand-xl top-navbar final-navbar shadow">
+  <div class="container">
+    
+    
+    
+      
+    
+    
+      
+    
+      <button class="navbar-toggler navbar-light" id="sidebar-toggler" type="button" onclick="toggleSidebar()">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" href="https://blog.internetz.me/">
+      <img src="/assets/images/main-logo.png">shit i like</a>
+    <button class="navbar-toggler navbar-light" id="toc-toggler" type="button" onclick="toggleTOC()">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="top-nav-items">
+      <ul class="navbar-nav ml-auto">
+      </ul>
+    </div>
+  </div>
+  
+  <img src="/assets/images/main-logo.png" class="d-none" id="main-logo">
+  <img src="/assets/images/inverted-logo.png" class="d-none" id="inverted-logo">
+</nav>
+
+
+
+      
+       
+
+      
+      
+<section class="content-section" id="content-section">
+  <div class="content">
+    <div class="container p-0 read-area">
+      
+      <div class="hero-area col-sm-12" id="hero-area" style='background-image: url(https://blog.internetz.me/assets/images/default-hero.jpg);'>
+      </div>
+
+      
+      <div class="page-content">
+        <div class="author-profile ml-auto align-self-lg-center">
+          <img class="rounded-circle" src='/images/avatar.png'/>
+          <h5 class="author-name">loeken</h5>
+          <p>June 10, 2020</p>
+        </div>
+
+        <div class="title">
+          <h1>Kubernetes Nodejs Postgresql Example With Nginx Ingress</h1>
+        </div>
+
+        <div class="post-content" id="post-content">
+          <h2 id="kubernetes-nodejs-postgresl-example-with-nginx-ingress">Kubernetes nodejs postgresl example with nginx ingress</h2>
+<p><img src="/media/img/kubernetes_deployment_nodejs_postgresql_ingress.png" alt="">
+<a href="/media/imgmarkup/kubernetes-deployment-nodejs-postgresql-ingress.py">Download Image Markup</a></p>
+<p>this would be an example to create an ingress that points to our internal node service</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: v1
+<span style="color:#66d9ef">kind</span>: Ingress
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: node-ingress
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">rules</span>:
+  - <span style="color:#66d9ef">host</span>: nodeexample.com
+    <span style="color:#66d9ef">http</span>:
+      <span style="color:#66d9ef">paths</span>:
+      - <span style="color:#66d9ef">test</span>:
+        <span style="color:#66d9ef">serviceName</span>: node-service
+        <span style="color:#66d9ef">servicePort</span>: <span style="color:#ae81ff">1337</span>
+</code></pre></div><p>Let&rsquo;s now combine this with our last two node and postgres deployments we wrote and create a new deployment for node/postgresql using the ingress with  an internal service vs using the external service for the node app.
+the postgres part stays the same. But in the node-deployment-ingress definition i removed the nodePort ( turning it into an interal service )
+and added the Ingress part</p>
+<h2 id="nginx-ingress">nginx ingress</h2>
+<h4 id="nginx-ingressyaml"><strong><code>nginx-ingress.yaml</code></strong></h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: v1
+<span style="color:#66d9ef">kind</span>: Namespace
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: ingress-nginx
+  <span style="color:#66d9ef">labels</span>:
+    <span style="color:#66d9ef">app.kubernetes.io/name</span>: ingress-nginx
+    <span style="color:#66d9ef">app.kubernetes.io/part-of</span>: ingress-nginx
+
+---
+
+<span style="color:#66d9ef">kind</span>: ConfigMap
+<span style="color:#66d9ef">apiVersion</span>: v1
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: nginx-configuration
+  <span style="color:#66d9ef">namespace</span>: ingress-nginx
+  <span style="color:#66d9ef">labels</span>:
+    <span style="color:#66d9ef">app.kubernetes.io/name</span>: ingress-nginx
+    <span style="color:#66d9ef">app.kubernetes.io/part-of</span>: ingress-nginx
+
+---
+<span style="color:#66d9ef">kind</span>: ConfigMap
+<span style="color:#66d9ef">apiVersion</span>: v1
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: tcp-services
+  <span style="color:#66d9ef">namespace</span>: ingress-nginx
+  <span style="color:#66d9ef">labels</span>:
+    <span style="color:#66d9ef">app.kubernetes.io/name</span>: ingress-nginx
+    <span style="color:#66d9ef">app.kubernetes.io/part-of</span>: ingress-nginx
+
+---
+<span style="color:#66d9ef">kind</span>: ConfigMap
+<span style="color:#66d9ef">apiVersion</span>: v1
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: udp-services
+  <span style="color:#66d9ef">namespace</span>: ingress-nginx
+  <span style="color:#66d9ef">labels</span>:
+    <span style="color:#66d9ef">app.kubernetes.io/name</span>: ingress-nginx
+    <span style="color:#66d9ef">app.kubernetes.io/part-of</span>: ingress-nginx
+
+---
+<span style="color:#66d9ef">apiVersion</span>: v1
+<span style="color:#66d9ef">kind</span>: ServiceAccount
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: nginx-ingress-serviceaccount
+  <span style="color:#66d9ef">namespace</span>: ingress-nginx
+  <span style="color:#66d9ef">labels</span>:
+    <span style="color:#66d9ef">app.kubernetes.io/name</span>: ingress-nginx
+    <span style="color:#66d9ef">app.kubernetes.io/part-of</span>: ingress-nginx
+
+---
+<span style="color:#66d9ef">apiVersion</span>: rbac.authorization.k8s.io/v1beta1
+<span style="color:#66d9ef">kind</span>: ClusterRole
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: nginx-ingress-clusterrole
+  <span style="color:#66d9ef">labels</span>:
+    <span style="color:#66d9ef">app.kubernetes.io/name</span>: ingress-nginx
+    <span style="color:#66d9ef">app.kubernetes.io/part-of</span>: ingress-nginx
+<span style="color:#66d9ef">rules</span>:
+  - <span style="color:#66d9ef">apiGroups</span>:
+      - <span style="color:#e6db74">&#34;&#34;</span>
+    <span style="color:#66d9ef">resources</span>:
+      - configmaps
+      - endpoints
+      - nodes
+      - pods
+      - secrets
+    <span style="color:#66d9ef">verbs</span>:
+      - list
+      - watch
+  - <span style="color:#66d9ef">apiGroups</span>:
+      - <span style="color:#e6db74">&#34;&#34;</span>
+    <span style="color:#66d9ef">resources</span>:
+      - nodes
+    <span style="color:#66d9ef">verbs</span>:
+      - get
+  - <span style="color:#66d9ef">apiGroups</span>:
+      - <span style="color:#e6db74">&#34;&#34;</span>
+    <span style="color:#66d9ef">resources</span>:
+      - services
+    <span style="color:#66d9ef">verbs</span>:
+      - get
+      - list
+      - watch
+  - <span style="color:#66d9ef">apiGroups</span>:
+      - <span style="color:#e6db74">&#34;&#34;</span>
+    <span style="color:#66d9ef">resources</span>:
+      - events
+    <span style="color:#66d9ef">verbs</span>:
+      - create
+      - patch
+  - <span style="color:#66d9ef">apiGroups</span>:
+      - <span style="color:#e6db74">&#34;extensions&#34;</span>
+      - <span style="color:#e6db74">&#34;networking.k8s.io&#34;</span>
+    <span style="color:#66d9ef">resources</span>:
+      - ingresses
+    <span style="color:#66d9ef">verbs</span>:
+      - get
+      - list
+      - watch
+  - <span style="color:#66d9ef">apiGroups</span>:
+      - <span style="color:#e6db74">&#34;extensions&#34;</span>
+      - <span style="color:#e6db74">&#34;networking.k8s.io&#34;</span>
+    <span style="color:#66d9ef">resources</span>:
+      - ingresses/status
+    <span style="color:#66d9ef">verbs</span>:
+      - update
+
+---
+<span style="color:#66d9ef">apiVersion</span>: rbac.authorization.k8s.io/v1beta1
+<span style="color:#66d9ef">kind</span>: Role
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: nginx-ingress-role
+  <span style="color:#66d9ef">namespace</span>: ingress-nginx
+  <span style="color:#66d9ef">labels</span>:
+    <span style="color:#66d9ef">app.kubernetes.io/name</span>: ingress-nginx
+    <span style="color:#66d9ef">app.kubernetes.io/part-of</span>: ingress-nginx
+<span style="color:#66d9ef">rules</span>:
+  - <span style="color:#66d9ef">apiGroups</span>:
+      - <span style="color:#e6db74">&#34;&#34;</span>
+    <span style="color:#66d9ef">resources</span>:
+      - configmaps
+      - pods
+      - secrets
+      - namespaces
+    <span style="color:#66d9ef">verbs</span>:
+      - get
+  - <span style="color:#66d9ef">apiGroups</span>:
+      - <span style="color:#e6db74">&#34;&#34;</span>
+    <span style="color:#66d9ef">resources</span>:
+      - configmaps
+    <span style="color:#66d9ef">resourceNames</span>:
+      <span style="color:#75715e"># Defaults to &#34;&lt;election-id&gt;-&lt;ingress-class&gt;&#34;</span>
+      <span style="color:#75715e"># Here: &#34;&lt;ingress-controller-leader&gt;-&lt;nginx&gt;&#34;</span>
+      <span style="color:#75715e"># This has to be adapted if you change either parameter</span>
+      <span style="color:#75715e"># when launching the nginx-ingress-controller.</span>
+      - <span style="color:#e6db74">&#34;ingress-controller-leader-nginx&#34;</span>
+    <span style="color:#66d9ef">verbs</span>:
+      - get
+      - update
+  - <span style="color:#66d9ef">apiGroups</span>:
+      - <span style="color:#e6db74">&#34;&#34;</span>
+    <span style="color:#66d9ef">resources</span>:
+      - configmaps
+    <span style="color:#66d9ef">verbs</span>:
+      - create
+  - <span style="color:#66d9ef">apiGroups</span>:
+      - <span style="color:#e6db74">&#34;&#34;</span>
+    <span style="color:#66d9ef">resources</span>:
+      - endpoints
+    <span style="color:#66d9ef">verbs</span>:
+      - get
+
+---
+<span style="color:#66d9ef">apiVersion</span>: rbac.authorization.k8s.io/v1beta1
+<span style="color:#66d9ef">kind</span>: RoleBinding
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: nginx-ingress-role-nisa-binding
+  <span style="color:#66d9ef">namespace</span>: ingress-nginx
+  <span style="color:#66d9ef">labels</span>:
+    <span style="color:#66d9ef">app.kubernetes.io/name</span>: ingress-nginx
+    <span style="color:#66d9ef">app.kubernetes.io/part-of</span>: ingress-nginx
+<span style="color:#66d9ef">roleRef</span>:
+  <span style="color:#66d9ef">apiGroup</span>: rbac.authorization.k8s.io
+  <span style="color:#66d9ef">kind</span>: Role
+  <span style="color:#66d9ef">name</span>: nginx-ingress-role
+<span style="color:#66d9ef">subjects</span>:
+  - <span style="color:#66d9ef">kind</span>: ServiceAccount
+    <span style="color:#66d9ef">name</span>: nginx-ingress-serviceaccount
+    <span style="color:#66d9ef">namespace</span>: ingress-nginx
+
+---
+<span style="color:#66d9ef">apiVersion</span>: rbac.authorization.k8s.io/v1beta1
+<span style="color:#66d9ef">kind</span>: ClusterRoleBinding
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: nginx-ingress-clusterrole-nisa-binding
+  <span style="color:#66d9ef">labels</span>:
+    <span style="color:#66d9ef">app.kubernetes.io/name</span>: ingress-nginx
+    <span style="color:#66d9ef">app.kubernetes.io/part-of</span>: ingress-nginx
+<span style="color:#66d9ef">roleRef</span>:
+  <span style="color:#66d9ef">apiGroup</span>: rbac.authorization.k8s.io
+  <span style="color:#66d9ef">kind</span>: ClusterRole
+  <span style="color:#66d9ef">name</span>: nginx-ingress-clusterrole
+<span style="color:#66d9ef">subjects</span>:
+  - <span style="color:#66d9ef">kind</span>: ServiceAccount
+    <span style="color:#66d9ef">name</span>: nginx-ingress-serviceaccount
+    <span style="color:#66d9ef">namespace</span>: ingress-nginx
+
+---
+
+<span style="color:#66d9ef">apiVersion</span>: apps/v1
+<span style="color:#66d9ef">kind</span>: Deployment
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: nginx-ingress-controller
+  <span style="color:#66d9ef">namespace</span>: ingress-nginx
+  <span style="color:#66d9ef">labels</span>:
+    <span style="color:#66d9ef">app.kubernetes.io/name</span>: ingress-nginx
+    <span style="color:#66d9ef">app.kubernetes.io/part-of</span>: ingress-nginx
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">replicas</span>: <span style="color:#ae81ff">1</span>
+  <span style="color:#66d9ef">selector</span>:
+    <span style="color:#66d9ef">matchLabels</span>:
+      <span style="color:#66d9ef">app.kubernetes.io/name</span>: ingress-nginx
+      <span style="color:#66d9ef">app.kubernetes.io/part-of</span>: ingress-nginx
+  <span style="color:#66d9ef">template</span>:
+    <span style="color:#66d9ef">metadata</span>:
+      <span style="color:#66d9ef">labels</span>:
+        <span style="color:#66d9ef">app.kubernetes.io/name</span>: ingress-nginx
+        <span style="color:#66d9ef">app.kubernetes.io/part-of</span>: ingress-nginx
+      <span style="color:#66d9ef">annotations</span>:
+        <span style="color:#66d9ef">prometheus.io/port</span>: <span style="color:#e6db74">&#34;10254&#34;</span>
+        <span style="color:#66d9ef">prometheus.io/scrape</span>: <span style="color:#e6db74">&#34;true&#34;</span>
+    <span style="color:#66d9ef">spec</span>:
+      <span style="color:#75715e"># wait up to five minutes for the drain of connections</span>
+      <span style="color:#66d9ef">terminationGracePeriodSeconds</span>: <span style="color:#ae81ff">300</span>
+      <span style="color:#66d9ef">serviceAccountName</span>: nginx-ingress-serviceaccount
+      <span style="color:#66d9ef">nodeSelector</span>:
+        <span style="color:#66d9ef">kubernetes.io/os</span>: linux
+      <span style="color:#66d9ef">containers</span>:
+        - <span style="color:#66d9ef">name</span>: nginx-ingress-controller
+          <span style="color:#66d9ef">image</span>: quay.io/kubernetes-ingress-controller/nginx-ingress-controller:<span style="color:#ae81ff">0.30.0</span>
+          <span style="color:#66d9ef">args</span>:
+            - /nginx-ingress-controller
+            - --configmap=$(POD_NAMESPACE)/nginx-configuration
+            - --tcp-services-configmap=$(POD_NAMESPACE)/tcp-services
+            - --udp-services-configmap=$(POD_NAMESPACE)/udp-services
+            - --publish-service=$(POD_NAMESPACE)/ingress-nginx
+            - --annotations-prefix=nginx.ingress.kubernetes.io
+          <span style="color:#66d9ef">securityContext</span>:
+            <span style="color:#66d9ef">allowPrivilegeEscalation</span>: <span style="color:#66d9ef">true</span>
+            <span style="color:#66d9ef">capabilities</span>:
+              <span style="color:#66d9ef">drop</span>:
+                - ALL
+              <span style="color:#66d9ef">add</span>:
+                - NET_BIND_SERVICE
+            <span style="color:#75715e"># www-data -&gt; 101</span>
+            <span style="color:#66d9ef">runAsUser</span>: <span style="color:#ae81ff">101</span>
+          <span style="color:#66d9ef">env</span>:
+            - <span style="color:#66d9ef">name</span>: POD_NAME
+              <span style="color:#66d9ef">valueFrom</span>:
+                <span style="color:#66d9ef">fieldRef</span>:
+                  <span style="color:#66d9ef">fieldPath</span>: metadata.name
+            - <span style="color:#66d9ef">name</span>: POD_NAMESPACE
+              <span style="color:#66d9ef">valueFrom</span>:
+                <span style="color:#66d9ef">fieldRef</span>:
+                  <span style="color:#66d9ef">fieldPath</span>: metadata.namespace
+          <span style="color:#66d9ef">ports</span>:
+            - <span style="color:#66d9ef">name</span>: http
+              <span style="color:#66d9ef">containerPort</span>: <span style="color:#ae81ff">80</span>
+              <span style="color:#66d9ef">protocol</span>: TCP
+            - <span style="color:#66d9ef">name</span>: https
+              <span style="color:#66d9ef">containerPort</span>: <span style="color:#ae81ff">443</span>
+              <span style="color:#66d9ef">protocol</span>: TCP
+          <span style="color:#66d9ef">livenessProbe</span>:
+            <span style="color:#66d9ef">failureThreshold</span>: <span style="color:#ae81ff">3</span>
+            <span style="color:#66d9ef">httpGet</span>:
+              <span style="color:#66d9ef">path</span>: /healthz
+              <span style="color:#66d9ef">port</span>: <span style="color:#ae81ff">10254</span>
+              <span style="color:#66d9ef">scheme</span>: HTTP
+            <span style="color:#66d9ef">initialDelaySeconds</span>: <span style="color:#ae81ff">10</span>
+            <span style="color:#66d9ef">periodSeconds</span>: <span style="color:#ae81ff">10</span>
+            <span style="color:#66d9ef">successThreshold</span>: <span style="color:#ae81ff">1</span>
+            <span style="color:#66d9ef">timeoutSeconds</span>: <span style="color:#ae81ff">10</span>
+          <span style="color:#66d9ef">readinessProbe</span>:
+            <span style="color:#66d9ef">failureThreshold</span>: <span style="color:#ae81ff">3</span>
+            <span style="color:#66d9ef">httpGet</span>:
+              <span style="color:#66d9ef">path</span>: /healthz
+              <span style="color:#66d9ef">port</span>: <span style="color:#ae81ff">10254</span>
+              <span style="color:#66d9ef">scheme</span>: HTTP
+            <span style="color:#66d9ef">periodSeconds</span>: <span style="color:#ae81ff">10</span>
+            <span style="color:#66d9ef">successThreshold</span>: <span style="color:#ae81ff">1</span>
+            <span style="color:#66d9ef">timeoutSeconds</span>: <span style="color:#ae81ff">10</span>
+          <span style="color:#66d9ef">lifecycle</span>:
+            <span style="color:#66d9ef">preStop</span>:
+              <span style="color:#66d9ef">exec</span>:
+                <span style="color:#66d9ef">command</span>:
+                  - /wait-shutdown
+
+---
+
+<span style="color:#66d9ef">apiVersion</span>: v1
+<span style="color:#66d9ef">kind</span>: LimitRange
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: ingress-nginx
+  <span style="color:#66d9ef">namespace</span>: ingress-nginx
+  <span style="color:#66d9ef">labels</span>:
+    <span style="color:#66d9ef">app.kubernetes.io/name</span>: ingress-nginx
+    <span style="color:#66d9ef">app.kubernetes.io/part-of</span>: ingress-nginx
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">limits</span>:
+  - <span style="color:#66d9ef">min</span>:
+      <span style="color:#66d9ef">memory</span>: 90Mi
+      <span style="color:#66d9ef">cpu</span>: 100m
+    <span style="color:#66d9ef">type</span>: Container
+</code></pre></div><h2 id="required-configmaps">required configmaps</h2>
+<h4 id="postgres-secretyaml"><strong><code>postgres-secret.yaml</code></strong></h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: v1
+<span style="color:#66d9ef">kind</span>: Secret
+<span style="color:#66d9ef">metadata</span>:
+    <span style="color:#66d9ef">name</span>: postgres-secret
+<span style="color:#66d9ef">type</span>: Opaque
+<span style="color:#66d9ef">data</span>:
+    <span style="color:#66d9ef">postgres-user</span>: cG9zdGdyZXNxbA==
+    <span style="color:#66d9ef">postgres-password</span>: dG9wc2VjdXJl
+</code></pre></div><h4 id="postgres-configmapyaml"><strong><code>postgres-configmap.yaml</code></strong></h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: v1
+<span style="color:#66d9ef">kind</span>: ConfigMap
+<span style="color:#66d9ef">metadata</span>:
+    <span style="color:#66d9ef">name</span>: postgres-configmap
+<span style="color:#66d9ef">data</span>:
+    <span style="color:#66d9ef">postgres-host</span>: postgres-service:<span style="color:#ae81ff">5432</span>
+    <span style="color:#66d9ef">postgres-dbname</span>: api
+</code></pre></div><p>apply configuration</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl apply -f postgres-secret.yaml
+kubectl apply -f postgres-configmap.yaml
+</code></pre></div><h2 id="postgres-deployment">postgres deployment</h2>
+<h4 id="postgres-deploymentyaml"><strong><code>postgres-deployment.yaml</code></strong></h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: apps/v1
+<span style="color:#66d9ef">kind</span>: Deployment
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: postgres
+  <span style="color:#66d9ef">labels</span>:
+    <span style="color:#66d9ef">app</span>: postgres
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">replicas</span>: <span style="color:#ae81ff">1</span>
+  <span style="color:#66d9ef">selector</span>:
+    <span style="color:#66d9ef">matchLabels</span>:
+      <span style="color:#66d9ef">app</span>: postgres
+  <span style="color:#66d9ef">template</span>:
+    <span style="color:#66d9ef">metadata</span>:
+      <span style="color:#66d9ef">labels</span>:
+        <span style="color:#66d9ef">app</span>: postgres
+    <span style="color:#66d9ef">spec</span>:
+      <span style="color:#66d9ef">containers</span>:
+      - <span style="color:#66d9ef">name</span>: postgres
+        <span style="color:#66d9ef">image</span>: postgres:latest
+        <span style="color:#66d9ef">ports</span>:
+        - <span style="color:#66d9ef">containerPort</span>: <span style="color:#ae81ff">80</span>
+        <span style="color:#66d9ef">env</span>:
+        - <span style="color:#66d9ef">name</span>: POSTGRES_USER
+          <span style="color:#66d9ef">valueFrom</span>:
+            <span style="color:#66d9ef">secretKeyRef</span>:
+              <span style="color:#66d9ef">name</span>: postgres-secret
+              <span style="color:#66d9ef">key</span>: postgres-user
+        - <span style="color:#66d9ef">name</span>: POSTGRES_PASSWORD
+          <span style="color:#66d9ef">valueFrom</span>:
+            <span style="color:#66d9ef">secretKeyRef</span>:
+              <span style="color:#66d9ef">name</span>: postgres-secret
+              <span style="color:#66d9ef">key</span>: postgres-password
+        - <span style="color:#66d9ef">name</span>: POSTGRES_HOST
+          <span style="color:#66d9ef">valueFrom</span>:
+            <span style="color:#66d9ef">configMapKeyRef</span>:
+              <span style="color:#66d9ef">name</span>: postgres-configmap
+              <span style="color:#66d9ef">key</span>: postgres-host
+        - <span style="color:#66d9ef">name</span>: POSTGRES_DBNAME
+          <span style="color:#66d9ef">valueFrom</span>:
+            <span style="color:#66d9ef">configMapKeyRef</span>:
+              <span style="color:#66d9ef">name</span>: postgres-configmap
+              <span style="color:#66d9ef">key</span>: postgres-dbname
+---
+<span style="color:#66d9ef">apiVersion</span>: v1
+<span style="color:#66d9ef">kind</span>: Service
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: postgres-service
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">selector</span>:
+    <span style="color:#66d9ef">app</span>: postgres
+  <span style="color:#66d9ef">type</span>: ClusterIP
+  <span style="color:#66d9ef">ports</span>:
+    - <span style="color:#66d9ef">protocol</span>: TCP
+      <span style="color:#66d9ef">port</span>: <span style="color:#ae81ff">5432</span>
+      <span style="color:#66d9ef">targetPort</span>: <span style="color:#ae81ff">5432</span>
+</code></pre></div><h2 id="node-deployment">node deployment</h2>
+<h4 id="node-deployment-ingressyaml"><strong><code>node-deployment-ingress.yaml</code></strong></h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: apps/v1
+<span style="color:#66d9ef">kind</span>: Deployment
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: node
+  <span style="color:#66d9ef">labels</span>:
+    <span style="color:#66d9ef">app</span>: node
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">replicas</span>: <span style="color:#ae81ff">1</span>
+  <span style="color:#66d9ef">selector</span>:
+    <span style="color:#66d9ef">matchLabels</span>:
+      <span style="color:#66d9ef">app</span>: node
+  <span style="color:#66d9ef">template</span>:
+    <span style="color:#66d9ef">metadata</span>:
+      <span style="color:#66d9ef">labels</span>:
+        <span style="color:#66d9ef">app</span>: node
+    <span style="color:#66d9ef">spec</span>:
+      <span style="color:#66d9ef">containers</span>:
+      - <span style="color:#66d9ef">name</span>: node
+        <span style="color:#66d9ef">image</span>: demoregistry.azurecr.io/node:<span style="color:#ae81ff">1.0.0</span>
+        <span style="color:#66d9ef">imagePullPolicy</span>: Always
+        <span style="color:#66d9ef">ports</span>:
+        - <span style="color:#66d9ef">containerPort</span>: <span style="color:#ae81ff">1337</span>
+        <span style="color:#66d9ef">env</span>:
+        - <span style="color:#66d9ef">name</span>: POSTGRES_USER
+          <span style="color:#66d9ef">valueFrom</span>:
+            <span style="color:#66d9ef">secretKeyRef</span>:
+              <span style="color:#66d9ef">name</span>: postgres-secret
+              <span style="color:#66d9ef">key</span>: postgres-user
+        - <span style="color:#66d9ef">name</span>: POSTGRES_PASSWORD
+          <span style="color:#66d9ef">valueFrom</span>:
+            <span style="color:#66d9ef">secretKeyRef</span>:
+              <span style="color:#66d9ef">name</span>: postgres-secret
+              <span style="color:#66d9ef">key</span>: postgres-password
+        - <span style="color:#66d9ef">name</span>: POSTGRES_HOST
+          <span style="color:#66d9ef">valueFrom</span>:
+            <span style="color:#66d9ef">configMapKeyRef</span>:
+              <span style="color:#66d9ef">name</span>: postgres-configmap
+              <span style="color:#66d9ef">key</span>: postgres-host
+        - <span style="color:#66d9ef">name</span>: POSTGRES_DBNAME
+          <span style="color:#66d9ef">valueFrom</span>:
+            <span style="color:#66d9ef">configMapKeyRef</span>:
+              <span style="color:#66d9ef">name</span>: postgres-configmap
+              <span style="color:#66d9ef">key</span>: postgres-dbname
+      <span style="color:#66d9ef">imagePullSecrets</span>:
+        - <span style="color:#66d9ef">name</span>: regcred
+---
+<span style="color:#66d9ef">apiVersion</span>: v1
+<span style="color:#66d9ef">kind</span>: Service
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: node-service
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">selector</span>:
+    <span style="color:#66d9ef">app</span>: node
+  <span style="color:#66d9ef">type</span>: ClusterIP
+  <span style="color:#66d9ef">ports</span>:
+    - <span style="color:#66d9ef">protocol</span>: TCP
+      <span style="color:#66d9ef">port</span>: <span style="color:#ae81ff">1337</span>
+      <span style="color:#66d9ef">targetPort</span>: <span style="color:#ae81ff">1337</span>
+---
+<span style="color:#66d9ef">apiVersion</span>: networking.k8s.io/v1beta1
+<span style="color:#66d9ef">kind</span>: Ingress
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: node-ingress
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">rules</span>:
+  - <span style="color:#66d9ef">host</span>: nodeexample.com
+    <span style="color:#66d9ef">http</span>:
+      <span style="color:#66d9ef">paths</span>:
+      - <span style="color:#66d9ef">path</span>: /
+        <span style="color:#66d9ef">backend</span>:
+          <span style="color:#66d9ef">serviceName</span>: node-service
+          <span style="color:#66d9ef">servicePort</span>: <span style="color:#ae81ff">1337</span>
+</code></pre></div><p>If you followed the previous <a href="/posts/kubernetes-nodejs-postgresql-example">kubernetes nodejs postgresql demo</a> then you might want to cleanup the node deployment</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl delete deployment node
+deployment.apps <span style="color:#e6db74">&#34;node&#34;</span> deleted
+
+kubectl delete service node-service
+service <span style="color:#e6db74">&#34;node-service&#34;</span> deleted
+</code></pre></div><p>now let&rsquo;s apply the new deployments</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl apply -f node-deployment-ingress.yaml
+</code></pre></div>
+        </div>
+
+        
+        
+          <div class="btn-improve-page">
+              <a href="https://github.com/hossainemruz/toha-example-site/edit/master/content/posts/kubernetes-nodejs-postgresql-example-with-nginx-ingress.md">
+                <i class="fas fa-code-branch"></i>
+                Improve This Page
+              </a>
+          </div>
+        
+
+        
+      <hr />
+        <div class="row next-prev-navigator">
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+      <div class="col-md-6 previous-article">
+        <a href="/posts/kubernetes-prometheus-and-grafana/" class="btn btn-outline-info">
+          <span><i class="fas fa-chevron-circle-left"></i> Prev</span>
+          <br />
+          <span>Kubernetes Prometheus &amp; Grafana</span>
+        </a>
+      </div>
+      
+    
+    
+      
+        
+        
+          
+              
+          
+        
+        <div class="col-md-6 next-article">
+          <a href="/posts/kubernetes-namespaces/" class="btn btn-outline-info">
+            <span>Next <i class="fas fa-chevron-circle-right"></i></span>
+            <br />
+            <span>Kubernetes Namespaces</span>
+          </a>
+        </div>
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</div>
+
+      <hr />
+      
+      
+          <div id="disqus_thread"></div>
+<script type="text/javascript">
+  (function () {
+    
+    
+    if (window.location.hostname == "localhost") return;
+
+    var dsq = document.createElement("script");
+    dsq.type = "text/javascript";
+    dsq.async = true;
+    var disqus_shortname = "does-not-exist";
+    dsq.src = "//" + disqus_shortname + ".disqus.com/embed.js";
+    (
+      document.getElementsByTagName("head")[0] ||
+      document.getElementsByTagName("body")[0]
+    ).appendChild(dsq);
+  })();
+</script>
+<noscript
+  >Please enable JavaScript to view the
+  <a href="https://disqus.com/?ref_noscript"
+    >comments powered by Disqus.</a
+  ></noscript
+>
+<a href="https://disqus.com/" class="dsq-brlink"
+  >comments powered by <span class="logo-disqus">Disqus</span></a
+>
+
+      
+      </div>
+    </div>
+  </div>
+</section>
+
+
+      
+      
+  <section class="toc-section" id="toc-section">
+    
+    <div class="toc-holder">
+      <h5 class="text-center pl-3">Table of Contents</h5>
+      <hr>
+      <div class="toc">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#kubernetes-nodejs-postgresl-example-with-nginx-ingress">Kubernetes nodejs postgresl example with nginx ingress</a></li>
+    <li><a href="#nginx-ingress">nginx ingress</a>
+      <ul>
+        <li>
+          <ul>
+            <li><a href="#nginx-ingressyaml"><strong><code>nginx-ingress.yaml</code></strong></a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#required-configmaps">required configmaps</a>
+      <ul>
+        <li>
+          <ul>
+            <li><a href="#postgres-secretyaml"><strong><code>postgres-secret.yaml</code></strong></a></li>
+            <li><a href="#postgres-configmapyaml"><strong><code>postgres-configmap.yaml</code></strong></a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#postgres-deployment">postgres deployment</a>
+      <ul>
+        <li>
+          <ul>
+            <li><a href="#postgres-deploymentyaml"><strong><code>postgres-deployment.yaml</code></strong></a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#node-deployment">node deployment</a>
+      <ul>
+        <li>
+          <ul>
+            <li><a href="#node-deployment-ingressyaml"><strong><code>node-deployment-ingress.yaml</code></strong></a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+      </div>
+    </div>
+    
+  </section>
+
+    </div>
+
+    <footer class="container-fluid text-center align-content-center footer pb-2">
+  <div class="container pt-5">
+    <div class="row text-left">
+      <div class="col-md-4 col-sm-12">
+        <h5>Navigation</h5>
+        
+        <ul>
+            
+            <li class="nav-item">
+              <a class="smooth-scroll" href="/#recent-posts">Recent Posts</a>
+            </li>
+            
+            
+            <li class="nav-item">
+              <a class="smooth-scroll" href="/#projects">Projects</a>
+            </li>
+            
+            
+            <li class="nav-item">
+              <a class="smooth-scroll" href="/#skills">Skills</a>
+            </li>
+            
+        </ul>
+        
+
+      </div>
+      <div class="col-md-4 col-sm-12">
+        <h5>Contact Me</h5>
+        <ul>
+          
+          <li><span>Email: </span> <span>loeken@internetz.me</span></li>
+          
+        </ul>
+      </div>
+      
+    </div>
+  </div>
+  <hr />
+  <div class="container">
+    <div class="row text-left">
+      <div class="col-md-4">
+        <a id="theme" href="https://github.com/hossainemruz/toha" target="#">
+          <img src="/assets/images/inverted-logo.png">
+          Toha
+        </a>
+      </div>
+      <div class="col-md-4 text-center">© 2020 Copyright.</div>
+      <div class="col-md-4 text-right">
+        <a id="hugo" href="https://gohugo.io/">Powered by Hugo
+        <img
+          src="/assets/images/hugo-logo-wide.svg"
+          alt="Hugo Logo"
+          height="18"
+        />
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+    <script src="/assets/js/jquery-3.4.1.min.js"></script>
+<script src="/assets/js/bootstrap.min.js"></script>
+
+<script src="/assets/js/navbar.js"></script>
+<script src="/assets/js/main.js"></script>
+
+
+    
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js"></script>
+<script src="/assets/js/single.js"></script>
+<script>
+  hljs.initHighlightingOnLoad();
+</script>
+
+
+  </body>
+</html>

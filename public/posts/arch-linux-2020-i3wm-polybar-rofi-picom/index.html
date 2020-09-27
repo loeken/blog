@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Arch Linux 2020 i3wm polybar rofi picom</title>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+
+<link rel="stylesheet" href="/assets/css/bootstrap.min.css" />
+<link rel="stylesheet" href="/assets/css/main.css" />
+<link rel="stylesheet" href="/assets/css/style.css" />
+<link rel="stylesheet" href="/assets/css/navigators/navbar.css" />
+
+
+<link href="https://fonts.googleapis.com/css2?family=Muli:wght@300;400;500;600" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" />
+
+
+<link rel="icon" type="image/png" href="/assets/images/favicon.png" />
+
+
+<link rel="stylesheet" href="/assets/css/style.css" />
+
+    
+<meta name="description" content="Arch Linux 2020 i3wm polybar rofi picom" />
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/atom-one-dark.min.css"
+/>
+<link rel="stylesheet" href="/assets/css/single.css" />
+<link rel="stylesheet" href="/assets/css/navigators/sidebar.css">
+
+
+    
+    
+  </head>
+
+  <body data-spy="scroll" data-target="#TableOfContents" data-offset="80">
+    <div class="container-fluid bg-dimmed wrapper">
+      
+      
+    <nav class="navbar navbar-expand-xl top-navbar final-navbar shadow">
+  <div class="container">
+    
+    
+    
+      
+    
+    
+      
+    
+      <button class="navbar-toggler navbar-light" id="sidebar-toggler" type="button" onclick="toggleSidebar()">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" href="https://blog.internetz.me/">
+      <img src="/assets/images/main-logo.png">shit i like</a>
+    <button class="navbar-toggler navbar-light" id="toc-toggler" type="button" onclick="toggleTOC()">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="top-nav-items">
+      <ul class="navbar-nav ml-auto">
+      </ul>
+    </div>
+  </div>
+  
+  <img src="/assets/images/main-logo.png" class="d-none" id="main-logo">
+  <img src="/assets/images/inverted-logo.png" class="d-none" id="inverted-logo">
+</nav>
+
+
+
+      
+       
+
+      
+      
+<section class="content-section" id="content-section">
+  <div class="content">
+    <div class="container p-0 read-area">
+      
+      <div class="hero-area col-sm-12" id="hero-area" style='background-image: url(https://blog.internetz.me/assets/images/default-hero.jpg);'>
+      </div>
+
+      
+      <div class="page-content">
+        <div class="author-profile ml-auto align-self-lg-center">
+          <img class="rounded-circle" src='/images/avatar.png'/>
+          <h5 class="author-name">loeken</h5>
+          <p>May 3, 2020</p>
+        </div>
+
+        <div class="title">
+          <h1>Arch Linux 2020 i3wm polybar rofi picom</h1>
+        </div>
+
+        <div class="post-content" id="post-content">
+          <h3 id="fix-for-the-last-part">fix for the last part</h3>
+<p>typo in the /etc/fstab file</p>
+<h3 id="general-stuff">general stuff</h3>
+<p>we now create a non root  user</p>
+<pre><code>useradd -m loeken
+passwd loeken
+gpasswd -a loeken wheel
+</code></pre><p>we now edit the /etc/sudoers file to enable access for the wheel group</p>
+<pre><code>nano /etc/sudoers
+</code></pre><h3 id="i3wm-installation">i3wm installation</h3>
+<p>we start by installing i3-gaps this is a fork of i3 which has a few more features git</p>
+<pre><code>sudo pacman -S i3-gaps xorg-xinit xorg-server terminator
+</code></pre><h3 id="installation-polybar">installation polybar</h3>
+<p>I&rsquo;ve upped a small repo to github with a few files lets grab that</p>
+<pre><code>mkdir Projects
+git clone https://github.com/loeken/dotfiles
+cd dotfiles
+</code></pre><h4 id="installation-of-rofi">installation of rofi</h4>
+<pre><code>sudo pacman -S rofi
+mkdir -p ~/.config/rofi
+cp rofi/config ~/.config/rofi/config
+cp .xinitrc ~/
+</code></pre><h3 id="installation-auf-pacaur">installation auf pacaur</h3>
+<p>in the following part we are going to install pacaur a package manage that accepts syntax similar to pacman but installs from the aur instead</p>
+<pre><code>git clone https://aur.archlinux.org/auracle-git.git
+cd auracle-git
+nano /etc/makepkg.conf
+</code></pre><p>we edit the /etc/makepkg.conf and set the MAKEFLAGS -j count to the amount of cores we have in our system to speed up the build processes.</p>
+<pre><code>#-- Make Flags: change this for DistCC/SMP systems
+MAKEFLAGS=&quot;-j8&quot;
+#-- Debugging flags
+</code></pre><pre><code>
+makepkg -s
+sudo pacman -U auracle-git-r315.d4b4548-1-x86_64.pkg.tar.xz
+cd ~/Projects
+git clone https://aur.archlinux.org/pacaur.git
+cd pacaur
+makepkg -s
+sudo pacman -U pacaur-4.8.6-1-any.pkg.tar.xz
+</code></pre><h4 id="installation-of-polybar">installation of polybar</h4>
+<pre><code>pacaur -S polybar siji-git
+mkdir -p ~/.config/polybar
+sudo cp polybar/config ~/.config/polybar/config
+sudo cp loadbar /usr/local/bin/loadbar
+</code></pre><h4 id="installation-of-picom">installation of picom</h4>
+<pre><code>sudo pacman -S picom
+mkdir -p ~/.config/picom
+cp picom/picom.conf ~/.config/picom/picom.conf
+</code></pre><h4 id="update-of-i3-config">update of i3 config</h4>
+<pre><code>#!/bin/bash
+mkdir -p ~/.config/i3
+cp i3/config ~/.config/i3/config
+cp .xinitrc ~/
+</code></pre><h4 id="installation-of-feh">installation of feh</h4>
+<p>to apply backgrounds</p>
+<pre><code>sudo pacman -S feh
+</code></pre><h4 id="installation-of-xrandr">installation of xrandr</h4>
+<p>to apply backgrounds</p>
+<pre><code>sudo pacman -S xorg-xrandr
+xrandr --output Virtual-1 --mode 1920x1080
+</code></pre><h4 id="copy-over-xinitrc">copy over .xinitrc</h4>
+<pre><code>cp .xinitrc ~/
+</code></pre>
+        </div>
+
+        
+        
+          <div class="btn-improve-page">
+              <a href="https://github.com/hossainemruz/toha-example-site/edit/master/content/posts/arch-linux-2020-i3wm-polybar-rofi-picom.md">
+                <i class="fas fa-code-branch"></i>
+                Improve This Page
+              </a>
+          </div>
+        
+
+        
+      <hr />
+        <div class="row next-prev-navigator">
+
+
+  
+
+  
+
+  
+
+  
+    
+      
+      <div class="col-md-6 previous-article">
+        <a href="/posts/building-custom-nginx-deb-package-with-fpm/" class="btn btn-outline-info">
+          <span><i class="fas fa-chevron-circle-left"></i> Prev</span>
+          <br />
+          <span>Building Nginx Deb Package With Fpm - effin package manager</span>
+        </a>
+      </div>
+      
+    
+    
+      
+        
+        
+          
+              
+          
+        
+        <div class="col-md-6 next-article">
+          <a href="/posts/arch-linux-2020-luks-cryptsetup-systemd-boot_base-system-installation/" class="btn btn-outline-info">
+            <span>Next <i class="fas fa-chevron-circle-right"></i></span>
+            <br />
+            <span>Arch Linux 2020 luks cryptsetup systemd-boot installation</span>
+          </a>
+        </div>
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</div>
+
+      <hr />
+      
+      
+          <div id="disqus_thread"></div>
+<script type="text/javascript">
+  (function () {
+    
+    
+    if (window.location.hostname == "localhost") return;
+
+    var dsq = document.createElement("script");
+    dsq.type = "text/javascript";
+    dsq.async = true;
+    var disqus_shortname = "does-not-exist";
+    dsq.src = "//" + disqus_shortname + ".disqus.com/embed.js";
+    (
+      document.getElementsByTagName("head")[0] ||
+      document.getElementsByTagName("body")[0]
+    ).appendChild(dsq);
+  })();
+</script>
+<noscript
+  >Please enable JavaScript to view the
+  <a href="https://disqus.com/?ref_noscript"
+    >comments powered by Disqus.</a
+  ></noscript
+>
+<a href="https://disqus.com/" class="dsq-brlink"
+  >comments powered by <span class="logo-disqus">Disqus</span></a
+>
+
+      
+      </div>
+    </div>
+  </div>
+</section>
+
+
+      
+      
+  <section class="toc-section" id="toc-section">
+    
+    <div class="toc-holder">
+      <h5 class="text-center pl-3">Table of Contents</h5>
+      <hr>
+      <div class="toc">
+        <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#fix-for-the-last-part">fix for the last part</a></li>
+        <li><a href="#general-stuff">general stuff</a></li>
+        <li><a href="#i3wm-installation">i3wm installation</a></li>
+        <li><a href="#installation-polybar">installation polybar</a>
+          <ul>
+            <li><a href="#installation-of-rofi">installation of rofi</a></li>
+          </ul>
+        </li>
+        <li><a href="#installation-auf-pacaur">installation auf pacaur</a>
+          <ul>
+            <li><a href="#installation-of-polybar">installation of polybar</a></li>
+            <li><a href="#installation-of-picom">installation of picom</a></li>
+            <li><a href="#update-of-i3-config">update of i3 config</a></li>
+            <li><a href="#installation-of-feh">installation of feh</a></li>
+            <li><a href="#installation-of-xrandr">installation of xrandr</a></li>
+            <li><a href="#copy-over-xinitrc">copy over .xinitrc</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+      </div>
+    </div>
+    
+  </section>
+
+    </div>
+
+    <footer class="container-fluid text-center align-content-center footer pb-2">
+  <div class="container pt-5">
+    <div class="row text-left">
+      <div class="col-md-4 col-sm-12">
+        <h5>Navigation</h5>
+        
+        <ul>
+            
+            <li class="nav-item">
+              <a class="smooth-scroll" href="/#recent-posts">Recent Posts</a>
+            </li>
+            
+            
+            <li class="nav-item">
+              <a class="smooth-scroll" href="/#projects">Projects</a>
+            </li>
+            
+            
+            <li class="nav-item">
+              <a class="smooth-scroll" href="/#skills">Skills</a>
+            </li>
+            
+        </ul>
+        
+
+      </div>
+      <div class="col-md-4 col-sm-12">
+        <h5>Contact Me</h5>
+        <ul>
+          
+          <li><span>Email: </span> <span>loeken@internetz.me</span></li>
+          
+        </ul>
+      </div>
+      
+    </div>
+  </div>
+  <hr />
+  <div class="container">
+    <div class="row text-left">
+      <div class="col-md-4">
+        <a id="theme" href="https://github.com/hossainemruz/toha" target="#">
+          <img src="/assets/images/inverted-logo.png">
+          Toha
+        </a>
+      </div>
+      <div class="col-md-4 text-center">© 2020 Copyright.</div>
+      <div class="col-md-4 text-right">
+        <a id="hugo" href="https://gohugo.io/">Powered by Hugo
+        <img
+          src="/assets/images/hugo-logo-wide.svg"
+          alt="Hugo Logo"
+          height="18"
+        />
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+    <script src="/assets/js/jquery-3.4.1.min.js"></script>
+<script src="/assets/js/bootstrap.min.js"></script>
+
+<script src="/assets/js/navbar.js"></script>
+<script src="/assets/js/main.js"></script>
+
+
+    
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js"></script>
+<script src="/assets/js/single.js"></script>
+<script>
+  hljs.initHighlightingOnLoad();
+</script>
+
+
+  </body>
+</html>

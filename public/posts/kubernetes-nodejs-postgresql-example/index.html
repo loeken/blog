@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Kubernetes Nodejs Postgresql Example</title>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+
+<link rel="stylesheet" href="/assets/css/bootstrap.min.css" />
+<link rel="stylesheet" href="/assets/css/main.css" />
+<link rel="stylesheet" href="/assets/css/style.css" />
+<link rel="stylesheet" href="/assets/css/navigators/navbar.css" />
+
+
+<link href="https://fonts.googleapis.com/css2?family=Muli:wght@300;400;500;600" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" />
+
+
+<link rel="icon" type="image/png" href="/assets/images/favicon.png" />
+
+
+<link rel="stylesheet" href="/assets/css/style.css" />
+
+    
+<meta name="description" content="Kubernetes Nodejs Postgresql Example" />
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/atom-one-dark.min.css"
+/>
+<link rel="stylesheet" href="/assets/css/single.css" />
+<link rel="stylesheet" href="/assets/css/navigators/sidebar.css">
+
+
+    
+    
+  </head>
+
+  <body data-spy="scroll" data-target="#TableOfContents" data-offset="80">
+    <div class="container-fluid bg-dimmed wrapper">
+      
+      
+    <nav class="navbar navbar-expand-xl top-navbar final-navbar shadow">
+  <div class="container">
+    
+    
+    
+      
+    
+    
+      
+    
+      <button class="navbar-toggler navbar-light" id="sidebar-toggler" type="button" onclick="toggleSidebar()">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" href="https://blog.internetz.me/">
+      <img src="/assets/images/main-logo.png">shit i like</a>
+    <button class="navbar-toggler navbar-light" id="toc-toggler" type="button" onclick="toggleTOC()">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="top-nav-items">
+      <ul class="navbar-nav ml-auto">
+      </ul>
+    </div>
+  </div>
+  
+  <img src="/assets/images/main-logo.png" class="d-none" id="main-logo">
+  <img src="/assets/images/inverted-logo.png" class="d-none" id="inverted-logo">
+</nav>
+
+
+
+      
+       
+
+      
+      
+<section class="content-section" id="content-section">
+  <div class="content">
+    <div class="container p-0 read-area">
+      
+      <div class="hero-area col-sm-12" id="hero-area" style='background-image: url(https://blog.internetz.me/assets/images/default-hero.jpg);'>
+      </div>
+
+      
+      <div class="page-content">
+        <div class="author-profile ml-auto align-self-lg-center">
+          <img class="rounded-circle" src='/images/avatar.png'/>
+          <h5 class="author-name">loeken</h5>
+          <p>June 9, 2020</p>
+        </div>
+
+        <div class="title">
+          <h1>Kubernetes Nodejs Postgresql Example</h1>
+        </div>
+
+        <div class="post-content" id="post-content">
+          <h2 id="deployment-example-with-nodejs--postgresql">Deployment example with nodejs / postgresql</h2>
+<p><img src="/media/img/kubernetes_deployment_nodejs_postgresql.png" alt="">
+<a href="/media/imgmarkup/kubernetes-deployment-nodejs-postgresql.py">Download Image Markup</a></p>
+<p>In this demo example we&rsquo;ll be deploying the app from  <a href="/posts/docker-nodejs-postgresql-example/">the previous docker example</a> which consists of one node and one postgresql container.
+In the docker example we used a hardcoded username/password combination - which is bad practise: this time we ll be working cleaner by moving the username/password for PG into environmental variables
+We are going to create a deployment that uses a Secret and a ConfigMap to define values for these 2 environmental variables.
+We ll create an external service for the nodejs instance and create an internal service for the postgresql server.
+So users coming from the &ldquo;Internet&rdquo; will only be able to access the External Service.</p>
+<h4 id="creating-a-configmap">Creating a configMap</h4>
+<h4 id="creating-a-secret">Creating a secret</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">echo -n <span style="color:#e6db74">&#34;postgresql&#34;</span> | base64                                                                                                                                         0.01   21:45  
+cG9zdGdyZXNxbA<span style="color:#f92672">==</span>
+
+echo -n <span style="color:#e6db74">&#34;topsecure&#34;</span> | base64                                                                                                                                          0.00   21:45  
+dG9wc2VjdXJl
+
+</code></pre></div><h4 id="postgres-secretyaml"><strong><code>postgres-secret.yaml</code></strong></h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: v1
+<span style="color:#66d9ef">kind</span>: Secret
+<span style="color:#66d9ef">metadata</span>:
+    <span style="color:#66d9ef">name</span>: postgres-secret
+<span style="color:#66d9ef">type</span>: Opaque
+<span style="color:#66d9ef">data</span>:
+    <span style="color:#66d9ef">postgres-user</span>: cG9zdGdyZXNxbA==
+    <span style="color:#66d9ef">postgres-password</span>: dG9wc2VjdXJl
+</code></pre></div><h4 id="postgres-configmapyaml"><strong><code>postgres-configmap.yaml</code></strong></h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: v1
+<span style="color:#66d9ef">kind</span>: ConfigMap
+<span style="color:#66d9ef">metadata</span>:
+    <span style="color:#66d9ef">name</span>: postgres-configmap
+<span style="color:#66d9ef">data</span>:
+    <span style="color:#66d9ef">postgres-host</span>: postgres-service:<span style="color:#ae81ff">5432</span>
+    <span style="color:#66d9ef">postgres-dbname</span>: api
+</code></pre></div><p>apply configuration</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl apply -f postgres-secret.yaml
+kubectl apply -f postgres-configmap.yaml
+
+kubectl get pods
+NAME                        READY   STATUS    RESTARTS   AGE
+postgres-784d9d978c-f67gs   1/1     Running   <span style="color:#ae81ff">0</span>          57s
+root@k3s-01:~/demo_nodejs_pg# kubectl get service
+NAME               TYPE        CLUSTER-IP      EXTERNAL-IP   PORT<span style="color:#f92672">(</span>S<span style="color:#f92672">)</span>    AGE
+kubernetes         ClusterIP   10.43.0.1       &lt;none&gt;        443/TCP    4d1h
+postgres-service   ClusterIP   10.43.122.189   &lt;none&gt;        5432/TCP   60s
+
+kubectl describe service postgres-service
+Name:              postgres-service
+Namespace:         default
+Labels:            &lt;none&gt;
+Annotations:       kubectl.kubernetes.io/last-applied-configuration:
+                     <span style="color:#f92672">{</span><span style="color:#e6db74">&#34;apiVersion&#34;</span>:<span style="color:#e6db74">&#34;v1&#34;</span>,<span style="color:#e6db74">&#34;kind&#34;</span>:<span style="color:#e6db74">&#34;Service&#34;</span>,<span style="color:#e6db74">&#34;metadata&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;annotations&#34;</span>:<span style="color:#f92672">{}</span>,<span style="color:#e6db74">&#34;name&#34;</span>:<span style="color:#e6db74">&#34;postgres-service&#34;</span>,<span style="color:#e6db74">&#34;namespace&#34;</span>:<span style="color:#e6db74">&#34;default&#34;</span><span style="color:#f92672">}</span>,<span style="color:#e6db74">&#34;spec&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;ports&#34;</span>:<span style="color:#f92672">[{</span><span style="color:#e6db74">&#34;port&#34;</span>...
+Selector:          app<span style="color:#f92672">=</span>postgres
+Type:              ClusterIP
+IP:                10.43.122.189
+Port:              &lt;unset&gt;  5432/TCP
+TargetPort:        5432/TCP
+Endpoints:         10.42.1.9:5432
+Session Affinity:  None
+Events:            &lt;none&gt;
+
+kubectl get pod -o wide
+NAME                        READY   STATUS    RESTARTS   AGE     IP          NODE     NOMINATED NODE   READINESS GATES
+postgres-784d9d978c-f67gs   1/1     Running   <span style="color:#ae81ff">0</span>          5m22s   10.42.1.9   k3s-02   &lt;none&gt;           &lt;none&gt;
+</code></pre></div><h2 id="postgres-deployment">postgres deployment</h2>
+<h4 id="postgres-deploymentyaml"><strong><code>postgres-deployment.yaml</code></strong></h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: apps/v1
+<span style="color:#66d9ef">kind</span>: Deployment
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: postgres
+  <span style="color:#66d9ef">labels</span>:
+    <span style="color:#66d9ef">app</span>: postgres
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">replicas</span>: <span style="color:#ae81ff">1</span>
+  <span style="color:#66d9ef">selector</span>:
+    <span style="color:#66d9ef">matchLabels</span>:
+      <span style="color:#66d9ef">app</span>: postgres
+  <span style="color:#66d9ef">template</span>:
+    <span style="color:#66d9ef">metadata</span>:
+      <span style="color:#66d9ef">labels</span>:
+        <span style="color:#66d9ef">app</span>: postgres
+    <span style="color:#66d9ef">spec</span>:
+      <span style="color:#66d9ef">containers</span>:
+      - <span style="color:#66d9ef">name</span>: postgres
+        <span style="color:#66d9ef">image</span>: postgres:latest
+        <span style="color:#66d9ef">ports</span>:
+        - <span style="color:#66d9ef">containerPort</span>: <span style="color:#ae81ff">80</span>
+        <span style="color:#66d9ef">env</span>:
+        - <span style="color:#66d9ef">name</span>: POSTGRES_USER
+          <span style="color:#66d9ef">valueFrom</span>:
+            <span style="color:#66d9ef">secretKeyRef</span>:
+              <span style="color:#66d9ef">name</span>: postgres-secret
+              <span style="color:#66d9ef">key</span>: postgres-user
+        - <span style="color:#66d9ef">name</span>: POSTGRES_PASSWORD
+          <span style="color:#66d9ef">valueFrom</span>:
+            <span style="color:#66d9ef">secretKeyRef</span>:
+              <span style="color:#66d9ef">name</span>: postgres-secret
+              <span style="color:#66d9ef">key</span>: postgres-password
+        - <span style="color:#66d9ef">name</span>: POSTGRES_HOST
+          <span style="color:#66d9ef">valueFrom</span>:
+            <span style="color:#66d9ef">configMapKeyRef</span>:
+              <span style="color:#66d9ef">name</span>: postgres-configmap
+              <span style="color:#66d9ef">key</span>: postgres-host
+        - <span style="color:#66d9ef">name</span>: POSTGRES_DBNAME
+          <span style="color:#66d9ef">valueFrom</span>:
+            <span style="color:#66d9ef">configMapKeyRef</span>:
+              <span style="color:#66d9ef">name</span>: postgres-configmap
+              <span style="color:#66d9ef">key</span>: postgres-dbname
+---
+<span style="color:#66d9ef">apiVersion</span>: v1
+<span style="color:#66d9ef">kind</span>: Service
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: postgres-service
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">selector</span>:
+    <span style="color:#66d9ef">app</span>: postgres
+  <span style="color:#66d9ef">type</span>: ClusterIP
+  <span style="color:#66d9ef">ports</span>:
+    - <span style="color:#66d9ef">protocol</span>: TCP
+      <span style="color:#66d9ef">port</span>: <span style="color:#ae81ff">5432</span>
+      <span style="color:#66d9ef">targetPort</span>: <span style="color:#ae81ff">5432</span>
+</code></pre></div><h2 id="node-deployment">node deployment</h2>
+<h4 id="node-deploymentyaml"><strong><code>node-deployment.yaml</code></strong></h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: apps/v1
+<span style="color:#66d9ef">kind</span>: Deployment
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: node
+  <span style="color:#66d9ef">labels</span>:
+    <span style="color:#66d9ef">app</span>: node
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">replicas</span>: <span style="color:#ae81ff">1</span>
+  <span style="color:#66d9ef">selector</span>:
+    <span style="color:#66d9ef">matchLabels</span>:
+      <span style="color:#66d9ef">app</span>: node
+  <span style="color:#66d9ef">template</span>:
+    <span style="color:#66d9ef">metadata</span>:
+      <span style="color:#66d9ef">labels</span>:
+        <span style="color:#66d9ef">app</span>: node
+    <span style="color:#66d9ef">spec</span>:
+      <span style="color:#66d9ef">containers</span>:
+      - <span style="color:#66d9ef">name</span>: node
+        <span style="color:#66d9ef">image</span>: demoregistry.azurecr.io/node:<span style="color:#ae81ff">1.0.0</span>
+        <span style="color:#66d9ef">imagePullPolicy</span>: Always
+        <span style="color:#66d9ef">ports</span>:
+        - <span style="color:#66d9ef">containerPort</span>: <span style="color:#ae81ff">1337</span>
+        <span style="color:#66d9ef">env</span>:
+        - <span style="color:#66d9ef">name</span>: POSTGRES_USER
+          <span style="color:#66d9ef">valueFrom</span>:
+            <span style="color:#66d9ef">secretKeyRef</span>:
+              <span style="color:#66d9ef">name</span>: postgres-secret
+              <span style="color:#66d9ef">key</span>: postgres-user
+        - <span style="color:#66d9ef">name</span>: POSTGRES_PASSWORD
+          <span style="color:#66d9ef">valueFrom</span>:
+            <span style="color:#66d9ef">secretKeyRef</span>:
+              <span style="color:#66d9ef">name</span>: postgres-secret
+              <span style="color:#66d9ef">key</span>: postgres-password
+        - <span style="color:#66d9ef">name</span>: POSTGRES_HOST
+          <span style="color:#66d9ef">valueFrom</span>:
+            <span style="color:#66d9ef">configMapKeyRef</span>:
+              <span style="color:#66d9ef">name</span>: postgres-configmap
+              <span style="color:#66d9ef">key</span>: postgres-host
+        - <span style="color:#66d9ef">name</span>: POSTGRES_DBNAME
+          <span style="color:#66d9ef">valueFrom</span>:
+            <span style="color:#66d9ef">configMapKeyRef</span>:
+              <span style="color:#66d9ef">name</span>: postgres-configmap
+              <span style="color:#66d9ef">key</span>: postgres-dbname
+      <span style="color:#66d9ef">imagePullSecrets</span>:
+        - <span style="color:#66d9ef">name</span>: regcred
+---
+<span style="color:#66d9ef">apiVersion</span>: v1
+<span style="color:#66d9ef">kind</span>: Service
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: node-service
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">selector</span>:
+    <span style="color:#66d9ef">app</span>: node
+  <span style="color:#66d9ef">type</span>: LoadBalancer
+  <span style="color:#66d9ef">ports</span>:
+    - <span style="color:#66d9ef">protocol</span>: TCP
+      <span style="color:#66d9ef">port</span>: <span style="color:#ae81ff">1337</span>
+      <span style="color:#66d9ef">targetPort</span>: <span style="color:#ae81ff">1337</span>
+      <span style="color:#66d9ef">nodePort</span>: <span style="color:#ae81ff">30000</span>
+</code></pre></div>
+        </div>
+
+        
+        
+          <div class="btn-improve-page">
+              <a href="https://github.com/hossainemruz/toha-example-site/edit/master/content/posts/kubernetes-nodejs-postgresql-example.md">
+                <i class="fas fa-code-branch"></i>
+                Improve This Page
+              </a>
+          </div>
+        
+
+        
+      <hr />
+        <div class="row next-prev-navigator">
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+      <div class="col-md-6 previous-article">
+        <a href="/posts/kubernetes-namespaces/" class="btn btn-outline-info">
+          <span><i class="fas fa-chevron-circle-left"></i> Prev</span>
+          <br />
+          <span>Kubernetes Namespaces</span>
+        </a>
+      </div>
+      
+    
+    
+      
+        
+        
+          
+              
+          
+        
+        <div class="col-md-6 next-article">
+          <a href="/posts/kubernetes-create-images-in-azure-container-registry/" class="btn btn-outline-info">
+            <span>Next <i class="fas fa-chevron-circle-right"></i></span>
+            <br />
+            <span>Kubernetes Create Images in Azure Container Registry</span>
+          </a>
+        </div>
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</div>
+
+      <hr />
+      
+      
+          <div id="disqus_thread"></div>
+<script type="text/javascript">
+  (function () {
+    
+    
+    if (window.location.hostname == "localhost") return;
+
+    var dsq = document.createElement("script");
+    dsq.type = "text/javascript";
+    dsq.async = true;
+    var disqus_shortname = "does-not-exist";
+    dsq.src = "//" + disqus_shortname + ".disqus.com/embed.js";
+    (
+      document.getElementsByTagName("head")[0] ||
+      document.getElementsByTagName("body")[0]
+    ).appendChild(dsq);
+  })();
+</script>
+<noscript
+  >Please enable JavaScript to view the
+  <a href="https://disqus.com/?ref_noscript"
+    >comments powered by Disqus.</a
+  ></noscript
+>
+<a href="https://disqus.com/" class="dsq-brlink"
+  >comments powered by <span class="logo-disqus">Disqus</span></a
+>
+
+      
+      </div>
+    </div>
+  </div>
+</section>
+
+
+      
+      
+  <section class="toc-section" id="toc-section">
+    
+    <div class="toc-holder">
+      <h5 class="text-center pl-3">Table of Contents</h5>
+      <hr>
+      <div class="toc">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#deployment-example-with-nodejs--postgresql">Deployment example with nodejs / postgresql</a>
+      <ul>
+        <li>
+          <ul>
+            <li><a href="#creating-a-configmap">Creating a configMap</a></li>
+            <li><a href="#creating-a-secret">Creating a secret</a></li>
+            <li><a href="#postgres-secretyaml"><strong><code>postgres-secret.yaml</code></strong></a></li>
+            <li><a href="#postgres-configmapyaml"><strong><code>postgres-configmap.yaml</code></strong></a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#postgres-deployment">postgres deployment</a>
+      <ul>
+        <li>
+          <ul>
+            <li><a href="#postgres-deploymentyaml"><strong><code>postgres-deployment.yaml</code></strong></a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#node-deployment">node deployment</a>
+      <ul>
+        <li>
+          <ul>
+            <li><a href="#node-deploymentyaml"><strong><code>node-deployment.yaml</code></strong></a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+      </div>
+    </div>
+    
+  </section>
+
+    </div>
+
+    <footer class="container-fluid text-center align-content-center footer pb-2">
+  <div class="container pt-5">
+    <div class="row text-left">
+      <div class="col-md-4 col-sm-12">
+        <h5>Navigation</h5>
+        
+        <ul>
+            
+            <li class="nav-item">
+              <a class="smooth-scroll" href="/#recent-posts">Recent Posts</a>
+            </li>
+            
+            
+            <li class="nav-item">
+              <a class="smooth-scroll" href="/#projects">Projects</a>
+            </li>
+            
+            
+            <li class="nav-item">
+              <a class="smooth-scroll" href="/#skills">Skills</a>
+            </li>
+            
+        </ul>
+        
+
+      </div>
+      <div class="col-md-4 col-sm-12">
+        <h5>Contact Me</h5>
+        <ul>
+          
+          <li><span>Email: </span> <span>loeken@internetz.me</span></li>
+          
+        </ul>
+      </div>
+      
+    </div>
+  </div>
+  <hr />
+  <div class="container">
+    <div class="row text-left">
+      <div class="col-md-4">
+        <a id="theme" href="https://github.com/hossainemruz/toha" target="#">
+          <img src="/assets/images/inverted-logo.png">
+          Toha
+        </a>
+      </div>
+      <div class="col-md-4 text-center">© 2020 Copyright.</div>
+      <div class="col-md-4 text-right">
+        <a id="hugo" href="https://gohugo.io/">Powered by Hugo
+        <img
+          src="/assets/images/hugo-logo-wide.svg"
+          alt="Hugo Logo"
+          height="18"
+        />
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+    <script src="/assets/js/jquery-3.4.1.min.js"></script>
+<script src="/assets/js/bootstrap.min.js"></script>
+
+<script src="/assets/js/navbar.js"></script>
+<script src="/assets/js/main.js"></script>
+
+
+    
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js"></script>
+<script src="/assets/js/single.js"></script>
+<script>
+  hljs.initHighlightingOnLoad();
+</script>
+
+
+  </body>
+</html>

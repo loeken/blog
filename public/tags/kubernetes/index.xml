@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>kubernetes on shit i like</title>
+    <link>https://blog.internetz.me/tags/kubernetes/</link>
+    <description>Recent content in kubernetes on shit i like</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 10 Jun 2020 11:54:27 +0200</lastBuildDate>
+    
+	<atom:link href="https://blog.internetz.me/tags/kubernetes/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Kubernetes Namespaces</title>
+      <link>https://blog.internetz.me/posts/kubernetes-namespaces/</link>
+      <pubDate>Wed, 10 Jun 2020 11:54:27 +0200</pubDate>
+      
+      <guid>https://blog.internetz.me/posts/kubernetes-namespaces/</guid>
+      <description>Kubernetes namespaces Imagine two teams build similar apps running in the same cluster. in order to avoid duplicated names etc and in order to group resources namespaces can be used to logically separate things. You could also use it to separate staging/production You could also use it if you want to run multiple different production environments. Notes:
+ ConfigMap and Secrets can only be used inside a namespace Namespaces can be used to limit access to namespaces Namespaces can be used to limit resources to namespaces ( cpu / mem / storage )  the default namespaces kubectl get namespaces NAME STATUS AGE default Active 5d14h kube-system Active 5d14h kube-public Active 5d14h kube-node-lease Active 5d14h kubernetes-dashboard Active 5d14h manage namespaces via command line kubectl create namespace mynamespace namespace/mynamespace created kubectl get namespaces NAME STATUS AGE default Active 5d14h kube-system Active 5d14h kube-public Active 5d14h kube-node-lease Active 5d14h kubernetes-dashboard Active 5d14h mynamespace Active 6s kubectl delete namespace mynamespace namespace &amp;#34;mynamespace&amp;#34; deleted to use namespaces in yaml markup simply add:</description>
+    </item>
+    
+    <item>
+      <title>Kubernetes Nodejs Postgresql Example</title>
+      <link>https://blog.internetz.me/posts/kubernetes-nodejs-postgresql-example/</link>
+      <pubDate>Tue, 09 Jun 2020 13:50:41 +0200</pubDate>
+      
+      <guid>https://blog.internetz.me/posts/kubernetes-nodejs-postgresql-example/</guid>
+      <description>Deployment example with nodejs / postgresql Download Image Markup
+In this demo example we&amp;rsquo;ll be deploying the app from the previous docker example which consists of one node and one postgresql container. In the docker example we used a hardcoded username/password combination - which is bad practise: this time we ll be working cleaner by moving the username/password for PG into environmental variables We are going to create a deployment that uses a Secret and a ConfigMap to define values for these 2 environmental variables.</description>
+    </item>
+    
+    <item>
+      <title>Kubernetes Create Images in Azure Container Registry</title>
+      <link>https://blog.internetz.me/posts/kubernetes-create-images-in-azure-container-registry/</link>
+      <pubDate>Tue, 09 Jun 2020 12:55:48 +0200</pubDate>
+      
+      <guid>https://blog.internetz.me/posts/kubernetes-create-images-in-azure-container-registry/</guid>
+      <description>Creating a Container registry @ azure For this we&amp;rsquo;ll be using the azure container registry, alternatively you can use docker.io or google/aws based services.
+I will name my registry demoregistry this guide will get you started
+dependencies for azure registry: now we login via the azure cli
+pacaur -S azure-cli az login az acr login --name demoregistry after the az login it will show
+now let&amp;rsquo;s package up the node app</description>
+    </item>
+    
+    <item>
+      <title>Kubernetes Getting Started</title>
+      <link>https://blog.internetz.me/posts/kubernetes-getting-started/</link>
+      <pubDate>Sun, 07 Jun 2020 18:19:55 +0200</pubDate>
+      
+      <guid>https://blog.internetz.me/posts/kubernetes-getting-started/</guid>
+      <description>Kubernetes Download Image Markup all following tutorials are done with k3s version: k3s version v1.17.2+k3s1 (cdab19b0)
+Node Worker Node A server - a physical or virtual machine. pods are running here. https://stackoverflow.com/questions/21889053/what-is-the-runtime-performance-cost-of-a-docker-container
+Master Node Manages Pods on all Worker and Master nodes
+Pod Abstraction ontop of a docker container. Creates running environment. Abstracting away the runtime/technology ( replace docker/containerd etc ) expect pods to be ephemeral.
+Service/Network each pod gets a virtual ip / internal ip.</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Jenkins installation in Docker</title>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+
+<link rel="stylesheet" href="/assets/css/bootstrap.min.css" />
+<link rel="stylesheet" href="/assets/css/main.css" />
+<link rel="stylesheet" href="/assets/css/style.css" />
+<link rel="stylesheet" href="/assets/css/navigators/navbar.css" />
+
+
+<link href="https://fonts.googleapis.com/css2?family=Muli:wght@300;400;500;600" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" />
+
+
+<link rel="icon" type="image/png" href="/assets/images/favicon.png" />
+
+
+<link rel="stylesheet" href="/assets/css/style.css" />
+
+    
+<meta name="description" content="Jenkins installation in Docker" />
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/atom-one-dark.min.css"
+/>
+<link rel="stylesheet" href="/assets/css/single.css" />
+<link rel="stylesheet" href="/assets/css/navigators/sidebar.css">
+
+
+    
+    
+  </head>
+
+  <body data-spy="scroll" data-target="#TableOfContents" data-offset="80">
+    <div class="container-fluid bg-dimmed wrapper">
+      
+      
+    <nav class="navbar navbar-expand-xl top-navbar final-navbar shadow">
+  <div class="container">
+    
+    
+    
+      
+    
+    
+      
+    
+      <button class="navbar-toggler navbar-light" id="sidebar-toggler" type="button" onclick="toggleSidebar()">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" href="https://blog.internetz.me/">
+      <img src="/assets/images/main-logo.png">shit i like</a>
+    <button class="navbar-toggler navbar-light" id="toc-toggler" type="button" onclick="toggleTOC()">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="top-nav-items">
+      <ul class="navbar-nav ml-auto">
+      </ul>
+    </div>
+  </div>
+  
+  <img src="/assets/images/main-logo.png" class="d-none" id="main-logo">
+  <img src="/assets/images/inverted-logo.png" class="d-none" id="inverted-logo">
+</nav>
+
+
+
+      
+       
+
+      
+      
+<section class="content-section" id="content-section">
+  <div class="content">
+    <div class="container p-0 read-area">
+      
+      <div class="hero-area col-sm-12" id="hero-area" style='background-image: url(https://blog.internetz.me/assets/images/default-hero.jpg);'>
+      </div>
+
+      
+      <div class="page-content">
+        <div class="author-profile ml-auto align-self-lg-center">
+          <img class="rounded-circle" src='/images/avatar.png'/>
+          <h5 class="author-name">loeken</h5>
+          <p>February 8, 2020</p>
+        </div>
+
+        <div class="title">
+          <h1>Jenkins installation in Docker</h1>
+        </div>
+
+        <div class="post-content" id="post-content">
+          <h1 id="jenkins-to-build-test-and-deploy-your-projects">jenkins to build, test and deploy your projects</h1>
+<h2 id="1-introduction">1. Introduction</h2>
+<p>Jenkins is a software written in java which allows you to setup a CI/CD pipeline. There are many ways to setup Jenkins depending on your environment. In this example I will try to set it up from the perspective of a single user, who wants a simple method to deploy/test their code easily. This approach does allow other users to submit code too.
+We are not going to use github enterprise but a normal free github account instead. We&rsquo;ll also setup the projects in a way that does NOT require the server to have a public ip ( you will not need to open ports for it or expose jenkins publicly ). We will also take a look at security and isolate each project ( with github repositories ) with their independent deploy keys, security by compartmentalization is one of the best approaches one can go for.
+Furthermore I&rsquo;ll be using the jenkins credential store and explain how we can use the jenkins credential store to save passwords/credentials and keep these outside the github repository. I will also explain how we can then run these projects locally for development. And last but not least I will also provide an example project in nodejs on github which can be used to follow this tutorial</p>
+<h4 id="continuous-integration">Continuous Integration</h4>
+<p>Continuous integration (CI) is the practice of automating the integration of code changes from multiple contributors into a single software project. The CI process is comprised of automatic tools that assert the new code&rsquo;s correctness before integration.</p>
+<h4 id="continuous-delivery">Continuous Delivery</h4>
+<p>Continuous delivery (CD or CDE) is a software engineering approach in which teams produce software in short cycles, ensuring that the software can be reliably released at any time and, when releasing the software, doing so manually.</p>
+<h4 id="pipeline">Pipeline</h4>
+<p>In computing, a pipeline, also known as a data pipeline, is a set of data processing elements connected in series, where the output of one element is the input of the next one. The elements of a pipeline are often executed in parallel or in time-sliced fashion.</p>
+<h2 id="2nodejs-example">2.nodejs example:</h2>
+<h3 id="21-installation-of-jenkins">2.1. Installation of Jenkins</h3>
+<style type="text/css">
+
+</style>
+<p align="center">
+  <iframe
+  width="560" 
+  height="315"
+  src="https://www.youtube.com/embed/HSUyxzsKZaY"
+  srcdoc="<style>*{padding:0;margin:0;overflow:hidden}html,body{height:100%}img,span{position:absolute;width:100%;top:0;bottom:0;margin:auto}span{height:1.5em;text-align:center;font:48px/1.5 sans-serif;color:white;text-shadow:0 0 0.5em black}</style><a href=https://www.youtube.com/embed/HSUyxzsKZaY?autoplay=1><img src=https://img.youtube.com/vi/HSUyxzsKZaY/hqdefault.jpg alt='Install Jenkins'><span>▶</span></a>"
+  frameborder="0"
+  allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+  allowfullscreen
+  title="Install Jenkins"
+></iframe>
+</p>
+<p>Because jenkins is written in java it can be run on almost any operating system ( the can run java applications ). So depending on your use case pick the appropriate jenkins image ( i recommend the Long Term Support version ( LTS ))</p>
+<p><a href="https://jenkins.io/download/">You can download Jenkins here</a></p>
+<p><a href="https://jenkins.io/doc/book/installing/">You can follow this guide to learn how to install Jenkins natively on your operating system</a>
+In the following example I&rsquo;ll be using docker in the following version:</p>
+<p>If you do not have docker installed yet run a</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sudo apt update <span style="color:#f92672">&amp;&amp;</span> sudo apt install docker-ce -y
+</code></pre></div><p>this will install the last docker community edition</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ docker --version
+Docker version 19.03.5, build 633a0ea838
+</code></pre></div><p>make sure to change the user to whatever your current user is ( whoami )</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">user@docker:~$ cat docker_jenkins.sh 
+<span style="color:#75715e">#!/bin/bash</span>
+mkdir /home/user/jenkins_home
+docker run --name jenkins -p 8080:8080 -p 12345:12345 -v /home/user/jenkins_home:/var/jenkins_home jenkins/jenkins:lts
+
+user@docker:~$ ./docker_jenkins.sh 
+Unable to find image <span style="color:#e6db74">&#39;jenkins/jenkins:lts&#39;</span> locally
+lts: Pulling from jenkins/jenkins
+146bd6a88618: Pull complete 
+9935d0c62ace: Pull complete 
+db0efb86e806: Pull complete 
+e705a4c4fd31: Pull complete 
+3d3bf7f7e874: Pull complete 
+49371c5b9ff6: Pull complete 
+3f7eaaf7ad75: Pull complete 
+c174316783db: Pull complete 
+024826a29afe: Pull complete 
+51f2bbab8803: Pull complete 
+6ce657881f7a: Pull complete 
+a5270cffee3a: Pull complete 
+083f0f43b51d: Pull complete 
+215073008675: Pull complete 
+ffda073f8127: Pull complete 
+3672d2dcba21: Pull complete 
+906db372d194: Pull complete 
+66fb46692c0e: Pull complete 
+3a9a81b17595: Pull complete 
+Digest: sha256:54486ebab0d42582a84fc35b184c4f5cf9998d139bbec552bc6ec8c617c4a055
+Status: Downloaded newer image <span style="color:#66d9ef">for</span> jenkins/jenkins:lts
+Running from: /usr/share/jenkins/jenkins.war
+webroot: EnvVars.masterEnvVars.get<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;JENKINS_HOME&#34;</span><span style="color:#f92672">)</span>
+2020-02-08 15:34:24.694+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>1<span style="color:#f92672">]</span>	INFO	org.eclipse.jetty.util.log.Log#initialized: Logging initialized @503ms to org.eclipse.jetty.util.log.JavaUtilLog
+2020-02-08 15:34:24.836+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>1<span style="color:#f92672">]</span>	INFO	winstone.Logger#logInternal: Beginning extraction from war file
+2020-02-08 15:34:26.716+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>1<span style="color:#f92672">]</span>	WARNING	o.e.j.s.handler.ContextHandler#setContextPath: Empty contextPath
+2020-02-08 15:34:26.786+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>1<span style="color:#f92672">]</span>	INFO	org.eclipse.jetty.server.Server#doStart: jetty-9.4.z-SNAPSHOT; built: 2019-05-02T00:04:53.875Z; git: e1bc35120a6617ee3df052294e433f3a25ce7097; jvm 1.8.0_242-b08
+2020-02-08 15:34:27.072+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>1<span style="color:#f92672">]</span>	INFO	o.e.j.w.StandardDescriptorProcessor#visitServlet: NO JSP Support <span style="color:#66d9ef">for</span> /, did not find org.eclipse.jetty.jsp.JettyJspServlet
+2020-02-08 15:34:27.122+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>1<span style="color:#f92672">]</span>	INFO	o.e.j.s.s.DefaultSessionIdManager#doStart: DefaultSessionIdManager workerName<span style="color:#f92672">=</span>node0
+2020-02-08 15:34:27.123+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>1<span style="color:#f92672">]</span>	INFO	o.e.j.s.s.DefaultSessionIdManager#doStart: No SessionScavenger set, using defaults
+2020-02-08 15:34:27.126+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>1<span style="color:#f92672">]</span>	INFO	o.e.j.server.session.HouseKeeper#startScavenging: node0 Scavenging every 660000ms
+2020-02-08 15:34:27.579+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>1<span style="color:#f92672">]</span>	INFO	hudson.WebAppMain#contextInitialized: Jenkins home directory: /var/jenkins_home found at: EnvVars.masterEnvVars.get<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;JENKINS_HOME&#34;</span><span style="color:#f92672">)</span>
+2020-02-08 15:34:27.708+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>1<span style="color:#f92672">]</span>	INFO	o.e.j.s.handler.ContextHandler#doStart: Started w.@26be6ca7<span style="color:#f92672">{</span>Jenkins v2.204.2,/,file:///var/jenkins_home/war/,AVAILABLE<span style="color:#f92672">}{</span>/var/jenkins_home/war<span style="color:#f92672">}</span>
+2020-02-08 15:34:27.725+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>1<span style="color:#f92672">]</span>	INFO	o.e.j.server.AbstractConnector#doStart: Started ServerConnector@19932c16<span style="color:#f92672">{</span>HTTP/1.1,<span style="color:#f92672">[</span>http/1.1<span style="color:#f92672">]}{</span>0.0.0.0:8080<span style="color:#f92672">}</span>
+2020-02-08 15:34:27.726+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>1<span style="color:#f92672">]</span>	INFO	org.eclipse.jetty.server.Server#doStart: Started @3536ms
+2020-02-08 15:34:27.727+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>22<span style="color:#f92672">]</span>	INFO	winstone.Logger#logInternal: Winstone Servlet Engine v4.0 running: controlPort<span style="color:#f92672">=</span>disabled
+2020-02-08 15:34:29.338+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>29<span style="color:#f92672">]</span>	INFO	jenkins.InitReactorRunner$1<span style="color:#75715e">#onAttained: Started initialization</span>
+2020-02-08 15:34:29.383+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>27<span style="color:#f92672">]</span>	INFO	jenkins.InitReactorRunner$1<span style="color:#75715e">#onAttained: Listed all plugins</span>
+2020-02-08 15:34:30.898+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>31<span style="color:#f92672">]</span>	INFO	jenkins.InitReactorRunner$1<span style="color:#75715e">#onAttained: Prepared all plugins</span>
+2020-02-08 15:34:30.904+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>31<span style="color:#f92672">]</span>	INFO	jenkins.InitReactorRunner$1<span style="color:#75715e">#onAttained: Started all plugins</span>
+2020-02-08 15:34:30.915+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>37<span style="color:#f92672">]</span>	INFO	jenkins.InitReactorRunner$1<span style="color:#75715e">#onAttained: Augmented all extensions</span>
+2020-02-08 15:34:31.588+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>40<span style="color:#f92672">]</span>	INFO	jenkins.InitReactorRunner$1<span style="color:#75715e">#onAttained: Loaded all jobs</span>
+2020-02-08 15:34:31.603+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>55<span style="color:#f92672">]</span>	INFO	hudson.model.AsyncPeriodicWork#lambda$doRun$0: Started Download metadata
+2020-02-08 15:34:31.614+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>55<span style="color:#f92672">]</span>	INFO	hudson.util.Retrier#start: Attempt <span style="color:#75715e">#1 to do the action check updates server</span>
+2020-02-08 15:34:32.605+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>29<span style="color:#f92672">]</span>	INFO	o.s.c.s.AbstractApplicationContext#prepareRefresh: Refreshing org.springframework.web.context.support.StaticWebApplicationContext@27206905: display name <span style="color:#f92672">[</span>Root WebApplicationContext<span style="color:#f92672">]</span>; startup date <span style="color:#f92672">[</span>Sat Feb <span style="color:#ae81ff">08</span> 15:34:32 UTC 2020<span style="color:#f92672">]</span>; root of context hierarchy
+2020-02-08 15:34:32.605+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>29<span style="color:#f92672">]</span>	INFO	o.s.c.s.AbstractApplicationContext#obtainFreshBeanFactory: Bean factory <span style="color:#66d9ef">for</span> application context <span style="color:#f92672">[</span>org.springframework.web.context.support.StaticWebApplicationContext@27206905<span style="color:#f92672">]</span>: org.springframework.beans.factory.support.DefaultListableBeanFactory@23f9ae9b
+2020-02-08 15:34:32.619+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>29<span style="color:#f92672">]</span>	INFO	o.s.b.f.s.DefaultListableBeanFactory#preInstantiateSingletons: Pre-instantiating singletons in org.springframework.beans.factory.support.DefaultListableBeanFactory@23f9ae9b: defining beans <span style="color:#f92672">[</span>authenticationManager<span style="color:#f92672">]</span>; root of factory hierarchy
+2020-02-08 15:34:32.841+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>29<span style="color:#f92672">]</span>	INFO	o.s.c.s.AbstractApplicationContext#prepareRefresh: Refreshing org.springframework.web.context.support.StaticWebApplicationContext@5427a84: display name <span style="color:#f92672">[</span>Root WebApplicationContext<span style="color:#f92672">]</span>; startup date <span style="color:#f92672">[</span>Sat Feb <span style="color:#ae81ff">08</span> 15:34:32 UTC 2020<span style="color:#f92672">]</span>; root of context hierarchy
+2020-02-08 15:34:32.841+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>29<span style="color:#f92672">]</span>	INFO	o.s.c.s.AbstractApplicationContext#obtainFreshBeanFactory: Bean factory <span style="color:#66d9ef">for</span> application context <span style="color:#f92672">[</span>org.springframework.web.context.support.StaticWebApplicationContext@5427a84<span style="color:#f92672">]</span>: org.springframework.beans.factory.support.DefaultListableBeanFactory@7fa32661
+2020-02-08 15:34:32.843+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>29<span style="color:#f92672">]</span>	INFO	o.s.b.f.s.DefaultListableBeanFactory#preInstantiateSingletons: Pre-instantiating singletons in org.springframework.beans.factory.support.DefaultListableBeanFactory@7fa32661: defining beans <span style="color:#f92672">[</span>filter,legacy<span style="color:#f92672">]</span>; root of factory hierarchy
+2020-02-08 15:34:33.235+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>29<span style="color:#f92672">]</span>	INFO	jenkins.install.SetupWizard#init: 
+
+*************************************************************
+*************************************************************
+*************************************************************
+
+Jenkins initial setup is required. An admin user has been created and a password generated.
+Please use the following password to proceed to installation:
+
+ff31c02226674d3085fd33aa4c75a9ac
+
+This may also be found at: /var/jenkins_home/secrets/initialAdminPassword
+
+*************************************************************
+*************************************************************
+*************************************************************
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">user@docker:~$ ip a show docker0
+3: docker0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu <span style="color:#ae81ff">1500</span> qdisc noqueue state UP group default 
+    link/ether 02:42:29:6e:e0:90 brd ff:ff:ff:ff:ff:ff
+    inet 172.17.0.1/16 brd 172.17.255.255 scope global docker0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::42:29ff:fe6e:e090/64 scope link 
+       valid_lft forever preferred_lft forever
+</code></pre></div><p>we can now access jenkins in the browser via http://172.17.0.1:8080
+a second port which we can use to talk to our node app is port 12345</p>
+<h5 id="installing-node-inside-the-container">installing node inside the container</h5>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">docker exec -it --user root jenkins /bin/bash
+</code></pre></div><p>now that we are inside the docker container we can install nodejs version 12 with the following commands:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">curl -sL https://deb.nodesource.com/setup_12.x | bash -
+apt install -y nodejs
+</code></pre></div><h3 id="22-example-project">2.2. example project</h3>
+<style type="text/css">
+
+</style>
+<p align="center">
+  <iframe
+  width="560" 
+  height="315"
+  src="https://www.youtube.com/embed/yeF7x6kPCWs"
+  srcdoc="<style>*{padding:0;margin:0;overflow:hidden}html,body{height:100%}img,span{position:absolute;width:100%;top:0;bottom:0;margin:auto}span{height:1.5em;text-align:center;font:48px/1.5 sans-serif;color:white;text-shadow:0 0 0.5em black}</style><a href=https://www.youtube.com/embed/yeF7x6kPCWs?autoplay=1><img src=https://img.youtube.com/vi/yeF7x6kPCWs/hqdefault.jpg alt='example project in nodejs'><span>▶</span></a>"
+  frameborder="0"
+  allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+  allowfullscreen
+  title="example project in nodejs"
+></iframe>
+</p>
+<p>you can find an example node js project on <a href="https://github.com/loeken/node_example">https://github.com/loeken/node_example</a></p>
+<h3 id="23-creating-our-first-job-in-jenkins">2.3. creating our first job in jenkins</h3>
+<style type="text/css">
+
+</style>
+<p align="center">
+  <iframe
+  width="560" 
+  height="315"
+  src="https://www.youtube.com/embed/nMBqIn3Wx4o"
+  srcdoc="<style>*{padding:0;margin:0;overflow:hidden}html,body{height:100%}img,span{position:absolute;width:100%;top:0;bottom:0;margin:auto}span{height:1.5em;text-align:center;font:48px/1.5 sans-serif;color:white;text-shadow:0 0 0.5em black}</style><a href=https://www.youtube.com/embed/nMBqIn3Wx4o?autoplay=1><img src=https://img.youtube.com/vi/nMBqIn3Wx4o/hqdefault.jpg alt='example project in nodejs'><span>▶</span></a>"
+  frameborder="0"
+  allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+  allowfullscreen
+  title="example project in nodejs"
+></iframe>
+</p>
+<h3 id="24-private-repositories">2.4. private repositories</h3>
+<style type="text/css">
+
+</style>
+<p align="center">
+  <iframe
+  width="560" 
+  height="315"
+  src="https://www.youtube.com/embed/SXzgJf8fjYE"
+  srcdoc="<style>*{padding:0;margin:0;overflow:hidden}html,body{height:100%}img,span{position:absolute;width:100%;top:0;bottom:0;margin:auto}span{height:1.5em;text-align:center;font:48px/1.5 sans-serif;color:white;text-shadow:0 0 0.5em black}</style><a href=https://www.youtube.com/embed/SXzgJf8fjYE?autoplay=1><img src=https://img.youtube.com/vi/SXzgJf8fjYE/hqdefault.jpg alt='create private repository'><span>▶</span></a>"
+  frameborder="0"
+  allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+  allowfullscreen
+  title="create private repository"
+></iframe>
+</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">ssh-keygen -t rsa -f id_rsa -C <span style="color:#e6db74">&#34;node_example&#34;</span>
+</code></pre></div><h3 id="25-add-agent-node-in-jenkins">2.5. add agent node in jenkins</h3>
+<style type="text/css">
+
+</style>
+<p align="center">
+  <iframe
+  width="560" 
+  height="315"
+  src="https://www.youtube.com/embed/iC6tjCVuNq8"
+  srcdoc="<style>*{padding:0;margin:0;overflow:hidden}html,body{height:100%}img,span{position:absolute;width:100%;top:0;bottom:0;margin:auto}span{height:1.5em;text-align:center;font:48px/1.5 sans-serif;color:white;text-shadow:0 0 0.5em black}</style><a href=https://www.youtube.com/embed/iC6tjCVuNq8?autoplay=1><img src=https://img.youtube.com/vi/iC6tjCVuNq8/hqdefault.jpg alt='add agent node in jenkins'><span>▶</span></a>"
+  frameborder="0"
+  allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+  allowfullscreen
+  title="add agent node in jenkins"
+></iframe>
+</p>
+<p>we now switch to <a href="https://github.com/loeken/node_example2">https://github.com/loeken/node_example2</a></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">user@docker:~$ cat docker_agent.sh
+<span style="color:#75715e">#!/bin/bash</span>
+docker run -it --user root --rm --name agent -p 3001:3001 -p 3002:3002 debian
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">apt update
+apt install nano openjdk-11-jre openssh-server git curl -y
+curl -sL https://deb.nodesource.com/setup_12.x | bash -
+apt install -y nodejs
+service ssh start
+
+adduser jenkins
+usermod -p <span style="color:#e6db74">&#39;*&#39;</span> jenkins
+su jenkins
+ssh-keygen -t rsa
+nano ~/.ssh/authorized_keys
+
+</code></pre></div><h3 id="26-deploy-node-project-to-jenkins-agent-over-ssh">2.6. deploy node project to jenkins agent over ssh</h3>
+<style type="text/css">
+
+</style>
+<p align="center">
+  <iframe
+  width="560" 
+  height="315"
+  src="https://www.youtube.com/embed/Z2AnXbxVzfc"
+  srcdoc="<style>*{padding:0;margin:0;overflow:hidden}html,body{height:100%}img,span{position:absolute;width:100%;top:0;bottom:0;margin:auto}span{height:1.5em;text-align:center;font:48px/1.5 sans-serif;color:white;text-shadow:0 0 0.5em black}</style><a href=https://www.youtube.com/embed/Z2AnXbxVzfc?autoplay=1><img src=https://img.youtube.com/vi/Z2AnXbxVzfc/hqdefault.jpg alt='deploy node project to a jenkins agent over ssh'><span>▶</span></a>"
+  frameborder="0"
+  allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+  allowfullscreen
+  title="deploy node project to a jenkins agent over ssh"
+></iframe>
+</p>
+
+        </div>
+
+        
+        
+          <div class="btn-improve-page">
+              <a href="https://github.com/hossainemruz/toha-example-site/edit/master/content/posts/jenkins_installation_setup_multibranch_pipelines_in_docker.md">
+                <i class="fas fa-code-branch"></i>
+                Improve This Page
+              </a>
+          </div>
+        
+
+        
+      <hr />
+        <div class="row next-prev-navigator">
+
+
+  
+
+  
+    
+      
+      <div class="col-md-6 previous-article">
+        <a href="/posts/arch-linux-2020-luks-cryptsetup-systemd-boot_base-system-installation/" class="btn btn-outline-info">
+          <span><i class="fas fa-chevron-circle-left"></i> Prev</span>
+          <br />
+          <span>Arch Linux 2020 luks cryptsetup systemd-boot installation</span>
+        </a>
+      </div>
+      
+    
+    
+      
+        
+        
+          
+              
+          
+        
+        <div class="col-md-6 next-article">
+          <a href="/posts/new-blog/" class="btn btn-outline-info">
+            <span>Next <i class="fas fa-chevron-circle-right"></i></span>
+            <br />
+            <span>New Blog</span>
+          </a>
+        </div>
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</div>
+
+      <hr />
+      
+      
+          <div id="disqus_thread"></div>
+<script type="text/javascript">
+  (function () {
+    
+    
+    if (window.location.hostname == "localhost") return;
+
+    var dsq = document.createElement("script");
+    dsq.type = "text/javascript";
+    dsq.async = true;
+    var disqus_shortname = "does-not-exist";
+    dsq.src = "//" + disqus_shortname + ".disqus.com/embed.js";
+    (
+      document.getElementsByTagName("head")[0] ||
+      document.getElementsByTagName("body")[0]
+    ).appendChild(dsq);
+  })();
+</script>
+<noscript
+  >Please enable JavaScript to view the
+  <a href="https://disqus.com/?ref_noscript"
+    >comments powered by Disqus.</a
+  ></noscript
+>
+<a href="https://disqus.com/" class="dsq-brlink"
+  >comments powered by <span class="logo-disqus">Disqus</span></a
+>
+
+      
+      </div>
+    </div>
+  </div>
+</section>
+
+
+      
+      
+  <section class="toc-section" id="toc-section">
+    
+    <div class="toc-holder">
+      <h5 class="text-center pl-3">Table of Contents</h5>
+      <hr>
+      <div class="toc">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-introduction">1. Introduction</a>
+      <ul>
+        <li>
+          <ul>
+            <li><a href="#continuous-integration">Continuous Integration</a></li>
+            <li><a href="#continuous-delivery">Continuous Delivery</a></li>
+            <li><a href="#pipeline">Pipeline</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#2nodejs-example">2.nodejs example:</a>
+      <ul>
+        <li><a href="#21-installation-of-jenkins">2.1. Installation of Jenkins</a>
+          <ul>
+            <li>
+              <ul>
+                <li><a href="#installing-node-inside-the-container">installing node inside the container</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="#22-example-project">2.2. example project</a></li>
+        <li><a href="#23-creating-our-first-job-in-jenkins">2.3. creating our first job in jenkins</a></li>
+        <li><a href="#24-private-repositories">2.4. private repositories</a></li>
+        <li><a href="#25-add-agent-node-in-jenkins">2.5. add agent node in jenkins</a></li>
+        <li><a href="#26-deploy-node-project-to-jenkins-agent-over-ssh">2.6. deploy node project to jenkins agent over ssh</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+      </div>
+    </div>
+    
+  </section>
+
+    </div>
+
+    <footer class="container-fluid text-center align-content-center footer pb-2">
+  <div class="container pt-5">
+    <div class="row text-left">
+      <div class="col-md-4 col-sm-12">
+        <h5>Navigation</h5>
+        
+        <ul>
+            
+            <li class="nav-item">
+              <a class="smooth-scroll" href="/#recent-posts">Recent Posts</a>
+            </li>
+            
+            
+            <li class="nav-item">
+              <a class="smooth-scroll" href="/#projects">Projects</a>
+            </li>
+            
+            
+            <li class="nav-item">
+              <a class="smooth-scroll" href="/#skills">Skills</a>
+            </li>
+            
+        </ul>
+        
+
+      </div>
+      <div class="col-md-4 col-sm-12">
+        <h5>Contact Me</h5>
+        <ul>
+          
+          <li><span>Email: </span> <span>loeken@internetz.me</span></li>
+          
+        </ul>
+      </div>
+      
+    </div>
+  </div>
+  <hr />
+  <div class="container">
+    <div class="row text-left">
+      <div class="col-md-4">
+        <a id="theme" href="https://github.com/hossainemruz/toha" target="#">
+          <img src="/assets/images/inverted-logo.png">
+          Toha
+        </a>
+      </div>
+      <div class="col-md-4 text-center">© 2020 Copyright.</div>
+      <div class="col-md-4 text-right">
+        <a id="hugo" href="https://gohugo.io/">Powered by Hugo
+        <img
+          src="/assets/images/hugo-logo-wide.svg"
+          alt="Hugo Logo"
+          height="18"
+        />
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+    <script src="/assets/js/jquery-3.4.1.min.js"></script>
+<script src="/assets/js/bootstrap.min.js"></script>
+
+<script src="/assets/js/navbar.js"></script>
+<script src="/assets/js/main.js"></script>
+
+
+    
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js"></script>
+<script src="/assets/js/single.js"></script>
+<script>
+  hljs.initHighlightingOnLoad();
+</script>
+
+
+  </body>
+</html>
