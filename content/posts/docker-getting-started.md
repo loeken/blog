@@ -5,6 +5,7 @@ draft: true
 toc: false
 description: summary of blogpost
 author: loeken
+Summary: An introduction into docker 
 images:
 tags:
   - docker
@@ -163,22 +164,22 @@ docker ps                                                                       
 CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS               NAMES
 770cc49014c4        redis               "docker-entrypoint.s…"   2 seconds ago       Up 1 second         6379/tcp            redistest
 
-docker stop 770cc49014c4                                                                                                                                               0.06   14:25  
+docker stop 770cc49014c4                                                                                                                                          
 do770cc49014c4
 
-docker ps                                                                                                                                                              0.61   14:26  
+docker ps                                                                                                                                                    
 CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
 
-docker start 770cc49014c4                                                                                                                                              0.06   14:26  
+docker start 770cc49014c4                                                                                                                                          
 docker 770cc49014c4
 
-docker stop redistest                                                                                                                                                  0.77   14:26  
+docker stop redistest                                                                                                                                             
 redistest
 
-docker start redistest                                                                                                                                                 0.49   14:26  
+docker start redistest                                                                                                                                             
 redistest
 
-docker stop 770cc49014c4                                                                                                                                               0.73   14:26  
+docker stop 770cc49014c4                                                                                                                                          
 770cc49014c4
 
 ```

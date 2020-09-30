@@ -38,7 +38,7 @@ params:
     inverted: /assets/images/inverted-logo.png
 
   # GitHub repo URL of your site
-  gitRepo: https://github.com/loeken/blog-v2
+  gitRepo: https://github.com/loeken/blog
 
   # specify whether you want to write blog post or not
   enableBlogPost: true

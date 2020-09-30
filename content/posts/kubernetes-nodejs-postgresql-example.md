@@ -11,8 +11,19 @@ tags:
 ---
 
 ## Deployment example with nodejs / postgresql
+<style type="text/css">
+.flex { 
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+}
+</style>
+<div class="flex">
 
 ![](/media/img/kubernetes_deployment_nodejs_postgresql.png)
+
+</div>
+
 [Download Image Markup](/media/imgmarkup/kubernetes-deployment-nodejs-postgresql.py)
 
 In this demo example we'll be deploying the app from  [the previous docker example](/posts/docker-nodejs-postgresql-example/) which consists of one node and one postgresql container.

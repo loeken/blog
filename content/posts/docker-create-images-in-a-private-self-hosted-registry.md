@@ -5,13 +5,18 @@ draft: true
 toc: false
 description: 
 author: loeken
+summary: how to use registry:2 to run a docker container registry locally inside a docker container
 images:
 tags:
   - untagged
 ---
 
-first we need a docker registry where we can  push our own application to in this demo we ll be using a self hosted ( unsecured ) docker registry running inside docker:
-```bash
+
+## running registry2 locally
+first we need a docker registry where we can  push our own application to in this demo we ll be using a self hosted ( unsecured ) docker registry running inside docker.
+
+### start registry container
+```
 docker run -d -p 5000:5000 --restart=always --name registry registry:2
 Unable to find image 'registry:2' locally
 2: Pulling from library/registry
@@ -26,7 +31,9 @@ Status: Downloaded newer image for registry:2
 ``` 
 
 then we tell docker to login: just type any username you want and an emtpy password.
-```bash
+
+### login to registry container
+```
 docker login localhost:5000
 Username: loeken
 Password: 
@@ -39,7 +46,8 @@ Login Succeeded
 
 Let's package the app that we build in the previous blogpost. this process uses the Dockerfile that ships with the github example repo.
 
-```bash
+### create an example docker image
+```
 mkdir -p ~/Projects
 cd ~/Projects
 git clone https://github.com/loeken/docker_nodejs_postgresql_demo
@@ -63,13 +71,13 @@ Successfully built b77da0a970cc
 Successfully tagged docker_nodejs_postgresql_demo:1.0.0
 ```
 
-```bash
+```
 docker images|grep demo 
 docker_nodejs_postgresql_demo   1.0.0               b77da0a970cc        2 minutes ago       941MB
 ```
 
-let's push the image
-```bash
+### push image to container registry
+```
 docker tag docker_nodejs_postgresql_demo:1.0.0 localhost:5000/docker_nodejs_postgresql_demo
 
 docker push localhost:5000/docker_nodejs_postgresql_demo 

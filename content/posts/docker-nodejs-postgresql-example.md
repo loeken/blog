@@ -5,6 +5,7 @@ draft: true
 toc: false
 description: summary of blogpost
 author: loeken
+summary: a demo of how to run 2 containers in the same virtual network using docker and docker-compose with a nodejs/postgresql application - code provided on github repository
 images:
 tags:
   - untagged
@@ -12,17 +13,21 @@ tags:
 
 ### example postgresql/nodejs in two containers
 
+<div class="flex">
+
 ![](/media/img/docker_postgresql_nodejs.png)
+
+</div>
 
 [Download Image Markup](/media/imgmarkup/docker_example_nodejs_postgresql.py)
 
 first we need to grab the postgresql image
 
-```bash
-docker pull postgres
+```
+docker pull postgres:12
 ```
 
-```bash
+```
 docker network ls
 NETWORK ID          NAME                DRIVER              SCOPE
 62e4019570d2        bridge              bridge              local
@@ -30,7 +35,7 @@ c1aeefb374e7        host                host                local
 608568a867c3        none                null                local
 ```
 
-```bash
+```
 docker network create testnetwork1 
 577e8e0c44c4ca0c0b1d855a70536e875bf77ec0010fdbfaf5db1d131ddabd69
 
@@ -46,7 +51,7 @@ docker containers dont have persistent storage out of the box. you can easily ma
 so far i've come across 3 ways of how one can specify volumes:
 1.) anonymous volumes
 example:
-```bash
+```
 -v /var/lib/postgresql 
 ```
 this is the easiest syntax, you simply specify the path inside the container and docker will create a volume in /var/lib/docker/volumes ( named via hash )
@@ -54,7 +59,7 @@ this is the easiest syntax, you simply specify the path inside the container and
 2.) named volumes
 imo the cleanest way: you specify the path within the container and add a name
 example:
-```bash
+```
 -v postgresql:/var/lib/postgresql
 ```
 this will create a folder inside /var/lib/docker/volumes on the host and name it postgresql
@@ -62,20 +67,21 @@ this will create a folder inside /var/lib/docker/volumes on the host and name it
 3.) mapped paths
 good for quick n easy tests or when you want to specify a specific location on the host to store the data on.
 example:
-```bash
--v /home/loeken/Projects/storehere:/var/lib/postgresql
+```
+-v $PWD/postgresql_data:/var/lib/postgresql
 ```
 
 ##### fire up postgresql
 create the container based on the image and forward the postgresql port 
-```bash
-docker run -d \
-           -p 5432:5432 \
-           -e POSTGRES_PASSWORD="topsecure" \
-           --net=testnetwork1 \
-           --name=postgresql \
-           -v /home/loeken/Projects/docker_postgresql_nodejs:/var/lib/postgresql/data \
-           postgres
+```
+docker run -it \
+          -p 5432:5432 \
+          -e POSTGRES_PASSWORD="topsecure" \
+          -e PGDATA=/var/lib/postgresql/data/pgdata \
+          --net=testnetwork1 \
+          --name=postgresql \
+          -v $PWD/docker_nodejs_postgresql_demo/postgresql_data:/var/lib/postgresql/data \
+          postgres:12
 5bc0816ecac54fef7e334ebd243a5a62c5859c8eeb639cea85414165bb9c7506
 ```
 
@@ -138,7 +144,7 @@ PostgreSQL init process complete; ready for start up.
 ```
 
 lets now create a database connect to it and insert sample data 
-```postgresql
+```
 psql -h localhost -U postgres -W
 Passwort: 
 psql (12.3)
@@ -164,13 +170,13 @@ INSERT 0 1
 ```
 
 now we can fire up a docker container with example code
-```bash
+```
 cd Projects
 git clone https://github.com/loeken/docker_nodejs_postgresql_demo
 cd docker_nodejs_postgresql_demo
 ```
 we download the example project which is a very basic app that connects to postgresql, reads and prints records.
-```js
+```
 const pg = require('pg');
 
 const cs = 'postgres://postgres:topsecure@postgresql:5432/api';
@@ -191,12 +197,13 @@ client.query('SELECT * FROM users').then(res => {
 });
 ```
 and now let's start up  our application:
-```bash
+```
 docker run -it \
            --rm \
            --name docker_nodejs_postgresql_demo \
            --net=testnetwork1 \
-           -v "$PWD":/usr/src/app -w /usr/src/app node:latest node index.js
+           -v "$PWD/index.js":/usr/src/app/index.js \
+           localhost:5000/docker_nodejs_postgresql_demo
 all data
 Id: 1 Name: Foo Email: foo@bar.com
 ```
@@ -204,51 +211,33 @@ Id: 1 Name: Foo Email: foo@bar.com
 #### docker compose
 a unified way to combine the run commands for various containers into a single file. you will need docker-compose installed for this to work.
 
-```yaml
+and we ll use the image that we created in the [last blobpost](/posts/docker-create-images-in-a-private-self-hosted-registry/)
+#### **`docker-compose.yml`**
+``` 
 version: '3'
 services:
   postgresql:
-    image: postgres
+    image: postgres:12
     ports:
       - 5432:5432
     environment:
       - POSTGRES_PASSWORD="topsecure"
+      - PGDATA=/var/lib/postgresql/data/pgdata
     volumes:
-      - /home/loeken/docker/postgresql/docker_postgresql_nodejs:/var/lib/postgresql/data
-  docker_nodejs_postgresql_demo:
-    image: node
-    depends_on:
-      - postgresql
-    volumes: 
-      - /home/loeken/Projects/docker_nodejs_postgresql_demo:/usr/src/app
-    working_dir: /usr/src/app
-    command: "bash -c 'node /usr/src/app/index.js'"
-```
-
-if you compare this to  the earlier docker run commands you ll notice that there is no network param. 
-if you combine containers inside a docker compose definition it will automatically create a network for these.
-i added the depends_on directive so that the docker_nodejs_postgresql_demo is only 
-
-
-If you already created the image as described in the [last blobpost](/posts/docker-create-images-in-a-private-self-hosted-registry/) you can also just use that instead
-```yaml
-version: '3'
-services:
-  postgresql:
-    image: postgres
-    ports:
-      - 5432:5432
-    environment:
-      - POSTGRES_PASSWORD="topsecure"
-    volumes:
-      - /home/loeken/docker/postgresql/docker_postgresql_nodejs:/var/lib/postgresql/data
+      - /home/loeken/Projects/docker_nodejs_postgresql_demo/postgresql_data:/var/lib/postgresql/data
   docker_nodejs_postgresql_demo:
     image: localhost:5000/docker_nodejs_postgresql_demo
     depends_on:
       - postgresql
     volumes: 
-      - /home/loeken/Projects/docker_nodejs_postgresql_demo:/usr/src/app
-    working_dir: /usr/src/app
+      - /home/loeken/Projects/docker_nodejs_postgresql_demo/index.js:/usr/src/app/index.js
 ```
 
 as we already have the start command defined within the Dockerfile we can remove the command: directive here.
+<style type="text/css">
+.flex { 
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+}
+</style>

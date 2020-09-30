@@ -11,11 +11,23 @@ tags:
 ---
 
 ## Kubernetes nodejs postgresl example with nginx ingress
+<style type="text/css">
+.flex { 
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+}
+</style>
+<div class="flex">
+
 ![](/media/img/kubernetes_deployment_nodejs_postgresql_ingress.png)
+
+</div>
+
 [Download Image Markup](/media/imgmarkup/kubernetes-deployment-nodejs-postgresql-ingress.py)
 
 this would be an example to create an ingress that points to our internal node service
-```yaml
+```
 apiVersion: v1
 kind: Ingress
 metadata:
@@ -37,7 +49,7 @@ and added the Ingress part
 ## nginx ingress
 
 #### **`nginx-ingress.yaml`**
-```yaml
+```
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -334,7 +346,7 @@ spec:
 ```
 ## required configmaps
 #### **`postgres-secret.yaml`**
-```yaml
+```
 apiVersion: v1
 kind: Secret
 metadata:
@@ -345,7 +357,7 @@ data:
     postgres-password: dG9wc2VjdXJl
 ```
 #### **`postgres-configmap.yaml`**
-```yaml
+```
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -362,7 +374,7 @@ kubectl apply -f postgres-configmap.yaml
 ```
 ## postgres deployment
 #### **`postgres-deployment.yaml`**
-```yaml
+```
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -422,7 +434,7 @@ spec:
 
 ## node deployment
 #### **`node-deployment-ingress.yaml`**
-```yaml
+```
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -498,7 +510,7 @@ spec:
 ```
 
 If you followed the previous [kubernetes nodejs postgresql demo](/posts/kubernetes-nodejs-postgresql-example) then you might want to cleanup the node deployment
-```bash
+```
 kubectl delete deployment node
 deployment.apps "node" deleted
 
@@ -508,6 +520,6 @@ service "node-service" deleted
 
 now let's apply the new deployments
 
-```bash
+```
 kubectl apply -f node-deployment-ingress.yaml
 ```

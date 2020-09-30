@@ -21,7 +21,7 @@ Notes:
  - Namespaces can be used to limit resources to namespaces ( cpu / mem / storage )
 
 ### the default namespaces
-```bash
+```
 kubectl get namespaces
 NAME                   STATUS   AGE
 default                Active   5d14h
@@ -33,7 +33,7 @@ kubernetes-dashboard   Active   5d14h
 
 ### manage namespaces via command line
 
-```bash
+```
 kubectl create namespace mynamespace
 namespace/mynamespace created
 
@@ -51,7 +51,7 @@ namespace "mynamespace" deleted
 ```
 
 to use namespaces in yaml markup simply add:
-```yaml
+```
 namespace: mynamespace
 ```
 into the metadata section
@@ -63,7 +63,7 @@ kubens
 ```
 
 this can be found in the package kubectx
-```bash
+```
 sudo apt install kubectx
 
 or

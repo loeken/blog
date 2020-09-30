@@ -11,7 +11,19 @@ tags:
 ---
 
 ## Deployment & Service Configuration
+<style type="text/css">
+.flex { 
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+}
+</style>
+<div class="flex">
+
 ![](/media/img/kubernetes_configuration_files.png)
+
+</div>
+
 [Download Image Markup](/media/imgmarkup/kubernetes-configuration_files.py)
 
 Connecting Deployments with Services and Pods. Every configuration in k3s has 3 types
@@ -25,7 +37,7 @@ the attributes of each of those 3 type have different options
 
 ### example for deployment
 #### **`nginx-deployment.yaml`**
-```yaml
+```
 apiVersion: apps/v1
 #  kind defines the type
 kind: Deployment
@@ -60,7 +72,7 @@ spec:
 
 ### example for service
 #### **`nginx-service.yaml`**
-```yaml
+```
 kind: Service
 apiVersion: v1
 metadata:
@@ -79,13 +91,13 @@ note: The suggested syntax for YAML files is to use 2 spaces for indentation
 
 now save these on a k3s cluster/server and apply
 
-```bash
+```
 kubectl apply -f nginx-deployment.yaml
 kubectl apply -f nginx-service.yaml
 ```
 
 now verify that all has been applied properly
-```bash
+```
 kubectl get deployments
 NAME               READY   UP-TO-DATE   AVAILABLE   AGE
 nginx-deployment   3/3     3            3           6m30s

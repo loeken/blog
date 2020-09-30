@@ -32,8 +32,19 @@ I span up 3 virtual machines each of them having 2 network interfaces
 the first interface has a public ip faceing the internet
 the second interface has a private ip connected to an internal vpn. I've created it like this so i can expose services publicly on the 1 public interface to start with. 
 while I can use the secondary interface to securely connect to the servers
- 
+<style type="text/css">
+.flex { 
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+}
+</style>
+<div class="flex">
+
 ![Prepare the Disk](/media/img/k3s_testlab_01.png)
+
+</div>
+
 [Download Image Markup](/media/imgmarkup/k3s_testlab_01.py)
 
 I used debian 10 netinstaller. these are the dependencies k3s needs in order to run. I created a user called ansible which i ll be using in this tutorial.
@@ -286,15 +297,18 @@ VERSION_KUBE_DASHBOARD=$(curl -w '%{url_effective}' -I -L -s -S ${GITHUB_URL}/la
 sudo k3s kubectl create -f https://raw.githubusercontent.com/kubernetes/dashboard/${VERSION_KUBE_DASHBOARD}/aio/deploy/recommended.yaml
 ```
 
-now we create 2 markups to define the user access to the dashboard1
+now we create 2 markups to define the user access to the dashboard
+#### **`dashboard.admin-user.yaml`**
 ```
-echo "apiVersion: v1
+apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: admin-user
-  namespace: kubernetes-dashboard" > /var/lib/rancher/k3s/server/manifests/dashboard.admin-user.yml
-
-echo "apiVersion: rbac.authorization.k8s.io/v1
+  namespace: kubernetes-dashboard"
+```
+#### **`dashboard.admin-user-role.yaml`**
+```
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: admin-user
@@ -305,13 +319,12 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: admin-user
-  namespace: kubernetes-dashboard" > /var/lib/rancher/k3s/server/manifests/dashboard.admin-user-role.yml
+  namespace: kubernetes-dashboard
 ```
-
-we could have also saved to another folder and manually applied the configuration with
+apply the configuration
 ```
-kubectl apply -f dashboard.admin-user.yml
-kubectl apply -f dashboard.admin-user-role.yml
+kubectl apply -f dashboard.admin-user.yaml
+kubectl apply -f dashboard.admin-user-role.yaml
 ```
 
 
@@ -320,13 +333,15 @@ next step is to get the bearer token which we need to login to the dashboard in 
 k3s kubectl -n kubernetes-dashboard describe secret admin-user-token | grep ^token
 ```
 
-now we can access the dashboard via:
+since k3s version 1.19 we have to use the proxy to access the dashboard but this is not tricky at all:
 ```
-https://k3s-01:6443/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/clusterrole?namespace=default
+kubectl proxy
+http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/clusterrole?namespace=default
 ```
 
 
 create a deployment for nginx:
+#### **`nginx-deployment.yaml`**
 ```
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
@@ -350,5 +365,5 @@ spec:
 ```
 
 ```
-kubectl apply -f deployment.yaml
+kubectl apply -f nginx-deployment.yaml
 ```
