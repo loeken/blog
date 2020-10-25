@@ -1,0 +1,28 @@
+{{ define "header" }}
+    <link rel="stylesheet" href="/assets/css/list.css">
+    <link rel="stylesheet" href="/assets/css/navigators/sidebar.css">
+{{ end }}
+
+{{ define "navbar" }}
+    {{ partial "navigators/navbar-2.html" . }}
+{{ end }}
+
+{{ define "content" }}
+<section class="content-section" id="content-section">
+  <div class="content container-fluid" id="content">
+    <div class="container-fluid post-card-holder" id="post-card-holder">
+      {{ $paginator := .Paginate .RegularPagesRecursive 12 }}
+      {{ range $paginator.Pages }}
+        {{ partial "cards/post.html" . }}
+      {{ end }}
+    </div>
+    <div class="paginator">
+      {{ template "_internal/pagination.html" . }}
+    </div>
+  </div>
+</section>
+{{ end }}
+
+{{ define "scripts" }}
+    <script src="/assets/js/list.js"></script>
+{{ end }}

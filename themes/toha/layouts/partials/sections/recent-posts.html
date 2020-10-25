@@ -1,0 +1,15 @@
+<div class="container-fluid anchor pb-5 recent-posts-section" id="{{ replace (lower .section.name) " " "-" }}">
+  {{ if not (.section.hideTitle) }}
+    <a href="/posts">
+      <h1 class="text-center">{{ .section.name }}</h1>
+    </a>
+  {{ end }}
+  <div class="container" style="margin-top: 70px;">
+    <div class="row" id="recent-post-cards">
+      {{ range first 3 (where site.RegularPages.ByDate.Reverse "Type" "in" site.Params.mainSections )}}
+        {{ partial "cards/recent-post.html" . }}
+      {{ end }}
+    </div><br>
+    <a href="/posts" class="btn btn-success form-control">view all posts</a>
+  </div>
+</div>
