@@ -1,7 +1,7 @@
 ---
 title: "Arch Linux 2020 luks cryptsetup systemd-boot installation"
 date: 2020-05-02T20:06:01+02:00
-draft: true
+draft: false
 toc: false
 description: summary of blogpost
 author: loeken

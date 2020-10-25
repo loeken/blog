@@ -1,7 +1,7 @@
 ---
 title: "Building Nginx Deb Package With Fpm - effin package manager"
 date: 2020-05-17T15:06:40+02:00
-draft: true
+draft: false
 toc: false
 description: In this tutorial we are going to create a deb file of nginx using fpm ( effing package manager). this is useful if you want to create 1 nginx deb that you can roll out to multiple vms. nginx supports modules and we want to add some that are not enabled by default.
 author: loeken

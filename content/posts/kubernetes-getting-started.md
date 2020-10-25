@@ -1,7 +1,7 @@
 ---
 title: "Kubernetes Getting Started"
 date: 2020-06-07T18:19:55+02:00
-draft: true
+draft: false
 toc: false
 description: 
 author: loeken

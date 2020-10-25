@@ -1,7 +1,7 @@
 ---
 title: "Kubernetes Create Images in Azure Container Registry"
 date: 2020-06-09T12:55:48+02:00
-draft: true
+draft: false
 toc: false
 description: 
 author: loeken

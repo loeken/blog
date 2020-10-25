@@ -1,7 +1,7 @@
 ---
 title: "Helm3 Getting Started"
 date: 2020-09-15T11:30:48+02:00
-draft: true
+draft: false
 ---
 
 # helm version 3

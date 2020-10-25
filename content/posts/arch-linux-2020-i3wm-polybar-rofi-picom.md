@@ -1,7 +1,7 @@
 ---
 title: "Arch Linux 2020 i3wm polybar rofi picom"
 date: 2020-05-03T21:20:30+02:00
-draft: true
+draft: false
 ---
 
 ### fix for the last part

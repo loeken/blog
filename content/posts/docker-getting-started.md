@@ -1,7 +1,7 @@
 ---
 title: "Docker Getting Started"
 date: 2020-06-05T13:55:43+02:00
-draft: true
+draft: false
 toc: false
 description: summary of blogpost
 author: loeken

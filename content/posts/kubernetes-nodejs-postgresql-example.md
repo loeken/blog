@@ -1,7 +1,7 @@
 ---
 title: "Kubernetes Nodejs Postgresql Example"
 date: 2020-06-09T13:50:41+02:00
-draft: true
+draft: false
 toc: false
 description: 
 author: loeken

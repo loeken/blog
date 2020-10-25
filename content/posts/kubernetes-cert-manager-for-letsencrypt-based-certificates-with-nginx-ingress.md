@@ -1,7 +1,7 @@
 ---
 title: "Kubernetes Cert Manager for Letsencrypt Based Certificates With Nginx Ingress"
 date: 2020-06-13T22:07:15+02:00
-draft: true
+draft: false
 toc: false
 description: 
 author: loeken

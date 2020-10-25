@@ -1,7 +1,7 @@
 ---
 title: "Kubernetes Nodejs Postgresql Example With Nginx Ingress"
 date: 2020-06-10T12:27:37+02:00
-draft: true
+draft: false
 toc: false
 description: 
 author: loeken

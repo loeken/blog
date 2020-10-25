@@ -1,7 +1,7 @@
 ---
 title: "Kubernetes Yaml Configuration Deployment and Service"
 date: 2020-06-08T13:31:40+02:00
-draft: true
+draft: false
 toc: false
 description: 
 author: loeken

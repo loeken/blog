@@ -1,7 +1,7 @@
 ---
 title: "Kubernetes Create Images in Google Container Registry"
 date: 2020-06-12T09:50:23+02:00
-draft: true
+draft: false
 toc: false
 description: 
 author: loeken

@@ -1,7 +1,7 @@
 ---
 title: "Kubernetes Namespaces"
 date: 2020-06-10T11:54:27+02:00
-draft: true
+draft: false
 toc: false
 description: 
 author: loeken

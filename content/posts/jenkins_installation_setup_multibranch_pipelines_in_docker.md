@@ -1,7 +1,7 @@
 ---
 title: "Jenkins installation in Docker"
 date: 2020-02-08T15:57:31+01:00
-draft: true
+draft: false
 ---
 
 # jenkins to build, test and deploy your projects
