@@ -5,6 +5,7 @@ draft: true
 toc: false
 description: 
 author: loeken
+summary: a very simple example of how to use a deployment to create nginx containers and how to scale replicas up or down
 images:
 tags:
   - untagged
@@ -39,7 +40,6 @@ the attributes of each of those 3 type have different options
 #### **`nginx-deployment.yaml`**
 ```
 apiVersion: apps/v1
-#  kind defines the type
 kind: Deployment
 # this is the metadata section
 metadata:
@@ -49,7 +49,7 @@ metadata:
     app: nginx
 # this is the spec section
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: nginx
@@ -66,8 +66,13 @@ spec:
         image: nginx:1.14.2
         ports:
         - containerPort: 80
-# once deployed a status section would be added here#
-
+        resources:
+          requests:
+            cpu: 10m
+            memory: 10Mi
+          limits:
+            cpu: 100m
+            memory: 25Mi
 ```
 
 ### example for service
@@ -124,4 +129,14 @@ Endpoints:                10.42.0.9:80,10.42.1.5:80,10.42.2.5:80
 Session Affinity:         None
 External Traffic Policy:  Cluster
 Events:                   <none>
+
+kubectl rollout restart deployment nginx-deployment
+deployment.apps/nginx-deployment restarted
+
+kubectl get pods
+NAME                                READY   STATUS              RESTARTS   AGE
+nginx-deployment-5d997565b9-m2vfx   1/1     Running             0          69s
+nginx-deployment-85cdff5cc5-mjl7h   0/1     ContainerCreating   0          2s
+
+
 ```

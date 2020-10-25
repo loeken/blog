@@ -14,11 +14,17 @@ tags:
 
 # Kubernetes getting started
 
+Greek for "helmsman" or "pilot" or "governor"
+
+created after google's borg ( c++ ) written in golang
+
 kubernetes - a tool for managing and automating containerized workloads in the cloud
 
-simply put: you define the desired state of your application and kubernetes ensures that all parts of your application are in the desired state.
+simply put: you define the desired state of your application and kubernetes ensures that all parts of your application are in the desired state. you feed your deployment.yaml file to kubernetes and the cluster services ensure that all these resources will be scheduled in your cluster - in the way you defined.
 
-it do this work across multiple machines ( nodes ) that together form a kubernetes cluster it can autoscale and autoheal ( add nodes / replace nodes )
+it does this work across multiple machines ( nodes ) that together form a kubernetes cluster
+
+it can autoscale and autoheal ( add nodes / replace nodes )
 
 the heart of kubernetes is known as "the control plane" - which is an api endpoint which can be called internally/externally  to manage the cluster and all resources of it. it also contains a datastore ( most commonly etcd ) which it uses to store information about the cluster.
 
@@ -45,7 +51,7 @@ It has been designed for high availability - which is mostly achived by keeping 
 
 all following tutorials are done with k3s version: v1.19
 
-## Terminology
+## Components
 ### Node
 #### Worker Node
 A server - a physical or virtual machine. pods are running here.
@@ -310,6 +316,10 @@ spec:
         requests:
           storage: 1Gi
 ```
+### Namespaces
+similar as in code namespaces can be used to seprate cluster resources from one another.
+
+
 
 <style type="text/css">
 .flex { 
