@@ -1,5 +1,6 @@
 ---
-title: "Golang_simple_rest_api"
+title: "Golang simple rest api"
+summary: a very simple rest api that reacts onto different methods (GET/POST) we ll be using gorilla/mux as a router
 date: 2020-11-01T10:45:20+01:00
 draft: false
 tags: go, programming

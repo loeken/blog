@@ -3,6 +3,7 @@ title: "Golang - getting started"
 date: 2020-10-31T12:15:57+01:00
 draft: false
 tags: go, programming
+summary: introduction on how to run a simple hello world in go
 ---
 
 # Golang getting started

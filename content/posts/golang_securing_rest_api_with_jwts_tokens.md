@@ -1,5 +1,6 @@
 ---
 title: "Golang securing rest api with jwts tokens"
+summary: in this tutorial we ll create a server/client the client generates a token and queries the server with that token and the server checks if that token is valid via a middleware function
 date: 2020-11-01T10:49:21+01:00
 draft: true
 ---
