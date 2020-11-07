@@ -34,4 +34,5 @@ And then we create a pull request:
 Then on my side it does build a preview of that change so i can view/test/approve it.
 ![Create PR at Github](/media/img/pr_preview.png)
 
-After the PR has been merged it will be pushed to production automatically.
+-After the PR has been merged it will be pushed to production automatically.
++After the Pull Request has been merged it will be pushed to production automatically.
