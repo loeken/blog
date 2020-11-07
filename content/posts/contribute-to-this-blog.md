@@ -32,6 +32,7 @@ And then we create a pull request:
 ![Create PR at Github](/media/img/create_pr.png)
 
 Then on my side it does build a preview of that change so i can view/test/approve it.
+
 ![Create PR at Github](/media/img/pr_preview.png)
 
 After the Pull Request has been merged it will be pushed to production automatically.
