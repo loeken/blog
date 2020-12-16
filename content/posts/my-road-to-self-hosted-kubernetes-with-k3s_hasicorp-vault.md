@@ -1,7 +1,7 @@
 ---
-title: "My Road to Self Hosted Kubernetes With K3s_hasicorp Vault"
+title: "My Road to Self Hosted Kubernetes With K3s Hasicorp Vault"
 date: 2020-12-13T16:41:35+01:00
-summary: here we ll cover how to setup ceph storage and create a storage class which we can use in other deployments to store stuf persistent across the nodes
+summary: we ll be setting up hashicorps vault, which we ll be using to inject secrets into containers and provider credentials to database etc
 toc: false
 author: loeken
 images:
