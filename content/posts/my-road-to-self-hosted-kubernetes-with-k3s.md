@@ -92,17 +92,20 @@ nginx-ingress - https://github.com/kubernetes/ingress-nginx
 
 ### 2.1 base installation of debian 10 64 + k3s
 
-http://blog.internetz.me/posts/setup_k3s_cluster_on_debian10_using_ansible_and_k3sup/
+https://blog.internetz.me/posts/setup_k3s_cluster_on_debian10_using_ansible_and_k3sup/
 
 
 ### 2.2 linkerd service mesh
+posts/my-road-to-self-hosted-kubernetes-with-k3s_linkerd-service-mesh/
 
 ### 2.3 storage
 
-http://blog.internetz.me/posts/my-road-to-self-hosted-kubernetes-with-k3s_distributed-storage-with-ceph
+https://blog.internetz.me/posts/my-road-to-self-hosted-kubernetes-with-k3s_distributed-storage-with-ceph
 
 ### 2.4 secret management
-http://blog.internetz.me/posts/my-road-to-self-hosted-kubernetes-with-k3s_hasicorp-vault/
+https://blog.internetz.me/posts/my-road-to-self-hosted-kubernetes-with-k3s_hasicorp-vault/
+
+### 2.5 user management
 
 
 
