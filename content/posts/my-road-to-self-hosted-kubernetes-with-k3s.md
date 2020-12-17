@@ -103,10 +103,19 @@ posts/my-road-to-self-hosted-kubernetes-with-k3s_linkerd-service-mesh/
 https://blog.internetz.me/posts/my-road-to-self-hosted-kubernetes-with-k3s_distributed-storage-with-ceph
 
 ### 2.4 secret management
-https://blog.internetz.me/posts/my-road-to-self-hosted-kubernetes-with-k3s_hasicorp-vault/
+https://blog.internetz.me/posts/my-road-to-self-hosted-kubernetes-with-k3s_hasicorp-vault
 
 ### 2.5 user management
 
+Permission manager
+awaiting merge @ https://github.com/sighupio/permission-manager/pull/44
+
+### 2.6 EFK
+https://blog.internetz.me/posts/my-road-to-self-hosted-kubernetes-with-k3s_logging-with-efk
+
+
+### 2.7 Databases
+https://blog.internetz.me/posts/my-road-to-self-hosted-kubernetes-with-k3s_ha-postgresql-cluster-using-helm-chart
 
 
 sources:
