@@ -59,6 +59,7 @@ hashicorp vault - https://github.com/hashicorp/vault
 permission manager - https://github.com/sighupio/permission-manager
 
 ### 1.6 logging
+https://blog.internetz.me/posts/my-road-to-self-hosted-kubernetes-with-k3s_logging-with-EFK
 
 EFK ( elasticsearch Fluentd Kibana) 
   - https://artifacthub.io/packages/helm/t3n/elasticsearch 
