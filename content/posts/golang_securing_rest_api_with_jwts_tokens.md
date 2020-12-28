@@ -245,7 +245,9 @@ func isAuthorized(endpoint func(http.ResponseWriter, *http.Request)) http.Handle
     })
 }
 func handleRequests() {
-    http.Handle("/", isAuthorized
+   - http.Handle("/", isAuthorized(homePage))
+   +  http.Handle("/", isAuthorized(homePage))
+   +  log.Fatal(http.ListenAndServe(":9000", nil))
 }
 func main() {
     fmt.Println("My Simple Server")
