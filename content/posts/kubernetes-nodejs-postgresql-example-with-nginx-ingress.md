@@ -344,6 +344,64 @@ spec:
       cpu: 100m
     type: Container
 ```
+#### **`ingres-service.yaml`**
+```
+kind: Service
+apiVersion: v1
+metadata:
+  name: ingress-nginx
+  namespace: ingress-nginx
+  labels:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/part-of: ingress-nginx
+spec:
+  type: LoadBalancer
+  selector:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/part-of: ingress-nginx
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+    - name: https
+      port: 443
+      targetPort: https
+```
+#### **`ingres-service.yaml`**
+```
+kind: Service
+apiVersion: v1
+metadata:
+  name: ingress-nginx
+  namespace: ingress-nginx
+  labels:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/part-of: ingress-nginx
+spec:
+  type: LoadBalancer
+  selector:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/part-of: ingress-nginx
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+    - name: https
+      port: 443
+      targetPort: https
+```
+#### **`ingres-dhparam.yaml`**
+```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dhparam
+data:
+  dhparam.pem: |
+    ADD YOUR DHPARAM HERE
+    MULTIPLE LINES LIKE THIS ARE FINE
+```
+
 ## required configmaps
 #### **`postgres-secret.yaml`**
 ```
