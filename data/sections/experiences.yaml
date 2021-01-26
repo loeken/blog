@@ -1,0 +1,83 @@
+# section information
+section:
+  name: Experiences
+  enable: true
+  weight: 3
+  showOnNavbar: true
+  # Can optionally hide the title in sections
+  # hideTitle: true 
+
+# Your experiences
+experiences:
+- company:
+    name: Crypto Coin Comparison Ltd.
+    url: "https://www.cryptocompare.com"
+    location: United Kingdom, London
+    # company overview
+    overview: CryptoCompare is a known entry point into the digital asset space. Real-time and historical market data, indices, exchange benchmarking, research, guides and more
+  positions:
+  - designation: Head of Devops team
+    start: Jun 2017
+    # don't provide end date if you are currently working there. It will be replaced by "Present"
+    # end: Dec 2020
+    # give some points about what was your responsibilities at the company.
+    responsibilities:
+    - Form a team to manage the infrastructure of cryptocompare
+    - Migration from Azure classic to Azure ARM
+    - Centralized Monitoring across locations.
+    - Wrote inhouse software (phpphalcon/mysql/ansible) that we use to deploy software to our infrastructure.
+    - Plan and implement migration from vms to containers for a more dynamic workflow
+
+
+- company:
+    name: Internetz.me
+    url: "https://internetz.me"
+    location: Germany, Berlin
+    overview: Started a vpn / proxy / socks / usenet / cloudstorage network for friends and collegues to use the internet anonymously ( gone private ).
+  positions:
+  - designation: Founder and Ceo
+    start: Oct 2011
+    responsibilities:
+    - Build it
+    - Run it!
+  - designation: Freelance IT consultancy / web shop programming
+    start: Oct 2011
+    end: Jun 2017
+    responsibilities:
+    - helping companies to migrate from onprem hosting to cloud hosting
+    - wrote software in various languages
+    - working with various webshops such as prestashop, magento, shopware and such
+
+
+- company:
+    name: Fraunhofer Institute for Telecommunications, Heinrich Hertz Institute, HHI
+    url: "https://www.hhi.fraunhofer.de/en.html"
+    location: Germany, Berlin
+    overview: part time student job working mostly in the epitaxie by writing software used in daily operations of weaver chip production
+  positions:
+  - designation: Student - part time
+    start: May 2012
+    end: Feb 2013
+    responsibilities:
+    - wrote software in delphi / ms-sql to plan and execute weaver chip production.
+  - designation: Stutend - part time
+    start: May 2012
+    end: Feb 2013
+    responsibilities:
+    - wrote software to measure emited lights from lasers to measure the thickness of chip layers applied in the epitaxie process.  
+    - reduced a 1million+ codebase in vb.net down to a generic database wrapper class. 
+
+
+- company:
+    name: Bioscientia
+    url: "https://www.bioscientia.de/"
+    location: Germany, Berlin
+    overview: managed the network / offices for bioscientia
+  positions:
+  - designation: Student - part time
+    start: Apr 2009
+    end: May 2011
+    responsibilities:
+    - integrated lab machines into network
+    - pc / office maintenance
+  
