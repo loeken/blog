@@ -19,7 +19,14 @@ tags:
 Hashicorp does have a docs page which covers most of the things quite well https://learn.hashicorp.com/vault the process of getting vault running in k3s with helm wasn't that smooth here so glad i finally figured this one out ...
 
 
-Anyways, hop over to the hashicorp learn subdomain and take a look at the concepts of the vault
+Anyways, hop over to the hashicorp learn subdomain and take a look at the concepts of the vault.
+
+
+### The scenario
+
+So my goal is to setup vault into it's seperated namespace: vault I then want to create a testnamespace: pgtest
+
+In the pgtest namespace we'll create a simple example deployment and then we ll inject some secret ( in a future tutorial we ll also install a postgresql cluster into this pgtest namespace - and we will link that cluster to the vault )
 
 
 ### preparing ca/certificate generation
@@ -38,6 +45,7 @@ chmod +x /usr/local/bin/cfssljson
 
 ### generate ca
 I will now be genearting a ca
+
 ```
 cfssl gencert -initca ca-csr.json | cfssljson -bare ca
 2020/12/16 11:37:38 [INFO] generating a new CA key and certificate from CSR
@@ -47,7 +55,6 @@ cfssl gencert -initca ca-csr.json | cfssljson -bare ca
 2020/12/16 11:37:38 [INFO] encoded CSR
 2020/12/16 11:37:38 [INFO] signed certificate with serial number *HIDDEN*
 ```
-
 
 ### generate server certificate/key
 then we create a server certificate/key and sign it with the ca we created above, im just simply hardcoding the hostnames for vault-0 - vault5 which allows me to use a total of 6 vaults running - however i only do plan to start with 3 ( in our helm values override ) 
@@ -89,7 +96,7 @@ cfssl gencert \
   -ca=ca.pem \
   -ca-key=ca-key.pem \
   -config=ca-config.json \
-  -hostname="vault-0.vault-internal,vault-1.vault-internal,vault-2.vault-internal,vault-3.vault-internal,vault-4.vault-internal,vault-5.vault-internal,localhost,127.0.0.1" \
+  -hostname="vault-0.vault-internal,vault-1.vault-internal,vault-2.vault-internal,vault-3.vault-internal,vault-4.vault-internal,vault-5.vault-internal,vault.vault.svc,localhost,127.0.0.1" \
   -profile=default \
   vault-csr.json | cfssljson -bare vault
 2020/12/16 11:39:25 [INFO] generate received request
@@ -113,10 +120,11 @@ I now end up with these files in that directory:
 -rw-------  1 loeken loeken 1675 Dec 16 11:39 vault-key.pem
 -rw-r--r--  1 loeken loeken 1623 Dec 16 11:39 vault.pem
 ```
-### create namespace vault
+### create namespace vault & pgtest
 I want to keep the vault in it's own little namespace
 ```
 kubectl create namespace vault
+kubectl create namespace pgtest
 ```
 
 ### save certs/ca/key in secret
@@ -135,12 +143,14 @@ data:
   ca.crt: $(cat ca.pem | base64 | tr -d '\n')
 EOF
 kubectl apply -n vault -f tls-server-secret.yaml
+kubectl apply -n pgtest -f tls-server-secret.yaml
 ```
 
 
 #### **`override-values.yaml`**
-```
-# Vault Helm Chart Value Overrides
+
+the contents of the generated ca.crt will be added to the injector.certs.caBundle in the override-values.yaml
+```# Vault Helm Chart Value Overrides
 global:
   enabled: true
   tlsDisable: false
@@ -159,6 +169,32 @@ injector:
       limits:
         memory: 256Mi
         cpu: 250m
+  metrics:
+    enabled: false
+  certs:
+    secretName: tls-server
+    caBundle: "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURjRENDQWxpZ0F3SUJBZ0lVRnZvM242TW5E
+dGVwY3pNb2twNFVsc3lPVDZJd0RRWUpLb1pJaHZjTkFRRUwKQlFBd1VERUxNQWtHQTFVRUJoTUNW
+VXN4RHpBTkJnTlZCQWdUQmt4dmJtUnZiakVQTUEwR0ExVUVCeE1HVEc5dQpaRzl1TVE0d0RBWURW
+UVFLRXdWTllXWnBZVEVQTUEwR0ExVUVDeE1HUkdWMmIzQnpNQjRYRFRJd01USXlPREE1Ck1UZ3dN
+Rm9YRFRJMU1USXlOekE1TVRnd01Gb3dVREVMTUFrR0ExVUVCaE1DVlVzeER6QU5CZ05WQkFnVEJr
+eHYKYm1SdmJqRVBNQTBHQTFVRUJ4TUdURzl1Wkc5dU1RNHdEQVlEVlFRS0V3Vk5ZV1pwWVRFUE1B
+MEdBMVVFQ3hNRwpSR1YyYjNCek1JSUJJakFOQmdrcWhraUc5dzBCQVFFRkFBT0NBUThBTUlJQkNn
+S0NBUUVBMGlTOStHWDJRbFY5CjhFeDVJQ1l3VVRXdkZvS0Vib01VRGNCSWgwMWlac1p0b29QSCtT
+QzA5R2ovbkl2aGJLRTExRmc3MGRuQVkrZWgKRHkvQ3UxSzNIN2NCTEVrWmxzL0VKcTNIWmJTK3NN
+Qkp1OUxQeXBweUtTUTdCVGpWVnN6QlIzbnVIb1FJLzZBbgp6RHhUYjhEOXllZms3QnJFc3ZjdXZ4
+czhFL2RLbXRwSGNDNXBsaTk0dTJWOUszZVNNNkJVU3kwck9MMUdIbjlpCnBmVU15UzBYd2gxTFJK
+T2crUmN6ZDRBTmdzVFBxUFF3c2V3UkRuSUJCa1FlR1l2UmRFUWZSRDNzdFZFc0QyNUsKalZJRGk2
+ckMxU1dBelprK0JzYjgwcTZJeVRvSEp6MzM1SWl1alM5ZXZGdWlZWkczMnF5a0ZuSTdTZ1FRZDdR
+SwpPM3JlTVRtcDNRSURBUUFCbzBJd1FEQU9CZ05WSFE4QkFmOEVCQU1DQVFZd0R3WURWUjBUQVFI
+L0JBVXdBd0VCCi96QWRCZ05WSFE0RUZnUVVnbER5ZkF1Vmduby82d3Jlc250SjE5VmZXR0V3RFFZ
+SktvWklodmNOQVFFTEJRQUQKZ2dFQkFETnRsSW4wMzFKV3RsdFJKZVJ1WExUam1wd25OZldCMUQ2
+Mitrd0cwYXR5dUNBNTBFM05STlFXMXFXdQpiTmVVaGI5YlpOZmhEZHVJcDBpRVl2WUl3VVRHSDdP
+R0VEU0hOdEs0ZXNGMXFBejA0ZlllRmd2bDFDbUsrM0dOClVvQzJrTlY5YjhVSmU2Q2xJM0dsdnhC
+NStIaW1PeW9PQ09nVGRad1lxQkZxSGM0by8rWHhPTWZkQklUcWUyMWcKeTZzNmF1dDV5SXFzeldp
+TUJDTkVPMUZXaTMveDJKTk1tNjJEUlRFS0ZPUTZ2NThhd0VmVkxkR3lwdU91V3ZNQQppaWJBZ2dE
+cGhOa3RBMjZxMHVlNTlubjgzaEZhNXd6WitzNUhZRXJEWU1EQnZUdlh3d0YxSlNtelNQcWdnSjcw
+ClhtUUZUeTBvQ0FKdHpyQ1Y2VC9seXdBVFp1WT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo="
 
 server:
   # Use the non Enterprise Image
@@ -172,11 +208,15 @@ server:
   # Vault Reference Architecture for a Small Cluster
   resources:
     requests:
-      memory: 4Gi
-      cpu: 2000m
-    limits:
       memory: 8Gi
       cpu: 2000m
+    limits:
+      memory: 16Gi
+      cpu: 2000m
+  dataStorage:
+    enabled: true
+    storageClass: rook-ceph-block
+    size: 5Gi
 
   # For HA configuration and because we need to manually init the vault,
   # we need to define custom readiness/liveness Probe settings
@@ -370,3 +410,120 @@ Raft Applied Index      24
 ```
 
 then repeat the same process for the other 2 vaults
+
+
+### preparing sidecar injection
+```
+kubectl exec -n vault -it vault-0 -- /bin/sh
+export VAULT_TOKEN=YOUR_ROOT_TOKEN_FROM_INIT
+vault secrets enable -path=internal kv-v2
+vault kv put internal/database/config username="db-readonly-username" password="db-secret-password"
+vault kv get internal/database/config
+```
+
+### enable kubernetes authentication
+```
+vault auth enable kubernetes
+Success! Enabled kubernetes auth method at: kubernetes/
+
+vault write auth/kubernetes/config \
+    token_reviewer_jwt="$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" \
+    kubernetes_host="https://$KUBERNETES_PORT_443_TCP_ADDR:443" \
+    kubernetes_ca_cert=@/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+Success! Data written to: auth/kubernetes/config
+```
+
+
+create a policy
+```
+vault policy write internal-app - <<EOF
+path "internal/data/database/config" {
+  capabilities = ["read"]
+}
+EOF
+Success! Uploaded policy: internal-app
+
+
+vault write auth/kubernetes/role/internal-app \
+   bound_service_account_names=internal-app \
+   bound_service_account_namespaces=pgtest \
+   policies=internal-app \
+   ttl=72h
+```
+
+### create a service account
+```
+cat service-account-pgtest.yml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: internal-app
+```
+
+#### **`deployment-orgchart.yaml`**
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orgchart
+  labels:
+    app: orgchart
+spec:
+  selector:
+    matchLabels:
+      app: orgchart
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+      labels:
+        app: orgchart
+    spec:
+      serviceAccountName: internal-app
+      containers:
+        - name: orgchart
+          image: jweissig/app:0.0.1
+```
+
+### now lets apply this deployment to our pgtest namespace
+```
+kubectl apply -n pgtest -f deployment-orgchart.yaml
+```
+
+
+### test for non existant secrets
+```
+// get a pod name
+kubectl get pods -n pgtest -o jsonpath="{.items[0].metadata.name}"
+orgchart-7457f8489d-gk4qw
+
+kubectl -n pgtest exec orgchart-7457f8489d-gk4qw -- ls /vault/secrets
+ls: /vault/secrets: No such file or directory
+command terminated with exit code 1
+```
+
+
+```
+cat inject_secret.yaml
+
+spec:
+  template:
+    metadata:
+      annotations:
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/role: "internal-app"
+        vault.hashicorp.com/agent-inject-secret-database: "internal/data/database/config"
+        vault.hashicorp.com/agent-inject-template-database: |
+          {{- with secret "internal/data/database/config" -}}
+          postgres://{{ .Data.data.username }}:{{ .Data.data.password }}@postgres:5432/mydb?sslmode=disable
+          {{- end }}
+        vault.hashicorp.com/tls-secret: tls-server
+        vault.hashicorp.com/ca-cert: /vault/tls/ca.crt
+
+kubectl patch deployment orgchart --patch "$(cat inject_secret.yaml)" -n pgtest
+deployment.apps/orgchart patched
+
+kubectl patch deployment orgchart --patch "$(cat patch-inject-secrets.yaml)" -n pgtest
+
+kubectl patch deployment app --patch "$(cat patch-basic-annotations.yaml)" -n pgtest
+```
