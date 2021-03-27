@@ -1,9 +1,9 @@
 ---
 title: "My road to self hosted Kubernetes with k3s"
-date: 2020-12-05T20:39:41+01:00
+date: 2021-03-27T00:28:41+01:00
 draft: false
 toc: false
-summary: this is the main post of a series of posts that has a log of the process from moving 300 vms from a proxmox cluster into a k3s environment.
+summary: this is a farytale from a devops engineer from Berlin
 author: loeken
 images:
 tags:
@@ -16,108 +16,63 @@ tags:
 
 ## 0. introduction
 
-This post will be the structure of a series of posts that will act as a log to my job of migrating roughly 300 vms from a proxmox cluster to a k3s environment. I will try to keep a log of the steps, the gottchas, what I learned etc.
+Over the last years ive started to embrace the docker & kubernetes ecosystem. this post links to a bunch of other posts that log will act as a sort of reference on how to create a poor man's cluster on ovh. In contrast to the big cloud providers ovh delivers a cheap (fixed costs per month - at least for the majority of things ) - in a nutshell my plan is to spin up 3 vms with ~ 4GB of ram each in 3 different geographic locations, combine that with ovh's block storage (which you can setup snapshots for too ) and we'll have a cluster for less then 30EUR/month with ~ 9GB of usable ram. we can scale up these instances to 8GB of ram each and also add more instances to the cluster ( scale horizontally ). we are not going to use managed load balancers but we are going to expose applications by using an nginx ingress on the nodes directly.
 
-## 0.1 the starting point
-![](/media/img/proxmox_cluster.png#center)
-<style type="text/css">
-img[src$='#center']
-{
-    display: block;
-    margin: 0.7rem auto;
-}
-</style>
+If you'd need a bit more umpf you could also get dedicated servers from ovh. ovh also does offer a managed kubernetes environment but the nodes start at roughly 25eur for 7GB of ram ( control plane free ), given that i ll have more redundancy with 3 smaller nodes and i ll get more cpu bang for the buck i ve decided to go with the ovh cloud instances instead.
 
-For the last 3 years this Proxmox Cluster has done a great job ( and saved us quite some money ). When we built that cluster kubernetes wasn't what it was today ( or at least it wasn't percevied as that by us :) ) - but a lot happens in three years. I for example changed my local dev workflow a bit and started using containers more ( as a qubes user i was used to qube's vm eco system ), which lead me to experiment with kubernetes ( k3s in particular ).... a few months later - and loads of reading/testing/repeating - I have now started to enjoy the benefits kubernetes ( and the docker / helm ecosystem ) brings me - and i would like to share them with the other users of this cluster ( the actual developers maintaining the applications on that are running on this proxmox cluster ).
+We also want to plan ahead, if we setup 1 cluster we most likely will end up setting up more and more clusters. This is why we want to build a small CI pipeline so we can save our build recipes to git repositories and use argocd to ensure the clusters run - what we want them to run.
 
-## 0.2 this article series
+
+## 0.1 this article series
 This article is written in simple markdown syntax ( articles can be found: https://github.com/loeken/blog/tree/master/content/posts ) I then use hugo to genearte html and netlify to serve these files. Long story short: "If you spot any mistake in these articles scroll down and click on 'improve this page', that way you can create a PR on the github repo and correct what you think is wrong and after approval I can merge it into my master and publish the updated version easily".
+[read blogposts about how to edit this blog's content ](/posts/contribute-to-this-blog/)
 
+## 1.1 minikube
+##### Introduction
+Minikube is an easy way for running kubernetes locally. in 1.5 we'll setup argocd - we could run that in the cluster but "waste" resources. I tend to run argocd locally so in case something is wrong with my cluster/some cloud i could reswapn applications in another cluster
+##### Article Link
+[read full article chapter 1.1 ](/posts/my-road-to-self-hosted-kubernetes-with-k3s_minikube)
 
-## 1. the planned stack
+##### Resources & Links
+- minikube https://kubernetes.io/de/docs/setup/minikube/
 
-### 1.1 orchestration
+## 1.2 kubectl
+## 1.3 orchestration
 
-- k3s - v1.19.4-rc2+k3s2 - https://github.com/k3s-io/k3s/tags
+##### Introduction
+In this article we are going to setup k3s on 3 dedicated servers, we ll be using k3sup to do most of the work and trigger the setup by using an ansible playbook.
+##### Article Link
+[read full article chapter 1.1 ](/posts/my-road-to-self-hosted-kubernetes-with-k3s_bootstrap-cluster-using-ansible-and-k3sup/)
+
+##### Resources & Links
+- k3s - v1.20.5-rc1+k3s1 - https://github.com/k3s-io/k3s/tags
 - k3sup - https://github.com/alexellis/k3sup
 - ansible - https://ansible.com
+## 1.2 kubectl
 
-### 1.2 service mesh
+## 1.3 orchestration
 
-linkerd - https://linkderd.io
+## 1.4 manage multiple kubeconfig profiles ( contexts )
 
-### 1.3 storage
+## 1.5 contineous integration with argocd
 
-rook.io ceph - https://github.com/rook/rook
+## 1.6 distributed storage with ceph
 
-### 1.4 secret management
+## 1.7 user permission management ( maybe with argo? )
 
-hashicorp vault - https://github.com/hashicorp/vault
+## 1.8 ( logging with EFK )
 
-### 1.5 user management
+## 1.9 cert-manager
 
-permission manager - https://github.com/sighupio/permission-manager
+## 1.10 external-dns
 
-### 1.6 logging
-https://blog.internetz.me/posts/my-road-to-self-hosted-kubernetes-with-k3s_logging-with-EFK
+## 1.11 nginx ingress
 
-EFK ( elasticsearch Fluentd Kibana) 
-  - https://artifacthub.io/packages/helm/t3n/elasticsearch 
-  - https://artifacthub.io/packages/helm/bitnami/fluentd 
-  - https://artifacthub.io/packages/helm/bitnami/kibana
+## 1.12 hashicorp vault - secret management
 
-### 1.7 databases
+## 1.13 postgresql ha helm chart
 
-- postgresql ( cluster ) - https://bitnami.com/stack/postgresql-ha/containers
-- redis ( cluster ) - https://bitnami.com/stack/redis-cluster/helm
+## 1.14 linkerd service mesh
 
-### 1.8 message systems
+## 1.15 mysql alpine deployment
 
-nsqd ( cluster )
-
-### 1.9 helpers
-
-- cert-manager - https://cert-manager.io/docs/installation/kubernetes/
-- external-dns - https://github.com/kubernetes-sigs/external-dns
-
-### 1.10 ingress
-
-nginx-ingress - https://github.com/kubernetes/ingress-nginx
-
-### 1.11 applications
-
-- nodejs ( various different services - frontends / backends )
-- golang ( various different services - frontends / backends )
-
-## 2 the journey begins
-
-### 2.1 base installation of debian 10 64 + k3s
-
-https://blog.internetz.me/posts/setup_k3s_cluster_on_debian10_using_ansible_and_k3sup/
-
-
-### 2.2 linkerd service mesh
-posts/my-road-to-self-hosted-kubernetes-with-k3s_linkerd-service-mesh/
-
-### 2.3 storage
-
-https://blog.internetz.me/posts/my-road-to-self-hosted-kubernetes-with-k3s_distributed-storage-with-ceph
-
-### 2.4 secret management
-https://blog.internetz.me/posts/my-road-to-self-hosted-kubernetes-with-k3s_hasicorp-vault
-
-### 2.5 user management
-
-Permission manager
-awaiting merge @ https://github.com/sighupio/permission-manager/pull/44
-
-### 2.6 EFK
-https://blog.internetz.me/posts/my-road-to-self-hosted-kubernetes-with-k3s_logging-with-efk
-
-
-### 2.7 Databases
-https://blog.internetz.me/posts/my-road-to-self-hosted-kubernetes-with-k3s_ha-postgresql-cluster-using-helm-chart
-
-
-sources:
-https://rook.github.io/docs/rook/master/ceph-quickstart.html
