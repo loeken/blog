@@ -1,7 +1,7 @@
 ---
 title: "My Road to Self Hosted Kubernetes With K3s_minikube"
 date: 2021-03-27T22:05:10+01:00
-draft: true
+draft: false
 ---
 
 ## Installation Minikube
