@@ -23,7 +23,7 @@ The master nodes are also known as <i>control plane</i>, which manages the worke
 #### worker nodes
 The worker node(s) host the Pods that are the components of the application workload. While the master nodes run etcd and schedulers the worker nodes only run the actual pods - and their dependencies.
 
-More info can be found on kubernetes docs: https://kubernetes.io/docs/concepts/overview/components/e
+More info can be found on kubernetes docs: https://kubernetes.io/docs/concepts/overview/components/
 
 <div class="row">
 <div class="col-sm-6">
@@ -35,26 +35,32 @@ More info can be found on kubernetes docs: https://kubernetes.io/docs/concepts/o
 
 ## planned setup
 
+##### vps
 so for the test cluster i ll be using 3 vps ( https://www.ovhcloud.com/de/public-cloud/prices/#388 ) of the type sandbox S1-4 - if you are on a really small budget you could pick 1 smaller size too however i ll be roughly needing the amount of ram 3 of those vps can provide me. these vps can be setup easily to use a common LAN which we ll use as our communications network for traffic between our k3s nodes.
 
+##### dedicated servers
 If you need more power you can grab one of ovh's dedicated servers and use the vrack to connect these, currently the best bang for the buck ( cpu/mem for money ) you d get with the ADVANCE-2 dedis: https://www.ovhcloud.com/de/bare-metal/advance/adv-2/
 
 
-### disk layout
+## disk layout
+##### vps
+If you pick a vps just use the entire disk for / we ll setup rook-ceph on ovh's blockstorage
+Each of ovh's vpss has two network cards ( eth0 / eth1 ) 
+
+- eth0 has a public ip assigned and is connected to switches that lead towards the internet.
+- eth1 is connected to a private network that only operates between the vpss.
+##### dedicated servers
 If you pick a dedi don't use the whole diskspace to install the operating system on rather make a small partition for the OS, and then we can use the rest for our rook ceph storage cluster.
 recommended for dedi
 - root: 50GB
 - swap:  1GB
-- rest: partition create ( but we ll remove the filesystem so ceph can use this space ) ( we ll use this storage with the ceph storage late on )
-
-if you are going with the vps we ll use ovh's blockstorage so we can just use the full space of the virtual disks that ship with the vps
-
+- rest: partition create ( but we ll remove the filesystem so ceph can use this space ) ( we ll use this storage with the ceph storage later on )
 
 
 Each server has two network cards ( eno1 / eno2 ) 
 
 - eno1 has a public ip assigned and is connected to switches that lead towards the internet.
-- eno2 is connected to a private network that only operates between my servers. i ll be using a vlan tag for traffic on this network.
+- eno2 is connected to a private network that only operates between the servers. i ll be using a vlan tag for traffic on this network with ovh's vrack
 
 </div>
 </div>
@@ -67,8 +73,7 @@ Each server has two network cards ( eno1 / eno2 )
 https://github.com/alexellis/k3sup is a tool that downloads the k3s installer and runs it for us
 
 ### ansible
-https://github.com/loeken/bootstrap-k3s it orchestration tool we ll be using to generate a config for k3sup and execute it via ssh
-
+it orchestration tool we ll be using to generate a config for k3sup and execute it via ssh
 
 ### the bootstrap part
 
