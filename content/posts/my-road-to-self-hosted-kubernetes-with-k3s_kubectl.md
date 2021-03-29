@@ -11,6 +11,104 @@ kubectl is a command line tool you can use to interact with the kubernetes api s
 
 we already installed minikube which includes kubectl and already creates a default config for us. the default config can be found in ~/.kube/config
 
+you can extend your ~/.kube/config and add further clusters/users/contexts this allows us to define different credentials for different clusters and helps us to switch between various clusters easily. here is an example of a "REDACTED" ~/.kube/config and how i switch my context from using the minikube cluster to using my baremetall cluster
+
+```
+❯ cat ~/.kube/config
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority-data: REDACTED
+    server: https://REDACTED:6443
+  name: baremetall
+- cluster:
+    certificate-authority-data: REDACTED
+    server: https://REDACTED:6443
+  name: enso
+- cluster:
+    certificate-authority-data: REDACTED
+    server: https://REDACTED:6443
+  name: ime
+- cluster:
+    certificate-authority-data: REDACTED
+    server: https://REDACTED:6443
+  name: jp
+- cluster:
+    certificate-authority-data: REDACTED
+    server: https://REDACTED:8443
+  name: minikube
+contexts:
+- context:
+    cluster: baremetall
+    user: baremetall
+  name: baremetall
+- context:
+    cluster: enso
+    user: enso
+  name: enso
+- context:
+    cluster: ime
+    user: ime
+  name: ime
+- context:
+    cluster: jp
+    user: jp
+  name: jp
+- context:
+    cluster: minikube
+    namespace: default
+    user: minikube
+  name: minikube
+current-context: enso
+kind: Config
+preferences: {}
+users:
+- name: baremetall
+  user:
+    client-certificate-data: REDACTED
+    client-key-data: REDACTED
+- name: enso
+  user:
+    client-certificate-data: REDACTED
+    client-key-data: REDACTED
+- name: ime
+  user:
+    client-certificate-data: REDACTED
+    client-key-data: REDACTED
+- name: jp
+  user:
+    client-certificate-data: REDACTED
+- name: minikube
+  user:
+    client-certificate-data: REDACTED
+    client-key-data: REDACTED
+```
+```
+❯ kubectl get nodes
+NAME       STATUS   ROLES                  AGE     VERSION
+minikube   Ready    control-plane,master   4d23h   v1.20.2
+```
+```
+❯ kubectl config get-contexts                                                                                                                                          
+CURRENT   NAME         CLUSTER      AUTHINFO     NAMESPACE
+          baremetall   baremetall   baremetall   
+          enso         enso         enso         
+          ime          ime          ime          
+          jp           jp           jp           
+*         minikube     minikube     minikube     default
+
+❯ kubectl config use-context baremetall                                                                                                                        
+
+Switched to context "baremetall".
+
+❯ kubectl get nodes
+NAME          STATUS   ROLES         AGE    VERSION
+k3s-node-01   Ready    etcd,master   106d   v1.20.2
+k3s-node-02   Ready    etcd,master   106d   v1.20.2
+k3s-node-03   Ready    etcd,master   106d   v1.20.2
+
+```
+the rest of the commands all follow a simple structure you can use kubectl help to list all commands
 ```
 ❯ kubectl help
 kubectl controls the Kubernetes cluster manager.
@@ -79,23 +177,4 @@ Usage:
 
 Use "kubectl <command> --help" for more information about a given command.
 Use "kubectl options" for a list of global command-line options (applies to all commands).
-```
-you can extend your ~/.kube/config and add further clusters/users/contexts this allows us to define different credentials for different clusters and helps us to switch between various clusters easily. here is an example of how i switch my context from using the minikube cluster to using my baremetall cluster
-
-```
-❯ kubectl get nodes
-NAME       STATUS   ROLES                  AGE     VERSION
-minikube   Ready    control-plane,master   4d23h   v1.20.2
-
-❯ kubectl config get-contexts                                                                                                                                          
-CURRENT   NAME         CLUSTER      AUTHINFO     NAMESPACE
-          baremetall   baremetall   baremetall   
-          enso         enso         enso         
-          ime          ime          ime          
-          jp           jp           jp           
-*         minikube     minikube     minikube     default
-
-❯ kubectl config use-context baremetall                                                                                                                        
-
-Switched to context "baremetall".
 ```
