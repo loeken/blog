@@ -23,9 +23,13 @@ If you'd need a bit more umpf you could also get dedicated servers from ovh. ovh
 We also want to plan ahead, if we setup 1 cluster we most likely will end up setting up more and more clusters. This is why we want to build a small CI pipeline so we can save our build recipes to git repositories and use argocd to ensure the clusters run - what we want them to run.
 
 
+<hr>
+
 ## 0.1 this article series
 This article is written in simple markdown syntax ( articles can be found: https://github.com/loeken/blog/tree/master/content/posts ) I then use hugo to genearte html and netlify to serve these files. Long story short: "If you spot any mistake in these articles scroll down and click on 'improve this page', that way you can create a PR on the github repo and correct what you think is wrong and after approval I can merge it into my master and publish the updated version easily".
 [read blogposts about how to edit this blog's content ](/posts/contribute-to-this-blog/)
+
+<hr>
 
 ## 1.1 minikube
 ##### Introduction
@@ -46,6 +50,9 @@ Kubectl is a command line client that allows us to control multiple kubernetes c
 
 ##### Resources & Links
 - kubectl https://kubernetes.io/docs/tasks/tools/
+
+<hr>
+
 ## 1.3 bootstrap k3s cluster with k3sup & ansible
 
 ##### Introduction
@@ -58,6 +65,8 @@ In this article we are going to setup k3s on 3 servers, we ll be using k3sup to 
 - k3sup - https://github.com/alexellis/k3sup
 - ansible - https://ansible.com
 
+<hr>
+
 ## 1.4 contineous integration with argocd
 ##### Introduction
 In this article we are going to setup argocd in minikube, argocd will be the tool that we use to apply configuration changes to our kubernetes yaml files.
@@ -68,23 +77,43 @@ In this article we are going to setup argocd in minikube, argocd will be the too
 - https://argoproj.github.io/argo-cd
 - https://argoproj.github.io/argo-cd/getting_started/
 
+<hr>
+
 ## 1.5 distributed storage with ceph
 
-## 1.7 user permission management ( maybe with argo? )
+<hr>
 
-## 1.8 ( logging with EFK )
+## 1.6 user permission management ( maybe with argo? )
 
-## 1.9 cert-manager
+<hr>
 
-## 1.10 external-dns
+## 1.7 ( logging with EFK )
 
-## 1.11 nginx ingress
+<hr>
 
-## 1.12 hashicorp vault - secret management
+## 1.8 cert-manager
 
-## 1.13 postgresql ha helm chart
+<hr>
 
-## 1.14 linkerd service mesh
+## 1.9 external-dns
 
-## 1.15 mysql alpine deployment
+<hr>
+
+## 1.10 nginx ingress
+
+<hr>
+
+## 1.11 hashicorp vault - secret management
+
+<hr>
+
+## 1.12 postgresql ha helm chart
+
+<hr>
+
+## 1.13 linkerd service mesh
+
+<hr>
+
+## 1.14 mysql alpine deployment
 
