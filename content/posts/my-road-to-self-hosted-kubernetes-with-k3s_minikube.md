@@ -1,12 +1,15 @@
 ---
-title: "My Road to Self Hosted Kubernetes With K3s_minikube"
+title: "My road to self hosted kubernetes with k3s minikube"
 date: 2021-03-27T22:05:10+01:00
 draft: false
+summary: Minikube is an easy way for running kubernetes locally. in 1.5 we'll setup argocd - we could run that in the cluster but "waste" resources. I tend to run argocd locally so in case something is wrong with my cluster/some cloud i could reswapn applications in another cluster
 ---
 
 ## Installation Minikube
 
 Minikube is available for Mac/Windows/Linux you can find more information on https://minikube.sigs.k8s.io/docs/start/
+
+Minikube is a great one node cluster - ideal for local installation and experimentation.
 
 It does require you to have docker in a working state ( [docker getting started ](/posts/docker-getting-started/) )
 
@@ -54,4 +57,10 @@ Optionale Abhängigkeiten für minikube
 🌟  Enabled addons: storage-provisioner, default-storageclass
 💡  kubectl not found. If you need it, try: 'minikube kubectl -- get pods -A'
 🏄  Done! kubectl is now configured to use "minikube" cluster and "default" namespace by default
+```
+
+macusers need to sepcify a vmdriver argument when starting minikube to tell minikube which type of hypervisor to use
+
+```
+minikube start --vm-driver=hyperkit
 ```

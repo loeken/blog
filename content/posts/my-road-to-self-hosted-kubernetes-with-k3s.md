@@ -1,5 +1,5 @@
 ---
-title: "My road to self hosted Kubernetes with k3s"
+title: "My road to self hosted kubernetes with k3s"
 date: 2021-03-27T00:28:41+01:00
 draft: false
 toc: false
@@ -36,11 +36,20 @@ Minikube is an easy way for running kubernetes locally. in 1.5 we'll setup argoc
 ##### Resources & Links
 - minikube https://kubernetes.io/de/docs/setup/minikube/
 
+<hr>
+
 ## 1.2 kubectl
+##### Introduction
+Kubectl is a command line client that allows us to control multiple kubernetes clusters (k3s/k8s) it does this by calling the kubernetes endpoints and providing a set of certificate/keys to authenticate.
+##### Article Link
+[read full article chapter 1.2 ](/posts/my-road-to-self-hosted-kubernetes-with-k3s_kubectl)
+
+##### Resources & Links
+- kubectl https://kubernetes.io/docs/tasks/tools/
 ## 1.3 orchestration
 
 ##### Introduction
-In this article we are going to setup k3s on 3 dedicated servers, we ll be using k3sup to do most of the work and trigger the setup by using an ansible playbook.
+In this article we are going to setup k3s on 3 servers, we ll be using k3sup to do most of the work and trigger the setup by using an ansible playbook.
 ##### Article Link
 [read full article chapter 1.1 ](/posts/my-road-to-self-hosted-kubernetes-with-k3s_bootstrap-cluster-using-ansible-and-k3sup/)
 
