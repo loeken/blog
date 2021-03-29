@@ -58,7 +58,7 @@ Kubectl is a command line client that allows us to control multiple kubernetes c
 ##### Introduction
 In this article we are going to setup k3s on 3 servers, we ll be using k3sup to do most of the work and trigger the setup by using an ansible playbook.
 ##### Article Link
-[read full article chapter 1.1 ](/posts/my-road-to-self-hosted-kubernetes-with-k3s_bootstrap-cluster-using-ansible-and-k3sup/)
+[read full article chapter 1.3 ](/posts/my-road-to-self-hosted-kubernetes-with-k3s_bootstrap-cluster-using-ansible-and-k3sup/)
 
 ##### Resources & Links
 - k3s - v1.20.5-rc1+k3s1 - https://github.com/k3s-io/k3s/tags
@@ -71,7 +71,7 @@ In this article we are going to setup k3s on 3 servers, we ll be using k3sup to 
 ##### Introduction
 In this article we are going to setup argocd in minikube, argocd will be the tool that we use to apply configuration changes to our kubernetes yaml files.
 ##### Article Link
-[read full article chapter 1.5 ](/posts/my-road-to-self-hosted-kubernetes-with-k3s_argocd/)
+[read full article chapter 1.4 ](/posts/my-road-to-self-hosted-kubernetes-with-k3s_argocd/)
 
 ##### Resources & Links
 - https://argoproj.github.io/argo-cd
