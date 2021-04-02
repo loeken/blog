@@ -255,6 +255,8 @@ now we are going to edit /boot/loader/loader.conf
 ```
 now we are going to add an entry to the bootloader config
 #### **`/boot/loader/entries/arch.conf`**
+make sure you type cryptdevice=UUID= ( two equal signs ) in the next step
+
 ```
 title	Arch Linux
 linux	/vmlinuz-linux
