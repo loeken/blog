@@ -11,7 +11,7 @@ tags:
 ---
 
 ### the video
-the following video whos the whole installation below the video you'll find the transcript
+the following video shows the whole installation below the video you'll find the transcript
 
 {{<  youtube_lazy ytid="x4ZFZ9B0t-8" yttitle="test title" >}}
  
