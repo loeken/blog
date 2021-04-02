@@ -4,6 +4,11 @@ date: 2020-05-03T21:20:30+02:00
 draft: false
 ---
 
+### the video
+the following video whos the whole installation below the video you'll find the transcript
+
+{{<  youtube_lazy ytid="PSutMZ0phXs" yttitle="test title" >}}
+
 ### fix for the last part
 typo in the /etc/fstab file
 
