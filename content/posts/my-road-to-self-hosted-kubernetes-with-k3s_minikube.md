@@ -64,3 +64,8 @@ macusers need to sepcify a vmdriver argument when starting minikube to tell mini
 ```
 minikube start --vm-driver=hyperkit
 ```
+
+by default minikube references to crt/key files via a /path/to/file in ~/.kube/config by running the following command we can make it rewrite the config and use base64 encoded keys/crts. This is useful as we now have all information in our single ~/.kube/config - which will be useful too later on when we use argocd.
+```
+❯ minikube config set embed-certs true
+```
