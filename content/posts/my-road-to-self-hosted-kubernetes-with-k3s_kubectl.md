@@ -1,5 +1,5 @@
 ---
-title: "My road to self hosted kubernetes with k3s kubectl"
+title: "My road to self hosted kubernetes with k3s - kubectl"
 date: 2021-03-27T23:08:08+01:00
 draft: false
 summary: Kubectl is a command line client that allows us to control multiple kubernetes clusters (k3s/k8s) it does this by calling the kubernetes endpoints and providing a set of certificate/keys to authenticate.

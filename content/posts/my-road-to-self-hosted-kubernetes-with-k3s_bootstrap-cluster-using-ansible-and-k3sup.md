@@ -1,5 +1,5 @@
 ---
-title: "Bootstrap k3s Cluster using ansible and k3sup on debian 10"
+title: "My road to self hosted kubernetes with k3s - Bootstrap k3s cluster using ansible and k3sup on debian 10"
 date: 2021-03-28T10:15:08+01:00
 draft: false
 summary: In this article we are going to setup k3s on 3 dedicated servers, we ll be using k3sup to do most of the work and trigger the setup by using an ansible playbook

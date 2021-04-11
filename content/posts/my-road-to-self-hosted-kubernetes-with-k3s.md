@@ -81,25 +81,68 @@ In this article we are going to setup argocd in minikube, argocd will be the too
 
 ## 1.5 distributed storage with ceph
 
+##### Introduction
+Here we ll cover how to setup ceph storage and create a storage class which we can use in other deployments to store data persistent across the nodes
+
+##### Article Link
+[read full article chapter 1.5 ](/posts/my-road-to-self-hosted-kubernetes-with-k3s_distributed-storage-with-ceph)
+
+##### Resources & Links
+- https://rook.github.io/docs/rook/master/ceph-quickstart.html
+- https://rook.github.io/docs/rook/v1.6/ceph-quickstart.html
 <hr>
 
-## 1.6 user permission management ( maybe with argo? )
+## 1.6 user permission management
+sighupio's permission manager is a simple ui which allows us to create new kubernetes users,  we can define roles first and then create users with the given roles. it then can be applied clusterwider or inside specific namespaces, this allows us to give granular access to cluster resources
 
+##### Article Link
+[read full article chapter 1.6 ](/posts/my-road-to-self-hosted-kubernetes-with-k3s_permission-manager)
+
+##### Resources & Links
+- https://github.com/sighupio/permission-manager
+- https://github.com/sighupio/permission-manager/blob/master/docs/installation.md
 <hr>
 
 ## 1.7 ( logging with EFK )
+Elasticsearch Fluent Kibana - we ll be using these three tools to setup a generic logging for our pods.
 
+##### Article Link
+[read full article chapter 1.7 ](/posts/my-road-to-self-hosted-kubernetes-with-k3s_logging-with-EFK)
+
+##### Resources & Links
 <hr>
 
 ## 1.8 cert-manager
+Cert-manager uses letsencrypt's certificate authority to request/update keys/crts
 
+##### Article Link
+[read full article chapter 1.7 ](/posts/my-road-to-self-hosted-kubernetes-with-k3s_cert-manager)
+
+##### Resources & Links
+- https://cert-manager.io/docs/
 <hr>
 
-## 1.9 external-dns
+## 1.9 external-dns with cloudflare
+External-Dns is used to update dns records with ips of the kubernetes cluster. here we ll use the cloudflare integration.
+
+##### Article Link
+[read full article chapter 1.9 ](/posts/my-road-to-self-hosted-kubernetes-with-k3s_external-dns)
+
+##### Resources & Links
+- https://support.cloudflare.com/hc/en-us/articles/201720164-Step-2-Create-a-Cloudflare-account-and-add-a-website
+- https://github.com/kubernetes-sigs/external-dns/blob/master/docs/tutorials/cloudflare.md
 
 <hr>
 
 ## 1.10 nginx ingress
+The ingress is kubernetes way of routing incoming traffic towards the destinations. We'll be using nginx as an ingress controller.
+
+##### Article Link
+[read full article chapter 1.10 ](/posts/my-road-to-self-hosted-kubernetes-with-k3s_nginx-ingress-with-helm)
+
+##### Resources & Links
+- https://support.cloudflare.com/hc/en-us/articles/201720164-Step-2-Create-a-Cloudflare-account-and-add-a-website
+- https://github.com/kubernetes-sigs/external-dns/blob/master/docs/tutorials/cloudflare.md
 
 <hr>
 

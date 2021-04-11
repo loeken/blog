@@ -1,5 +1,5 @@
 ---
-title: "My road to self hosted kubernetes with k3s minikube"
+title: "My road to self hosted kubernetes with k3s - minikube"
 date: 2021-03-27T22:05:10+01:00
 draft: false
 summary: Minikube is an easy way for running kubernetes locally. in 1.5 we'll setup argocd - we could run that in the cluster but "waste" resources. I tend to run argocd locally so in case something is wrong with my cluster/some cloud i could reswapn applications in another cluster
