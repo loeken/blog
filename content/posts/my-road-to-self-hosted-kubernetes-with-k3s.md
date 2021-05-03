@@ -146,17 +146,4 @@ The ingress is kubernetes way of routing incoming traffic towards the destinatio
 
 <hr>
 
-## 1.11 hashicorp vault - secret management
-
-<hr>
-
-## 1.12 postgresql ha helm chart
-
-<hr>
-
-## 1.13 linkerd service mesh
-
-<hr>
-
-## 1.14 mysql alpine deployment
 
