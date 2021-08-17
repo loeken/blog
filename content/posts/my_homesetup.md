@@ -18,9 +18,24 @@ Hi there, I'm loeken - I work as a devops engineer - so i have the great job of 
 
 At first glance it might look a bit overkill and maybe even frightening to some people, but once it's setup properly it isn't complicated to use. If you run a small business/office/company you could apply the same principles, and maybe add some further network seggregation between your departments.
 
-## 1. laptop - dell xps 9305
+## 1. dual boot windows/manjaro i3 on laptop - dell xps 9305
 I'm gonna start out same as most people with a windows 10 installation by using the dell's recovery image: ( https://www.dell.com/support/home/de-de/drivers/osiso/wt64a )
 once windows is installed i ll shrink the partition down to 80GB and use the rest for linux and setup a dual boot configuration - in my experience it's usually easier to have a windows installed and then add the linux next to it.
+
+configuration of terminator ( color / background / i3 config override )
+
+installation of powerlevel10k/zsh
+```
+yay -S zsh-theme-powerlevel10k-git
+echo 'source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme' >>~/.zshrc
+chsh /bin/zsh
+```
+
+installation of google-chrome from aur with yay
+
+installation of brave-bin from aur with yay
+
+
 
 ## 2. prerequisites & principles 
 #### 2.1. ssh keys
