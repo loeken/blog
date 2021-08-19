@@ -22,20 +22,93 @@ At first glance it might look a bit overkill and maybe even frightening to some 
 I'm gonna start out same as most people with a windows 10 installation by using the dell's recovery image: ( https://www.dell.com/support/home/de-de/drivers/osiso/wt64a )
 once windows is installed i ll shrink the partition down to 80GB and use the rest for linux and setup a dual boot configuration - in my experience it's usually easier to have a windows installed and then add the linux next to it.
 
-configuration of terminator ( color / background / i3 config override )
+In HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\TimeZoneInformation DWORD (32-bit)
+RealTimeIsUniversal=1
 
-installation of powerlevel10k/zsh
+#### 1.1. navigating in i3wm
+
+| keys                 | description                                                   |
+|----------------------|---------------------------------------------------------------|
+| mod + Enter          | opens a new terminal window                                   |
+| mod + Shift + q      | closes selected window                                        |
+| mod + d              | opens program launcher dmenu                                  |
+| mod + q              | toggles switching direction                                   |
+| mod + (1-8)          | change active workspace to 1-8                                |
+| mod + shift + (1-8)  | move focused window to workspace 1-8 and focus that workspace |
+| mod + shift + h      | view docs of i3                                               |
+
+#### 1.2. configuration of terminator with zsh/oh-my-zsh and powerlevel10k
+
+
+###### 1.2.1. installation of terminator
+```
+sudo pacman -S terminator
+```
+
+- color tab: source code regular / font size 30
+- background: transparent 70%
+- i3 config override change terminal to terminator
+
+###### 1.2.2. zsh theme pwoerlevel10k-git
 ```
 yay -S zsh-theme-powerlevel10k-git
 echo 'source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme' >>~/.zshrc
 chsh /bin/zsh
 ```
 
-installation of google-chrome from aur with yay
+###### 1.2.3. changing the default shell to /usr/bin/zsh
+```
+chsh $USER
+```
 
-installation of brave-bin from aur with yay
+###### 1.2.4 browser installation
+```
+yay -S google-chrome brave-bin
+```
 
+###### 1.2.5. pulseaudio
+```
+install_pulse
 
+```
+
+now we edit the i3 config ~ line 40
+```
+#exec --no-startup-id volumeicon
+#bindsym $mod+Ctrl+m exec terminal -e 'alsamixer'
+exec --no-startup-id pulseaudio
+exec --no-startup-id pa-applet
+bindsym $mod+Ctrl+m exec pavucontrol
+```
+
+###### 1.2.6. bluetooth audio with bluez
+```
+sudo pacman -S pulseaudio-bluetooth
+```
+
+###### 1.2.7. file browser:
+```
+sudo pacman -S thunar
+```
+alternative:
+```
+sudo pacman -S nautilus
+```
+###### 1.2.8. define default applications:
+```
+sudo pacman -S xfce4-settings xfce4-settings-manager
+```
+
+then head over to the settings manager > Default Applications
+
+#### 1.3. updating your system
+
+```
+pacman-mirrors --status
+sudo pacman-mirrors --fasttrack 
+pacman-mirrors --status
+sudo pacman -Syyu
+```
 
 ## 2. prerequisites & principles 
 #### 2.1. ssh keys
