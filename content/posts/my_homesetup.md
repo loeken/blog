@@ -22,7 +22,8 @@ At first glance it might look a bit overkill and maybe even frightening to some 
 I'm gonna start out same as most people with a windows 10 installation by using the dell's recovery image: ( https://www.dell.com/support/home/de-de/drivers/osiso/wt64a )
 once windows is installed i ll shrink the partition down to 80GB and use the rest for linux and setup a dual boot configuration - in my experience it's usually easier to have a windows installed and then add the linux next to it.
 
-In HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\TimeZoneInformation DWORD (32-bit)
+
+Change Windows to use UTC: via regedit: in HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\TimeZoneInformation DWORD (32-bit)
 RealTimeIsUniversal=1
 
 #### 1.1. navigating in i3wm
@@ -36,6 +37,9 @@ RealTimeIsUniversal=1
 | mod + (1-8)          | change active workspace to 1-8                                |
 | mod + shift + (1-8)  | move focused window to workspace 1-8 and focus that workspace |
 | mod + shift + h      | view docs of i3                                               |
+| mod + shift + r      | reload i3 config                                              |
+
+.i3/config contains your desktop config can be edited easily
 
 #### 1.2. configuration of terminator with zsh/oh-my-zsh and powerlevel10k
 
@@ -69,16 +73,6 @@ yay -S google-chrome brave-bin
 ###### 1.2.5. pulseaudio
 ```
 install_pulse
-
-```
-
-now we edit the i3 config ~ line 40
-```
-#exec --no-startup-id volumeicon
-#bindsym $mod+Ctrl+m exec terminal -e 'alsamixer'
-exec --no-startup-id pulseaudio
-exec --no-startup-id pa-applet
-bindsym $mod+Ctrl+m exec pavucontrol
 ```
 
 ###### 1.2.6. bluetooth audio with bluez
@@ -100,6 +94,12 @@ sudo pacman -S xfce4-settings xfce4-settings-manager
 ```
 
 then head over to the settings manager > Default Applications
+
+###### 1.2.9. set the right time
+```
+sudo systemctl start systemd-timesyncd 
+sudo systemctl enable systemd-timesyncd
+```
 
 #### 1.3. updating your system
 
