@@ -105,7 +105,7 @@ You might ask yourself why i have a gateway in frankfurt and in berlin - my ISP 
 The only thing that is a bit "different" from the normal pc is that this mainboard has 2 NICs ( network interface cards ) - one WAN and one LAN.
 
 
-## 1. dual boot windows/manjaro i3 on laptop - dell xps 9305
+## 1. turning windows 10 into dual-boot manjaro (FullDiskEncryption) / Windows 10
 I'm gonna start out same as most people with a windows 10 installation by using the dell's recovery image: ( https://www.dell.com/support/home/de-de/drivers/osiso/wt64a )
 once windows is installed i ll shrink the partition down to 80GB and use the rest for linux and setup a dual boot configuration - in my experience it's usually easier to have a windows installed and then add the linux next to it.
 
@@ -199,7 +199,7 @@ sudo pacman -Syyu
 
 ![Create New Template VM](/media/img/opnsense_pc.jpg)
 
-## 2. opnsense installation & openvpn tunnel
+## 2. setup of two opnsense with openvpn tunnel
 
 #### 2.0 opnsense installation ovh ( public cloud)
 
@@ -242,7 +242,7 @@ route add default 1.2.3.4
 
 ###### 2.2.2. openvpn client on opnsense berlin to uplink to opnsense ovh
 
-## 3. debian 11 on homeserver with full disk encryption ( FDE )
+## 3. install fully encrypted debian 11 and turn into proxmox 7
 
 #### 3.1. preparing bootable media & installation
 ```
@@ -329,9 +329,7 @@ ensure smart is turned on for disks
 smartctl -a /dev/sdX
 ```
  
-## 4. using proxmox
-
-#### 10.1. proxmox kvm template for debian 10
+## 4. creating a openstack cloud template with debian 11 for proxmox
 ```
 apt update && apt install -y libguestfs-tools
 
@@ -392,13 +390,63 @@ qm clone 998 999 --name template --full true
 qm template 999
 ```
 
-#### 10.2 terraform for further vm creation
+#### 5 terraform for further vm creation
 - set static lease for homeserver since we hardcoded it to proxmox
+```
+git clone https://github.com/loeken/tf-proxmox-demo
+cd tf-proxmox-demo
+terraform init
+terraform plan
+terraform apply
+```
 
+#### 6. backups / pxe boot server ( fog project )
 
-#### 10.2. creation of test kvm / growing disks
+proxmox backup
+proxmox backup scheduling
+explain pxe in home example
+for that well be using fog
 
-#### 10.3. setup pxe server ( fog project )
+###### 6.1. prepare a vm for for using terraform
+```
+git clone https://github.com/loeken/tf-proxmox-demo
+cd tf-proxmox-demo
+terraform init
+terraform plan
+terraform apply
+```
+
+```
+ssh debian@fog-01
+```
+
+###### 6.2. install fog project
+```
+sudo -s
+apt install -y git
+git clone https://github.com/FOGProject/fogproject.git
+cd fogproject/bin
+git checkout dev-branch
+./installfog.sh
+2
+N ( Type of installation: Normal )
+N ( change network )
+Y ( setup router address )
+Enter ( to confirm the ip: 172.16.137.254 )
+Yes ( dhcp to handle DNS )
+Enter ( What DNS address should DHCP allow? [172.16.137.254] )
+N ( Would you like to use the FOG server for DHCP service? )
+N ( international packages ) 
+N ( https )
+N ( change hostname ) 
+Y ( are you sure to continue )
+```
+
+###### 6.2. configure opnsense
+in opnsense Services > Dhcpv4 > Lan > Enable network booting
+set next server ip to ip of fog vm
+filename: undionly.kpxe
+
 
 #### 10.6. an email server ( postfix/dovecot with ispconfig )
 
