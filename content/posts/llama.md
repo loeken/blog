@@ -81,16 +81,51 @@ pytorch_model-00004-of-00033.bin
 
 now place the folders into the subfolder
 ```
-loeken@the-machine:~/Projects/text-generation-webui$ tree models/llama-7b-hf/
-models/llama-7b-hf/
+loeken@the-machine:~/Projects/text-generation-webui$ tree models/decapoda-research_llama-7b-hf/
+models/decapoda-research_llama-7b-hf/
 ├── config.json
 ├── generation_config.json
-├── model-00001-of-00002.safetensors
-├── model-00002-of-00002.safetensors
-├── model.safetensors.index.json
+├── huggingface-metadata.txt
+├── pytorch_model-00001-of-00033.bin
+├── pytorch_model-00002-of-00033.bin
+├── pytorch_model-00003-of-00033.bin
+├── pytorch_model-00004-of-00033.bin
+├── pytorch_model-00005-of-00033.bin
+├── pytorch_model-00006-of-00033.bin
+├── pytorch_model-00007-of-00033.bin
+├── pytorch_model-00008-of-00033.bin
+├── pytorch_model-00009-of-00033.bin
+├── pytorch_model-00010-of-00033.bin
+├── pytorch_model-00011-of-00033.bin
+├── pytorch_model-00012-of-00033.bin
+├── pytorch_model-00013-of-00033.bin
+├── pytorch_model-00014-of-00033.bin
+├── pytorch_model-00015-of-00033.bin
+├── pytorch_model-00016-of-00033.bin
+├── pytorch_model-00017-of-00033.bin
+├── pytorch_model-00018-of-00033.bin
+├── pytorch_model-00019-of-00033.bin
+├── pytorch_model-00020-of-00033.bin
+├── pytorch_model-00021-of-00033.bin
+├── pytorch_model-00022-of-00033.bin
+├── pytorch_model-00023-of-00033.bin
+├── pytorch_model-00024-of-00033.bin
+├── pytorch_model-00025-of-00033.bin
+├── pytorch_model-00026-of-00033.bin
+├── pytorch_model-00027-of-00033.bin
+├── pytorch_model-00028-of-00033.bin
+├── pytorch_model-00029-of-00033.bin
+├── pytorch_model-00030-of-00033.bin
+├── pytorch_model-00031-of-00033.bin
+├── pytorch_model-00032-of-00033.bin
+├── pytorch_model-00033-of-00033.bin
+├── pytorch_model.bin.index.json
+├── README.md
 ├── special_tokens_map.json
 ├── tokenizer_config.json
 └── tokenizer.model
+
+0 directories, 41 files
 ```
 
 alternatively you can use huggingface ones:
