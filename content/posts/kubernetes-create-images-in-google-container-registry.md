@@ -62,7 +62,7 @@ docker run -p 80:80 blog
 tag image and push to registry
 ```
 docker tag blog gcr.io/$PROJECT/blog
-docker push cr.io/$PROJECT/blog
+docker push gcr.io/$PROJECT/blog
 ```
 
 
