@@ -1,6 +1,6 @@
 ---
 title: "cs2 setup windows 10"
-date: 2020-06-05T20:14:18+02:00
+date: 2024-07-26T15:14:18+02:00
 draft: false
 toc: false
 description: 
